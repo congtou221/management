@@ -2,21 +2,31 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const proxy = require('express-http-proxy');
-const jsonServer = require('./mock/jsonServer');
-const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
-const webpackDevConfig = require('../webpack.dev.config.js');
-const compiler = webpack(webpackDevConfig);
+var consolidate = require('consolidate');
 
 const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'view'));
-app.set('view engine', 'ejs');
+const proxy = require('express-http-proxy');
+const jsonServer = require('./mock/jsonServer');
 
-// if(process.env.NODE_ENV == 'local') {
+
+// view engine setup
+app.engine('html', consolidate.ejs);
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, 'view'));
+
+// local variables for all views
+app.locals.env = process.env.NODE_ENV || 'local';
+app.locals.reload = true;
+
+if(process.env.NODE_ENV == 'local') {
+  const webpack = require('webpack');
+  const webpackDevMiddleware = require('webpack-dev-middleware');
+  const webpackHotMiddleware = require('webpack-hot-middleware');
+  const webpackDevConfig = require('../webpack.dev.config.js');
+
+  const compiler = webpack(webpackDevConfig);
+
   app.use(webpackDevMiddleware(compiler, {
     publicPath: webpackDevConfig.output.publicPath,
     noInfo: true,
@@ -26,10 +36,11 @@ app.set('view engine', 'ejs');
   }));
 
   app.use(webpackHotMiddleware(compiler));
-// } else {
-//   // 静态资源路径
-//   app.use(express.static(path.join(__dirname, '../build')));
-// }
+
+} else {
+  // 静态资源路径
+  app.use(express.static(path.join(__dirname, '../build')));
+}
 
 // mock数据  开发环境下代理到jsonServer，生产环境代理到线上服务器
 if(process.env.NODE_ENV == 'local') {

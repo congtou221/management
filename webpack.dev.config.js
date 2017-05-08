@@ -8,10 +8,11 @@ var config = {
        page: [path.resolve(__dirname, 'src/app.js'), hotMiddlewareScript]
   },
   output: {
-    publicPath: 'http://localhost:8080/',
+    publicPath: 'http://localhost:3000/',
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js'
   },
+  devtool: 'eval-source-map',
   module: {
     // preLoaders: [
     //   {
@@ -48,7 +49,8 @@ var config = {
   },
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
   ],
   eslint: {
     configFile: './.eslintrc'
