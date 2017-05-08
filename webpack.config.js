@@ -17,7 +17,7 @@ var config = {
       loader: 'babel', // 加载模块 "babel" 是 "babel-loader" 的缩写
       exclude: /node_modules/,
       query: {
-          presets: ["es2015", "stage-0", "react"],
+          presets: ["es2015", "react"],
           plugins: [
             ["import", 
               {
@@ -37,9 +37,6 @@ var config = {
         test: /\.less$/,
         loader: 'style!css!less'
     }]
-  },
-  devServer: {
-
   }
 }
 

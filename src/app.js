@@ -8,3 +8,7 @@ $("document").ready(function(){
         url: 'api/posts'
     })
 });
+
+if(module.hot) {
+    module.hot.accept();
+}
