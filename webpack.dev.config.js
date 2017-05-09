@@ -1,17 +1,18 @@
 var path = require('path');
 var webpack = require("webpack");
 
+var hotMiddlewareScript = 'webpack-hot-middleware/client?reload=true';
+
 var config = {
-  entry: [
-      'webpack/hot/dev-server',   
-      'webpack-dev-server/client?http://localhost:8080/',  // inline mode 自动刷新
-      path.resolve(__dirname, 'src/app.js')
-  ],
+  entry: {
+       page: [path.resolve(__dirname, 'src/app.js'), hotMiddlewareScript]
+  },
   output: {
-    publicPath: '/',
+    publicPath: 'http://localhost:3000/',
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js'
   },
+  devtool: 'eval-source-map',
   module: {
     // preLoaders: [
     //   {
@@ -25,7 +26,7 @@ var config = {
       loader: 'babel', // 加载模块 "babel" 是 "babel-loader" 的缩写
       exclude: /node_modules/,
       query: {
-          presets: ["es2015", "stage-0", "react"],
+          presets: ["es2015", "react"],
           plugins: [
             ["import", 
               {
@@ -47,21 +48,10 @@ var config = {
     }]
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': '"develop"'
-      }
-    })
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
   ],
-  devServer: {
-    proxy: {
-      '/api': {
-        target: isDevelop() ? 'http://localhost:3000' : 'https://test.joudou.com',
-        pathRewrite: {'^/api': ''},
-        secure: false
-      }
-    }
-  },
   eslint: {
     configFile: './.eslintrc'
   }
@@ -69,7 +59,3 @@ var config = {
  
 module.exports = config;
 
-function isDevelop(){
-  console.log(process.env.NODE_ENV);
-  return process.env.NODE_ENV === 'develop';
-}

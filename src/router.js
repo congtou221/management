@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import {Router, Route, hashHistory} from 'react-router';
 
-import Index from './index/entry';
+import Index from './index/main';
 import Transform from './index/transform/entry';
 import Compare from './index/compare/entry';
 

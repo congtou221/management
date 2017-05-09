@@ -8,6 +8,7 @@ var app = require('./app');
 var debug = require('debug')('Log:server');
 var fs = require('fs');
 var http = require('http');
+var reload = require('reload');
 
 /**
  * Get port from environment and store in Express.
@@ -23,6 +24,7 @@ app.set('port', port);
 
 var server = http.createServer(app);
 console.log('create http server, listen ' + port);
+reload(server, app);
 
 server.listen(port);
 server.on('error', onError);

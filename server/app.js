@@ -2,57 +2,56 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const proxy = require('express-http-proxy');
-const jsonServer = require('./mock/jsonServer');
-const webpackDevServer = require('../webpackDevServer');
-// var glob = require('glob');
-// var cookieParser = require('cookie-parser');
-// var bodyParser = require('body-parser');
-// var useragent = require('express-useragent');
+var consolidate = require('consolidate');
 
 const app = express();
 
+const proxy = require('express-http-proxy');
+const jsonServer = require('./mock/jsonServer');
+
+
 // view engine setup
-// app.set('views', path.join(__dirname, 'view'));
-// app.set('view engine', 'ejs');
+app.engine('html', consolidate.ejs);
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, 'view'));
 
-// if (process.env.NODE_ENV == 'local') {
-//     app.use(express.static(path.join(__dirname, '../dist')));
-// }
-// else {
-//     app.use(express.static('/home/works/apps/joudou/newDev/dist'));
-// }
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(cookieParser());
-// app.use(useragent.express());
+// local variables for all views
+app.locals.env = process.env.NODE_ENV || 'local';
+app.locals.reload = true;
 
-// var controllers = glob.sync(path.join(__dirname, './controller/*.js'));
-
-// controllers.forEach(function(controller) {
-//     require(controller)(app);
-// });
 if(process.env.NODE_ENV == 'local') {
-  
-  webpackDevServer.listen(8080, () => {
-    console.log('webpackDevServer is running, HMR is started');
-  });
+  const webpack = require('webpack');
+  const webpackDevMiddleware = require('webpack-dev-middleware');
+  const webpackHotMiddleware = require('webpack-hot-middleware');
+  const webpackDevConfig = require('../webpack.dev.config.js');
+
+  const compiler = webpack(webpackDevConfig);
+
+  app.use(webpackDevMiddleware(compiler, {
+    publicPath: webpackDevConfig.output.publicPath,
+    noInfo: true,
+    stats: {
+      colors: true
+    }
+  }));
+
+  app.use(webpackHotMiddleware(compiler));
+
+} else {
+  // 静态资源路径
+  app.use(express.static(path.join(__dirname, '../build')));
+}
+
+// mock数据  开发环境下代理到jsonServer，生产环境代理到线上服务器
+if(process.env.NODE_ENV == 'local') {
   jsonServer.listen(3004, () => {
     console.log('JSON Server is running');
   });
-}
-// mock数据  开发环境下代理到jsonServer，生产环境代理到线上服务器
-if(process.env.NODE_ENV == 'local') {
+
   app.use('/api', proxy('http://localhost:3004'));
 } else {
   app.use('/api', proxy('https://test.joudou.com'));
-}
-// view engine setup
-app.set('views', path.join(__dirname, 'view'));
-app.set('view engine', 'ejs');
-// 静态资源路径
-app.use(express.static(path.join(__dirname, '../build')));
-
+} 
 
 app.use('/', router);
 router.get('/', function(req, res, next){
