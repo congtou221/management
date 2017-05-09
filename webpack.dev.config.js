@@ -47,6 +47,10 @@ var config = {
         loader: 'style!css!less'
     }]
   },
+  resolve: {
+    root: [__dirname],
+    extensions: ['', '.js', '.jsx']
+  },
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
