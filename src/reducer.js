@@ -1,15 +1,17 @@
-function userReducer (state = {}, action) {
-    console.log('userReducer was called with state', state, 'and action', action);
 
-    switch (action.type) {
-    case 'SET_NAME':
-        return {
-            state: state,
-            name: action.name
-        };
+function userReducer(
+  state = {
+    submit: false,
+    inputText: ''
+  }, action) {
+  switch (action.type) {
+    case 'submit':
+      return { submit: true, inputText: state.inputText }
+    case 'input':
+      return { inputText: action.inputText}
     default:
-        return state;
-    }
+      return state
+  }
 };
 
-module.exports = userReducer;
+export default userReducer;

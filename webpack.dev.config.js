@@ -28,13 +28,13 @@ var config = {
       query: {
           presets: ["es2015", "react"],
           plugins: [
-            ["import", 
+            ["import",
               {
                 libraryName: "antd",
                 style: true
               }
             ]
-          ] 
+          ]
       }
     },{
         test: /\.scss$/,
@@ -60,6 +60,6 @@ var config = {
     configFile: './.eslintrc'
   }
 };
- 
+
 module.exports = config;
 

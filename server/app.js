@@ -2,7 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-var consolidate = require('consolidate');
+const consolidate = require('consolidate');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -51,7 +52,10 @@ if(process.env.NODE_ENV == 'local') {
   app.use('/api', proxy('http://localhost:3004'));
 } else {
   app.use('/api', proxy('https://test.joudou.com'));
-} 
+}
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', router);
 router.get('/', function(req, res, next){
