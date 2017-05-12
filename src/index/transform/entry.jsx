@@ -1,11 +1,12 @@
 import $ from 'jquery';
 import React from 'react';
-import { Input } from 'antd';
+import { Input, Button } from 'antd';
 import {connect} from 'react-redux';
 
 import If from '../common/if';
 import InputBox from './inputBox/entry';
 import TableBox from './tableBox/entry';
+// import ButtonBox from './buttonBox/entry';
 
 const submitAction = { type: 'submit' };
 
@@ -15,29 +16,28 @@ const tableBox = React.createClass({
     let inputArr = inputText.split(String.fromCharCode(10)).map(rows => {
       return rows.split(String.fromCharCode(9))
     });
-    $.ajax({
+    $.post({
       type: 'POST',
-      url: 'api/login',
+      url: 'api/posts',
+      dataType: "json",
       data: {
-        input: ''
+        input: inputArr
       },
       success: retData => {
-        dispatchSubmit();
-        console.log(retData);
+        dispatchSubmit(retData);
       }
-    })
-
+    });
 
   },
   render() {
-    const {isSubmit} = this.props;
+    const {isSubmit, retData, receivedData} = this.props;
     return(
       <div id="container">
         <InputBox />
+        <Button onClick={this.handleSubmit}> click me </Button>
         <If when={isSubmit}>
-          <TableBox />
+          <TableBox dataSource={retData}/>
         </If>
-        <div onClick={this.handleSubmit}>clickHere</div>
       </div>
     )
   }
@@ -47,14 +47,16 @@ const tableBox = React.createClass({
 function mapStateToProps(state) {
   return {
     isSubmit: state.submit,
-    inputText: state.inputText
+    inputText: state.inputText,
+    retData: state.retData,
+    receivedData: state.receivedData
   }
 }
 
 // Map Redux actions to component props
 function mapDispatchToProps(dispatch) {
   return {
-    dispatchSubmit: () => {return dispatch(submitAction)}
+    dispatchSubmit: retData => {return dispatch({ type: 'submit', retData: retData, receivedData: true})}
   }
 }
 

@@ -15,12 +15,13 @@ const inputBox = React.createClass({
 
   render() {
     let {inputText, handleInput} = this.props;
-    return <Input
+    return <Input style={{ margin: '24px 0' }}
         type="textarea"
         placeholder="请输入..."
         value={inputText}
         onInput={handleInput}
         autosize={{ minRows: 2, maxRows: 6}}/>;
+
   }
 });
 

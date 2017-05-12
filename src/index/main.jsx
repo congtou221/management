@@ -4,6 +4,9 @@ import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
+// import DevTools from '../devTools';
+
+
 export default React.createClass({
   render() {
     return (
@@ -21,6 +24,7 @@ export default React.createClass({
             </Content>
           </Layout>
         </Layout>
+        {/*<DevTools />*/}
       </Layout>
     )
   }
