@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from './common/head';
+import Sidebar from './common/sidebar';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -10,9 +11,10 @@ const { Header, Content, Sider } = Layout;
 export default React.createClass({
   render() {
     return (
-      <Layout>
+      <Layout style={{ height: '100%'}}>
         <Head />
-        <Layout>
+        <Layout className="ant-layout-has-sider">
+          <Sidebar />
           <Layout style={{ padding: '0 24px 24px' }}>
             <Breadcrumb style={{ margin: '12px 0' }}>
               <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -29,6 +31,3 @@ export default React.createClass({
     )
   }
 })
-
-
-

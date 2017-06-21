@@ -18,15 +18,7 @@ const columns = [{
   title: 'Action',
   key: 'action',
   render: (text, record) => {return (
-    <span>
-      <a href="#">Action 一 {record.name}</a>
-      <span className="ant-divider" />
-      <a href="#">Delete</a>
-      <span className="ant-divider" />
-      <a href="#" className="ant-dropdown-link">
-        More actions <Icon type="down" />
-      </a>
-    </span>
+    <a href="#">Action 一 {record.name}</a>
   )},
 }];
 
@@ -73,4 +65,3 @@ const tableBox = React.createClass({
   }
 });
 export default tableBox;
-

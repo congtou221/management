@@ -1,40 +1,24 @@
 import $ from 'jquery';
 import React from 'react';
-import { Input, Button } from 'antd';
 import {connect} from 'react-redux';
 
 import If from '../common/if';
 import InputBox from './inputBox/entry';
 import TableBox from './tableBox/entry';
 // import ButtonBox from './buttonBox/entry';
+import UploadBox from './uploadBox/entry';
+import FormBox from './formBox/entry';
 
 const submitAction = { type: 'submit' };
 
-const tableBox = React.createClass({
-  handleSubmit(){
-    let {inputText, dispatchSubmit} = this.props;
-    let inputArr = inputText.split(String.fromCharCode(10)).map(rows => {
-      return rows.split(String.fromCharCode(9))
-    });
-    $.post({
-      type: 'POST',
-      url: 'api/posts',
-      dataType: "json",
-      data: {
-        input: inputArr
-      },
-      success: retData => {
-        dispatchSubmit(retData);
-      }
-    });
-
-  },
+const UploadContainer = React.createClass({
   render() {
     const {isSubmit, retData, receivedData} = this.props;
     return(
-      <div id="container">
-        <InputBox />
-        <Button onClick={this.handleSubmit}> click me </Button>
+      <div id="upload-container">
+        Please choose to <UploadBox /> or <FormBox />
+        {/* <InputBox /> */}
+        {/* <Button onClick={this.showForm}> click me to fill a form </Button> */}
         <If when={isSubmit}>
           <TableBox dataSource={retData}/>
         </If>
@@ -47,16 +31,13 @@ const tableBox = React.createClass({
 function mapStateToProps(state) {
   return {
     isSubmit: state.submit,
-    inputText: state.inputText,
-    retData: state.retData,
-    receivedData: state.receivedData
+    retData: state.retData
   }
 }
 
 // Map Redux actions to component props
 function mapDispatchToProps(dispatch) {
   return {
-    dispatchSubmit: retData => {return dispatch({ type: 'submit', retData: retData, receivedData: true})}
   }
 }
 
@@ -64,4 +45,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(tableBox)
+)(UploadContainer)

@@ -12,23 +12,21 @@ export default React.createClass({
           <Menu
             theme="dark"
             mode="horizontal"
+            defaultSelectedKeys={['2']}
             style={{ lineHeight: '64px' }}
           >
             <Menu.Item key="1">
-              <NavLink to="/compare">Compare</NavLink>
+              <NavLink to="/history">History</NavLink>
             </Menu.Item>
             <Menu.Item key="2">
-              <NavLink to="/transform">Transform</NavLink>
+              <NavLink to="/upload">Upload</NavLink>
             </Menu.Item>
           </Menu>
         </Header>
-        <div> 
+        <div>
           {this.props.children}
         </div>
       </div>
     )
   }
 })
-
-
-
