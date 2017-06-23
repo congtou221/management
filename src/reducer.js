@@ -2,6 +2,14 @@ function userReducer(
   state = {
     submit: false,
     retData: [],
+    mergerForm:{
+      visible: true,
+      form: {},
+      showRecruitSec: true,
+      recruitBuyerNumber: 0,
+      recruitBuyerList:[],
+
+    },
     formBox:{
         visible: false,
         form: {}
@@ -12,6 +20,59 @@ function userReducer(
     }
   }, action) {
   switch (action.type) {
+    case 'saveMergerForm':
+      return {
+        submit: true,
+        retData: state.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: action.form,
+          showRecruitSec: true,
+          recruitBuyerNumber: state.mergerForm.recruitBuyerNumber,
+          recruitBuyerList: state.mergerForm.recruitBuyerList
+        }
+      }
+    case 'showMergerModal':
+      return {
+        submit: true,
+        retData: state.retData,
+        mergerForm:{
+            visible: true,
+            form: state.mergerForm.form,
+            showRecruitSec: true,
+            recruitBuyerNumber: state.mergerForm.recruitBuyerNumber,
+            recruitBuyerList: state.mergerForm.recruitBuyerList
+        }
+      }
+    case 'showRecruitSec' :
+      return {
+        submit: true,
+        retData: state.retData,
+        mergerForm: {
+          visible: true,
+          form: state.mergerForm.form,
+          showRecruitSec: action.showRecruitSec,
+          recruitBuyerNumber: state.mergerForm.recruitBuyerNumber,
+          recruitBuyerList: state.mergerForm.recruitBuyerList
+        }
+      }
+  case 'addKnowBuyer':
+      let newBuyerNumber = state.mergerForm.recruitBuyerNumber + 1;
+      let tempList = state.mergerForm.recruitBuyerList;
+      tempList.push(newBuyerNumber);
+      let newBuyerList = tempList;
+
+      return {
+          submit: true,
+          retData: state.retData,
+          mergerForm: {
+              visible: true,
+              form: state.mergerForm.form,
+              showRecruitSec: true,
+              recruitBuyerNumber: newBuyerNumber,
+              recruitBuyerList: newBuyerList
+          }
+      }
     case 'saveFormRef':
       return {
         submit: true,

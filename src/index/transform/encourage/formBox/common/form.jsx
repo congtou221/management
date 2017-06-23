@@ -1,93 +1,113 @@
+import $ from 'jquery';
 import React from 'react';
-import { Modal, Form, Input, Radio } from 'antd';
+import { Modal, Form, Input, Radio, DatePicker, Select, Button} from 'antd';
 import { connect } from 'react-redux';
 const FormItem = Form.Item;
 
-const CollectionCreateForm = Form.create()(
-  (props) => {
-    const { visible, onCancel, onCreate, form } = props;
-    const { getFieldDecorator } = form;
-    return (
-      <Modal
-        title="Create a new collection"
-        okText="Create"
-        visible={visible}
-        onCancel={onCancel}
-        onOk={onCreate}
-      >
-        <Form layout="vertical">
-          <FormItem label="Title">
-            {getFieldDecorator('title', {
-              rules: [{ required: true, message: 'Please input the title of collection!' }],
-            })(
-              <Input />
-            )}
-          </FormItem>
-          <FormItem label="Description">
-            {getFieldDecorator('description')(<Input type="textarea" />)}
-          </FormItem>
-          <FormItem className="collection-create-form_last-form-item">
-            {getFieldDecorator('modifier', {
-              initialValue: 'public',
-            })(
-              <Radio.Group>
-                <Radio value="public">Public</Radio>
-                <Radio value="private">Private</Radio>
-              </Radio.Group>
-            )}
-          </FormItem>
-        </Form>
-      </Modal>
-    );
-  }
-);
-
 const CollectionForm = React.createClass({
   handleCreate(){
-    let {formRef, dispatchCreated} = this.props;
-    formRef.validateFields((err, values) => {
+    let { form, dispatchCreated } = this.props;
+    form.validateFields((err, values) => {debugger
       if (err) {
         return;
       }
+
       /* create successfully*/
       $.post({
         type: 'POST',
         url: 'api/posts',
         dataType: 'json',
         data: {
-          input: values
+          input: JSON.stringify(values) //values need to be processed
         },
         success: retData => {
           /* fetch new data after upload the form*/
           /* should be a get request*/
-          formRef.resetFields();
+          form.resetFields();
           dispatchCreated(retData);
         }
       })
     });
   },
   render(){
-    <CollectionCreateForm
-      ref={dispatchSaveFormRef}
-      onCancel={dispatchCancel}
-      onCreate={this.handleCreate}
-    />
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <Form layout="horizontal"
+            onSubmit={this.handleCreate}>
+        <FormItem label="股票代码">
+          {getFieldDecorator('id', {
+             rules: [{ required: true, message: '请输入股票代码！' }],
+          })(<Input />)}
+        </FormItem>
+        <FormItem label="公告日期">
+          {getFieldDecorator('date', {
+             rules: [{ type:'object', required: true, message: '请选择公告日期！' }],
+        })(<DatePicker />)}
+        </FormItem>
+        <FormItem label="股票概念">
+          {getFieldDecorator('concept', {
+             rules: [{ required: true, message: '请输入股票概念！' }],
+          })(<Input />)}
+        </FormItem>
+        <FormItem label="授予价格">
+          {getFieldDecorator('price', {
+            rules: [{ required: true, message: '请输入授予价格！'}]
+          })(<Input />)}
+        </FormItem>
+        <FormItem label="公告类型">
+          {getFieldDecorator('type', {
+             initialValue: 'restriction'
+          })(
+             <Select>
+               <Option value="restriction">限制性股票激励</Option>
+               <Option value="option">股票期权激励</Option>
+             </Select>
+           )}
+        </FormItem>
+
+        <FormItem label="资金总额">
+          {getFieldDecorator('all-money', {
+          })(<Input />)}
+        </FormItem>
+        <FormItem label="股价">
+          {getFieldDecorator('price', {
+          })(<Input />)}
+        </FormItem>
+        <FormItem label="股份数量">
+          {getFieldDecorator('amount', {
+          })(<Input />)}
+        </FormItem>
+
+        <FormItem label="Description">
+          {getFieldDecorator('description')(<Input type="textarea" />)}
+        </FormItem>
+        <FormItem className="collection-create-form_last-form-item">
+          {getFieldDecorator('modifier', {
+             initialValue: 'public',
+          })(
+             <Radio.Group>
+               <Radio value="public">Public</Radio>
+               <Radio value="private">Private</Radio>
+             </Radio.Group>
+           )}
+        </FormItem>
+        <FormItem>
+          <Button type="primary" htmlType="submit" size="large">Register</Button>
+        </FormItem>
+      </Form>
+    );
   }
-})
+});
+
+const WrappedCollectionForm = Form.create()(CollectionForm);
+
 function mapStateToProps(state) {
   return {
-    formRef: state.formBox.form
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    dispatchSaveFormRef: formRef => {
-      return dispatch({type: 'saveFormRef', form: formRef})
-    },
-    dispatchCancel: () => {
-      return dispatch({type: 'cancel'})
-    },
     dispatchCreated: retData => {
       return dispatch({type: 'create', retData: retData})
     }
@@ -97,4 +117,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CollectionCreateForm)
+)(WrappedCollectionForm)
