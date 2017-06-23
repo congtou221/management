@@ -57,11 +57,6 @@ function userReducer(
         }
       }
   case 'addKnowBuyer':
-      let newBuyerNumber = state.mergerForm.recruitBuyerNumber + 1;
-      let tempList = state.mergerForm.recruitBuyerList;
-      tempList.push(newBuyerNumber);
-      let newBuyerList = tempList;
-
       return {
           submit: true,
           retData: state.retData,
@@ -69,8 +64,20 @@ function userReducer(
               visible: true,
               form: state.mergerForm.form,
               showRecruitSec: true,
-              recruitBuyerNumber: newBuyerNumber,
-              recruitBuyerList: newBuyerList
+              recruitBuyerNumber: action.number,
+              recruitBuyerList: action.list
+          }
+      }
+  case 'addUnknowBuyer':
+      return {
+          submit: true,
+          retData: state.retData,
+          mergerForm: {
+              visible: true,
+              form: state.mergerForm.form,
+              showRecruitSec: true,
+              recruitBuyerNumber: action.number,
+              recruitBuyerList: action.list
           }
       }
     case 'saveFormRef':

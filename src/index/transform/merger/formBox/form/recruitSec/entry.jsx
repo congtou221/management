@@ -9,17 +9,30 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
 const RecruitSection = React.createClass({
+
   onRadioChange(e){
     let { dispatchShowRecruitSec } = this.props;
     dispatchShowRecruitSec(e.target.value);
   },
+
   addKnowBuyer(){
-    let { dispatchAddKnowBuyer } = this.props;
-    dispatchAddKnowBuyer();
+    let { dispatchAddKnowBuyer, buyerNumber, buyerList } = this.props;
+
+    let newBuyerNumber = ++buyerNumber;
+    let newBuyerList = buyerList;
+    newBuyerList.push(newBuyerNumber);
+
+    dispatchAddKnowBuyer( newBuyerNumber, newBuyerList );
   },
+
   addUnknowBuyer(){
-    let { dispatchAddUnkowBuyer } = this.props;
-    dispatchAddUnkowBuyer();
+    let { dispatchAddUnknowBuyer, buyerNumber, buyerList } = this.props;
+
+    let newBuyerNumber = ++buyerNumber;
+    let newBuyerList = buyerList;
+    newBuyerList.push(newBuyerNumber);
+
+    dispatchAddUnknowBuyer(newBuyerNumber, newBuyerList);
   },
   render(){
     let { form, showRecruitSec } = this.props;
@@ -92,7 +105,9 @@ const RecruitSection = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    showRecruitSec: state.mergerForm.showRecruitSec
+    showRecruitSec: state.mergerForm.showRecruitSec,
+    buyerNumber: state.mergerForm.recruitBuyerNumber,
+    buyerList: state.mergerForm.recruitBuyerList
   }
 }
 
@@ -104,14 +119,18 @@ function mapDispatchToProps(dispatch) {
         showRecruitSec: value
       })
     },
-    dispatchAddKnowBuyer: () => {
+    dispatchAddKnowBuyer: (number, list) => {
       return dispatch({
-        type: 'addKnowBuyer'
+        type: 'addKnowBuyer',
+        number: number,
+        list: list
       })
     },
-    dispatchAddUnkowBuyer: () => {
+    dispatchAddUnknowBuyer: (number, list) => {
       return dispatch({
-        type: 'addUnknowBuyer'
+        type: 'addUnknowBuyer',
+        number: number,
+        list: list
       })
     }
   }

@@ -15,7 +15,7 @@ const BuyerList = React.createClass({
 
     let list = buyerList.map((key, index) => {
       return (
-        <div className="recruit-buyeritem" data-buyer={key}>
+        <div className="recruit-buyeritem" key={key}>
           <FormItem {...formItemLayout} label="配募方股东名称">
             {getFieldDecorator(`buyer-${key}-name`)(
                <Input />
@@ -61,6 +61,7 @@ const BuyerList = React.createClass({
 
 function mapStateToProps(state){
   return {
+    buyerNumber: state.mergerForm.recruitBuyerNumber,
     buyerList: state.mergerForm.recruitBuyerList
   }
 }
