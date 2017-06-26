@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import If from '../../common/if';
 import TableBox from './tableBox/entry';
 // import ButtonBox from './buttonBox/entry';
-import UploadBox from './uploadBox/entry';
+import UploadBox from '../common/uploadBox/entry';
 import FormBox from './formBox/entry';
 
 const submitAction = { type: 'submit' };

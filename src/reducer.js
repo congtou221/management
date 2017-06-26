@@ -3,12 +3,13 @@ function userReducer(
     submit: false,
     retData: [],
     mergerForm:{
-      visible: true,
+      visible: false,
       form: {},
-      showRecruitSec: true,
-      recruitBuyerNumber: 0,
-      recruitBuyerList:[],
-
+      showRecruitSec: false
+    },
+    increaseForm:{
+      visible: false,
+      form: {}
     },
     formBox:{
         visible: false,
@@ -20,6 +21,17 @@ function userReducer(
     }
   }, action) {
   switch (action.type) {
+     case 'upload':
+       return {
+         submit: true,
+         retData: action.retData,
+         mergerForm: {
+            visible: state.mergerForm.visible,
+            form: state.mergerForm.form,
+            showRecruitSec: state.mergerForm.showRecruitSec
+         },
+         increaseForm: state.increaseForm
+       }
     case 'saveMergerForm':
       return {
         submit: true,
@@ -27,22 +39,31 @@ function userReducer(
         mergerForm: {
           visible: state.mergerForm.visible,
           form: action.form,
-          showRecruitSec: true,
-          recruitBuyerNumber: state.mergerForm.recruitBuyerNumber,
-          recruitBuyerList: state.mergerForm.recruitBuyerList
-        }
+          showRecruitSec: state.mergerForm.showRecruitSec
+        },
+        increaseForm: state.increaseForm
       }
-    case 'showMergerModal':
+    case 'createMergerForm':
+      return {
+        submit: true,
+        retData: action.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: state.mergerForm.form,
+          showRecruitSec: state.mergerForm.showRecruitSec
+        },
+        increaseForm: state.increaseForm
+      }
+    case 'showMergerForm':
       return {
         submit: true,
         retData: state.retData,
         mergerForm:{
-            visible: true,
+            visible: !state.mergerForm.visible,
             form: state.mergerForm.form,
-            showRecruitSec: true,
-            recruitBuyerNumber: state.mergerForm.recruitBuyerNumber,
-            recruitBuyerList: state.mergerForm.recruitBuyerList
-        }
+            showRecruitSec: state.mergerForm.showRecruitSec
+        },
+        increaseForm: state.increaseForm
       }
     case 'showRecruitSec' :
       return {
@@ -51,166 +72,142 @@ function userReducer(
         mergerForm: {
           visible: true,
           form: state.mergerForm.form,
-          showRecruitSec: action.showRecruitSec,
-          recruitBuyerNumber: state.mergerForm.recruitBuyerNumber,
-          recruitBuyerList: state.mergerForm.recruitBuyerList
-        }
+          showRecruitSec: action.showRecruitSec
+        },
+        increaseForm: state.increaseForm
       }
-  case 'addKnowBuyer':
+  case 'showIncreaseForm' :
       return {
           submit: true,
           retData: state.retData,
-          mergerForm: {
-              visible: true,
-              form: state.mergerForm.form,
-              showRecruitSec: true,
-              recruitBuyerNumber: action.number,
-              recruitBuyerList: action.list
+          mergerForm: state.mergerForm,
+          increaseForm: {
+              visible: true
           }
       }
-  case 'addUnknowBuyer':
-      return {
-          submit: true,
-          retData: state.retData,
-          mergerForm: {
-              visible: true,
-              form: state.mergerForm.form,
-              showRecruitSec: true,
-              recruitBuyerNumber: action.number,
-              recruitBuyerList: action.list
-          }
-      }
-    case 'saveFormRef':
-      return {
-        submit: true,
-        retData: state.retData,
-        formBox:{
-          visible:state.formBox.visible,
-          form: action.form
-        },
-        historyFormBox: {
-          visible: false,
-          form: state.historyFormBox.form
-        }
-      }
-    case 'showModal':
-      return {
-        submit: true,
-        retData: state.retData,
-        formBox:{
-          visible: true,
-          form: state.formBox.form
-        },
-        historyFormBox: {
-          visible: false,
-          form: state.historyFormBox.form
-        }
-      }
-    case 'cancel':
-      return {
-        submit: true,
-        retData: state.retData,
-        formBox: {
-          visible: false,
-          form: state.formBox.form
-        },
-        historyFormBox: {
-          visible: false,
-          form: state.historyFormBox.form
-        }
-      }
-    case 'create':
-      return {
-        submit: true,
-        submit: true,
-        retData: action.retData,
-        formBox: {
-          visible: false,
-          form: state.formBox.form
-        },
-        historyFormBox: {
-          visible: false,
-          form: state.historyFormBox.form
-        }
-      }
-    case 'upload':
-      return {
-        submit: true,
-        retData: action.retData,
-        formBox: {
-            visible: false,
-            form: state.formBox.form
-        },
-        historyFormBox: {
-          visible: false,
-          form: state.historyFormBox.form
-        }
-      }
-    case 'fetchCompareData':
-      return {
-        submit: true,
-        retData : action.retData,
-        formBox: {
-          visible: false,
-          form: state.formBox.form
-        },
-        historyFormBox: {
-          visible: false,
-          form: state.historyFormBox.form
-        }
-      }
-    case 'saveHistoryFormRef':
-      return {
-        submit: true,
-        retData: state.retData,
-        formBox: {
-          visible: false,
-          form: state.formBox.form,
-        },
-        historyFormBox: {
-          visible: false,
-          form: action.form
-        }
-      }
-    case 'showHistoryModal':
-      return {
-        submit: true,
-        retData: state.retData,
-        formBox: {
-          visible: false,
-          form: state.formBox.form
-        },
-        historyFormBox: {
-          visible: true,
-          form: state.historyFormBox.form
-        }
-      }
-    case 'editHistoryForm':
-      return {
-        submit: true,
-        retData: state.retData,
-        formBox: {
-          visible: false,
-          form: state.formBox.form
-        },
-        historyFormBox: {
-          visible: false,
-          form: state.historyFormBox.form
-        }
-      }
-    case 'cancelHistoryForm':
-      return {
-        submit: true,
-        retData: state.retData,
-        formBox: {
-          visible: false,
-          form: state.formBox.form
-        },
-        historyFormBox: {
-          visible: false,
-          form: state.historyFormBox.form
-        }
-      }
+
+    // case 'saveFormRef':
+    //   return {
+    //     submit: true,
+    //     retData: state.retData,
+    //     mergerForm: {
+    //       visible: true,
+    //       form: state.mergerForm.form,
+    //       showRecruitSec: action.showRecruitSec
+    //     }
+    //   }
+    // case 'showModal':
+    //   return {
+    //     submit: true,
+    //     retData: state.retData,
+    //     mergerForm: {
+    //       visible: true,
+    //       form: state.mergerForm.form,
+    //       showRecruitSec: action.showRecruitSec
+    //     },
+
+    //     formBox:{
+    //       visible: true,
+    //       form: state.formBox.form
+    //     },
+    //     historyFormBox: {
+    //       visible: false,
+    //       form: state.historyFormBox.form
+    //     }
+    //   }
+    // case 'cancel':
+    //   return {
+    //     submit: true,
+    //     retData: state.retData,
+    //     formBox: {
+    //       visible: false,
+    //       form: state.formBox.form
+    //     },
+    //     historyFormBox: {
+    //       visible: false,
+    //       form: state.historyFormBox.form
+    //     }
+    //   }
+    // case 'create':
+    //   return {
+    //     submit: true,
+    //     submit: true,
+    //     retData: action.retData,
+    //     formBox: {
+    //       visible: false,
+    //       form: state.formBox.form
+    //     },
+    //     historyFormBox: {
+    //       visible: false,
+    //       form: state.historyFormBox.form
+    //     }
+    //   }
+
+    // case 'fetchCompareData':
+    //   return {
+    //     submit: true,
+    //     retData : action.retData,
+    //     formBox: {
+    //       visible: false,
+    //       form: state.formBox.form
+    //     },
+    //     historyFormBox: {
+    //       visible: false,
+    //       form: state.historyFormBox.form
+    //     }
+    //   }
+    // case 'saveHistoryFormRef':
+    //   return {
+    //     submit: true,
+    //     retData: state.retData,
+    //     formBox: {
+    //       visible: false,
+    //       form: state.formBox.form,
+    //     },
+    //     historyFormBox: {
+    //       visible: false,
+    //       form: action.form
+    //     }
+    //   }
+    // case 'showHistoryModal':
+    //   return {
+    //     submit: true,
+    //     retData: state.retData,
+    //     formBox: {
+    //       visible: false,
+    //       form: state.formBox.form
+    //     },
+    //     historyFormBox: {
+    //       visible: true,
+    //       form: state.historyFormBox.form
+    //     }
+    //   }
+    // case 'editHistoryForm':
+    //   return {
+    //     submit: true,
+    //     retData: state.retData,
+    //     formBox: {
+    //       visible: false,
+    //       form: state.formBox.form
+    //     },
+    //     historyFormBox: {
+    //       visible: false,
+    //       form: state.historyFormBox.form
+    //     }
+    //   }
+    // case 'cancelHistoryForm':
+    //   return {
+    //     submit: true,
+    //     retData: state.retData,
+    //     formBox: {
+    //       visible: false,
+    //       form: state.formBox.form
+    //     },
+    //     historyFormBox: {
+    //       visible: false,
+    //       form: state.historyFormBox.form
+    //     }
+    //   }
     default:
       return state
   }

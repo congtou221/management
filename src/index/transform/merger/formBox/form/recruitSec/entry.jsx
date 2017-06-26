@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import BuyerList from './buyerList';
 import If from '../../../../../common/if';
 
+require('./style.scss');
+
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
@@ -15,38 +17,20 @@ const RecruitSection = React.createClass({
     dispatchShowRecruitSec(e.target.value);
   },
 
-  addKnowBuyer(){
-    let { dispatchAddKnowBuyer, buyerNumber, buyerList } = this.props;
 
-    let newBuyerNumber = ++buyerNumber;
-    let newBuyerList = buyerList;
-    newBuyerList.push(newBuyerNumber);
-
-    dispatchAddKnowBuyer( newBuyerNumber, newBuyerList );
-  },
-
-  addUnknowBuyer(){
-    let { dispatchAddUnknowBuyer, buyerNumber, buyerList } = this.props;
-
-    let newBuyerNumber = ++buyerNumber;
-    let newBuyerList = buyerList;
-    newBuyerList.push(newBuyerNumber);
-
-    dispatchAddUnknowBuyer(newBuyerNumber, newBuyerList);
-  },
   render(){
     let { form, showRecruitSec } = this.props;
     let { getFieldDecorator } = form;
 
     const formItemLayout = {
       labelCol: { span: 8 },
-      wrapperCol: { span: 14 }
+      wrapperCol: { span: 8 }
     }
     return (
       <div className="recruit-sec">
         <FormItem {...formItemLayout} label="是否配募">
           {getFieldDecorator('recruit', {
-            initialValue: true
+            initialValue: false
           })(
              <RadioGroup onChange={this.onRadioChange} >
                <Radio value={true}>是</Radio>
@@ -57,7 +41,7 @@ const RecruitSection = React.createClass({
 
         <If when={showRecruitSec}>
           <div className="recruit-detail">
-            <FormItem  label="配募总金额">
+            <FormItem {...formItemLayout} label="配募总金额">
               {getFieldDecorator('money')(
                  <Input />
                )}
@@ -77,25 +61,7 @@ const RecruitSection = React.createClass({
                  <Input />
                )}
             </FormItem>
-            <div className="recruit-buyerlist">
-              <FormItem {...formItemLayout}>
-                {getFieldDecorator('know-buyer')(
-                   <Button type="dashed" onClick={this.addKnowBuyer}>
-                     <Icon type="plus" />增加确定的配募方
-                   </Button>
-                 )}
-              </FormItem>
-              <FormItem {...formItemLayout}>
-                {getFieldDecorator('unknow-buyer')(
-                   <Button type="dashed" onClick={this.addUnknowBuyer}>
-                     <Icon type="plus" />增加不确定的配募方
-                   </Button>
-                 )}
-              </FormItem>
-
-              <BuyerList />
-
-            </div>
+            <BuyerList />
           </div>
         </If>
       </div>

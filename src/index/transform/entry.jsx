@@ -3,11 +3,11 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import If from '../common/if';
-import InputBox from './inputBox/entry';
-import TableBox from './tableBox/entry';
+//import InputBox from './inputBox/entry';
+//import TableBox from './tableBox/entry';
 // import ButtonBox from './buttonBox/entry';
-import UploadBox from './uploadBox/entry';
-import FormBox from './formBox/entry';
+//import UploadBox from './uploadBox/entry';
+//import FormBox from './formBox/entry';
 
 const submitAction = { type: 'submit' };
 
@@ -16,12 +16,12 @@ const UploadContainer = React.createClass({
     const {isSubmit, retData, receivedData} = this.props;
     return(
       <div id="upload-container">
-        Please choose to <UploadBox /> or <FormBox />
+        {/* Please choose to <UploadBox /> or <FormBox /> */}
         {/* <InputBox /> */}
         {/* <Button onClick={this.showForm}> click me to fill a form </Button> */}
-        <If when={isSubmit}>
-          <TableBox dataSource={retData}/>
-        </If>
+        {/* <If when={isSubmit}>
+            <TableBox dataSource={retData}/>
+            </If> */}
       </div>
     )
   }

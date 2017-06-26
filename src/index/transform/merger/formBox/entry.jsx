@@ -12,8 +12,8 @@ const CollectionsPage = React.createClass({
       dispatchShowModal
     } = this.props;
     return (
-      <div style={{display: 'inline-block'}}>
-        <Button onClick={dispatchShowModal}>Fill the Form Manually</Button>
+      <div className="merger-form-wrapper">
+        <Button onClick={dispatchShowModal}>录入表单</Button>
         <If when={visible}>
           <CollectionCreateForm />
         </If>
@@ -31,7 +31,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     dispatchShowModal: () => {
-      return dispatch({type: 'showMergerModal'})
+      return dispatch({type: 'showMergerForm'})
     }
   }
 }
