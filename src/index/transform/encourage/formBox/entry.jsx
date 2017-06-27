@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React from 'react';
 import { Button, Modal, Form, Input, Radio, DatePicker, Select } from 'antd';
 import If from '../../../common/if';

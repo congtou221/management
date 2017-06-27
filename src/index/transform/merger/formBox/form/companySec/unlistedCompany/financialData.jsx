@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { Form, Button, Icon, Input, DatePicker } from 'antd';
 
 import { connect } from 'react-redux';
@@ -45,7 +46,7 @@ const FinancialData = React.createClass({
       labelCol: { span: 8 },
       wrapperCol: { span: 14}
     }
-
+    let dateFormat = "YYYY/MM/DD";
 
     getFieldDecorator('financialDataKeys', { initialValue: [] });
     const financialDataKeys = getFieldValue('financialDataKeys');
@@ -67,7 +68,11 @@ const FinancialData = React.createClass({
                rules: [{
                  type: 'array',
                  message: '请选择时间！'
-               }]
+               }],
+               initialValue: [
+                 moment(`${new Date().getFullYear()}/01/01`, dateFormat),
+                 moment(`${new Date().getFullYear()}/12/31`, dateFormat)
+               ]
             })(
                <RangePicker />
              )}
@@ -92,7 +97,8 @@ const FinancialData = React.createClass({
                rules: [{
                  type: 'object',
                  message: '请选择时间！'
-               }]
+               }],
+               initialValue: moment(new Date(), dateFormat)
             })(
                <MonthPicker />
              )}

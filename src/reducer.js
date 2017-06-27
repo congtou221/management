@@ -18,15 +18,15 @@ function userReducer(
     holdingForm: {
       visible: true,
       form: {}
-    }// ,
+    },
     // formBox:{
     //     visible: false,
     //     form: {}
     // },
-    // historyFormBox:{
-    //     visible: false,
-    //     form: {}
-    // }
+    historyFormBox:{
+        visible: false,
+        form: {}
+    }
   }, action) {
   switch (action.type) {
     case 'upload':
@@ -40,7 +40,8 @@ function userReducer(
         },
         increaseForm: state.increaseForm,
         encourageForm: state.encourageForm,
-        holdingForm: state.holdingForm
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
       }
     case 'saveMergerForm':
       return {
@@ -53,7 +54,8 @@ function userReducer(
         },
         increaseForm: state.increaseForm,
         encourageForm: state.encourageForm,
-        holdingForm: state.holdingForm
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
       }
     case 'createMergerForm':
       return {
@@ -66,7 +68,8 @@ function userReducer(
         },
         increaseForm: state.increaseForm,
         encourageForm: state.encourageForm,
-        holdingForm: state.holdingForm
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
       }
     case 'showMergerForm':
       return {
@@ -79,7 +82,8 @@ function userReducer(
         },
         increaseForm: state.increaseForm,
         encourageForm: state.encourageForm,
-        holdingForm: state.holdingForm
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
       }
     case 'showRecruitSec' :
       return {
@@ -92,7 +96,8 @@ function userReducer(
         },
         increaseForm: state.increaseForm,
         encourageForm: state.encourageForm,
-        holdingForm: state.holdingForm
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
       }
     case 'showIncreaseForm' :
       return {
@@ -100,10 +105,11 @@ function userReducer(
         retData: state.retData,
         mergerForm: state.mergerForm,
         increaseForm: {
-          visible: true
+          visible: !state.increaseForm.visible
         },
         encourageForm: state.encourageForm,
-        holdingForm: state.holdingForm
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
       }
     case 'createIncreaseForm' :
       return {
@@ -114,7 +120,8 @@ function userReducer(
           visible: true
         },
         encourageForm: state.encourageForm,
-        holdingForm: state.holdingForm
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
 
       }
     case 'showEncourageForm' :
@@ -124,10 +131,11 @@ function userReducer(
         mergerForm: state.mergerForm,
         increaseForm: state.increaseForm,
         encourageForm: {
-          visible: true,
+          visible: !state.encourageForm.visible,
           form: state.encourageForm.form
         },
-        holdingForm: state.holdingForm
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
       }
     case 'createEncourageForm':
       return {
@@ -139,7 +147,8 @@ function userReducer(
           visible: true,
           form: action.encourageForm.form
         },
-        holdingForm: state.holdingForm
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
       }
     case 'showHoldingForm':
       return {
@@ -149,9 +158,10 @@ function userReducer(
         increaseForm: state.increaseForm,
         encourageForm:state.encourageForm,
         holdingForm: {
-          visible: true,
+          visible: !state.holdingForm.visible,
           form: state.holdingForm.form
-        }
+        },
+        historyFormBox: state.historyFormBox
       }
     case 'createHoldingForm':
       return {
@@ -163,7 +173,8 @@ function userReducer(
         holdingForm: {
           visible: true,
           form: state.holdingForm.form
-        }
+        },
+        historyFormBox: state.historyFormBox
       }
 
     // case 'saveFormRef':

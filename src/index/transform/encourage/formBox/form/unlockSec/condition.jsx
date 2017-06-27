@@ -1,10 +1,12 @@
 import React from 'react';
-import { Form, Input, Button, Icon, DatePicker } from 'antd';
+import moment from 'moment';
+import { Form, Input, Button, Icon, DatePicker, Select } from 'antd';
 import { connect } from 'react-redux';
 
 require('./condition.scss');
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 
 let uuid = 5;
 
@@ -39,8 +41,19 @@ const UnlockyearList = React.createClass({
     let { getFieldDecorator, getFieldValue } = form;
     let formItemLayout = {
       labelCol: { span: 8 },
-      wrapperCol: { span: 14 }
+      wrapperCol: { span: 14  }
     }
+    let headerFormItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 2 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 14 },
+      },
+    };
+    let dateFormat = "YYYY/MM/DD";
 
     getFieldDecorator('unlockyearKeys', {initialValue: [1, 2, 3, 4, 5]});
     const unlockyearKeys = getFieldValue('unlockyearKeys');
@@ -59,7 +72,9 @@ const UnlockyearList = React.createClass({
             {...formItemLayout}
             label="解锁年"
           >
-            {getFieldDecorator(`unlockyear-${key}-date`)(
+            {getFieldDecorator(`unlockyear-${key}-date`, {
+               initialValue: moment(`${new Date().getFullYear() + index}/01/01`, dateFormat)
+            })(
                <DatePicker />
              )}
           </FormItem>
@@ -87,21 +102,36 @@ const UnlockyearList = React.createClass({
     })
 
     return (
-      <div className="unlockyear-list">
-        <FormItem {...formItemLayout}>
-          {getFieldDecorator('know-buyer')(
-             <Button type="dashed" onClick={this.addUnlockyear}>
-               <Icon type="plus" />增加解锁年
-             </Button>
-           )}
+      <div className="condition-wrapper">
+        <FormItem {...headerFormItemLayout} label="解锁类型">
+        {getFieldDecorator('unlock-type')(
+          <Select
+            style={{ width: 200 }}
+          >
+            <Option value="营业收入">营业收入</Option>
+            <Option value="净利润">净利润</Option>
+            <Option value="归母净利润">归母净利润</Option>
+            <Option value="归母扣非净利润">归母扣非净利润</Option>
+            <Option value="利润总额">利润总额</Option>
+            <Option value="净资产收益率">净资产收益率</Option>
+          </Select>
+        )}
         </FormItem>
 
-        <div className="unlockyear-item-wrapper">
-          {list}
+        <div className="unlockyear-list">
+          <FormItem {...formItemLayout}>
+            {getFieldDecorator('add-unlockyear-btn')(
+            <Button type="dashed" onClick={this.addUnlockyear}>
+              <Icon type="plus" />增加解锁年
+            </Button>
+            )}
+          </FormItem>
+
+          <div className="unlockyear-item-wrapper">
+            {list}
+          </div>
         </div>
-
       </div>
-
     )
   }
 })

@@ -39,7 +39,7 @@ const uploadBox = React.createClass( {
     };
 
     return (
-      <Upload {...props} style={{ display: 'inline-block', margin: '0 0 24px'}}>
+      <Upload {...props} style={{ display: 'inline-block' }}>
         <Button>
           <Icon type="upload" /> 上传文件（.xls/.xlsx）
         </Button>

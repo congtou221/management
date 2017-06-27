@@ -9,7 +9,7 @@ var config = {
   },
   output: {
     publicPath: 'http://localhost:3000/',
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
   },
   devtool: 'eval-source-map',
@@ -54,7 +54,14 @@ var config = {
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: require('./manifest.json'),
+    }),
+    new webpack.ProvidePlugin({
+      $: "jquery"
+    })
   ],
   eslint: {
     configFile: './.eslintrc'
@@ -62,4 +69,3 @@ var config = {
 };
 
 module.exports = config;
-

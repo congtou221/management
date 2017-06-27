@@ -1,10 +1,11 @@
 import React from 'react';
-import { Form, Input, Button, Icon } from 'antd';
+import { Form, Input, Button, Icon, Select } from 'antd';
 import { connect } from 'react-redux';
 
 require('./buyerList.scss');
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 
 let uuid = 0;
 

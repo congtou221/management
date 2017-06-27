@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import If from '../../../common/if';
 import CollectionCreateForm from './form/entry';
 
+require('./style.scss');
+
 const CollectionsPage = React.createClass({
   render() {
     let {

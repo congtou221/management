@@ -2,25 +2,29 @@ import React from 'react'
 import { Table, Icon } from 'antd';
 
 const columns = [{
-  title: 'Name',
-  dataIndex: 'name',
-  key: 'name',
-  render: text => {return <a href="#">{text}</a>},
+  title: '事件',
+  dataIndex: 'event',
+  key: 'event'
 }, {
-  title: 'Age',
-  dataIndex: 'age',
-  key: 'age',
+  title: '股票代码',
+  dataIndex: 'id',
+  key: 'id',
 }, {
-  title: 'Address',
-  dataIndex: 'address',
-  key: 'address',
+  title: '公告日期',
+  dataIndex: 'date',
+  key: 'date',
+}, {
+  title: '进程',
+  dataIndex: 'process',
+  key: 'process',
 }, {
   title: 'Action',
   key: 'action',
   render: (text, record) => {return (
-    <a href="#">Action 一 {record.name}</a>
+    <a href="#">编辑 一 {record.name}</a>
   )},
 }];
+
 
 // const data = [{
 //   key: '1',
@@ -42,7 +46,7 @@ const columns = [{
 const tableBox = React.createClass({
   formatData(){
     let { dataSource } = this.props;
-    let columns = ['key', 'name', 'age', 'address'];
+    let columns = ['key', 'event', 'id', 'date', 'process'];
 
     return dataSource.map( (list) => {
       if(!Array.isArray(list)){

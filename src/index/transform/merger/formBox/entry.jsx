@@ -1,9 +1,10 @@
-import $ from 'jquery';
 import React from 'react';
 import { Button, Form, Input, Radio } from 'antd';
 import { connect } from 'react-redux';
 import If from '../../../common/if';
 import CollectionCreateForm from './form/entry';
+
+require('./style.scss');
 
 const CollectionsPage = React.createClass({
   render() {

@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const path = require('path');
@@ -27,6 +26,8 @@ if(process.env.NODE_ENV == 'local') {
   const webpackDevConfig = require('../webpack.dev.config.js');
 
   const compiler = webpack(webpackDevConfig);
+
+  app.use(express.static(path.join(__dirname, '../build')));
 
   app.use(webpackDevMiddleware(compiler, {
     publicPath: webpackDevConfig.output.publicPath,

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React from 'react';
 import { Form, Input, Radio, DatePicker, Button, message, Select} from 'antd';
 import { connect } from 'react-redux';

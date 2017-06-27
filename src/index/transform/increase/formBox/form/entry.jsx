@@ -86,13 +86,15 @@ const CollectionForm = React.createClass({
                filterOption={false}
                onChange={this.handleChange}
                >
-              <Option key='预案'>预案</Option>
               <Option key='草案'>草案</Option>
-              <Option key='修订'>修订</Option>
-              <Option key='审批'>审批</Option>
-              <Option key='核准'>核准</Option>
-              <Option key='终止'>终止</Option>
-              <Option key='交割'>交割</Option>
+              <Option key='修订稿'>修订稿</Option>
+              <Option key='部门批复'>部门批复</Option>
+              <Option key='证监会受理'>证监会受理</Option>
+              <Option key='通过'>通过</Option>
+              <Option key='证监会核准'>证监会核准</Option>
+              <Option key='失败'>失败</Option>
+              <Option key='上市'>上市</Option>
+              <Option key='中止'>中止</Option>
 
              </Select>
            )}

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Form, Input } from 'antd';
+import { Form, Input, Radio } from 'antd';
 
 import { connect } from 'react-redux';
 
 const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
 
 require('./style.scss');
 
@@ -25,6 +26,16 @@ const DealInfo = React.createClass({
              <Input />
            )}
         </FormItem>
+        <FormItem {...formItemLayout} label="交易方式">
+          {getFieldDecorator('deal-way')(
+             <RadioGroup>
+               <Radio value="股份">股份</Radio>
+               <Radio value="现金">现金</Radio>
+               <Radio value="both">both</Radio>
+             </RadioGroup>
+           )}
+        </FormItem>
+
         <FormItem {...formItemLayout} label="换股价">
           {getFieldDecorator('deal-price')(
              <Input />
