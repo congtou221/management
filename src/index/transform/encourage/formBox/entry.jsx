@@ -3,15 +3,15 @@ import React from 'react';
 import { Button, Modal, Form, Input, Radio, DatePicker, Select } from 'antd';
 import If from '../../../common/if';
 import { connect } from 'react-redux';
-import CollectionCreateForm from './common/form';
+import CollectionCreateForm from './form/entry';
 require('./style.scss')
 
 const CollectionsPage = React.createClass({
   render() {
     let { visible, dispatchShowModal } = this.props;
     return (
-      <div style={{display: 'inline-block'}}>
-        <Button onClick={dispatchShowModal}>Fill the Form Manually</Button>
+      <div className="encourage-form-wrapper">
+        <Button onClick={dispatchShowModal}>录入激励数据</Button>
         <If when={visible}>
           <CollectionCreateForm />
         </If>
@@ -22,14 +22,14 @@ const CollectionsPage = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    visible: state.formBox.visible
+    visible: state.encourageForm.visible
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     dispatchShowModal: () => {
-      return dispatch({type: 'showModal'})
+      return dispatch({type: 'showEncourageForm'})
     }
   }
 }

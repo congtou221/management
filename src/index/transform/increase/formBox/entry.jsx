@@ -15,7 +15,7 @@ const CollectionsPage = React.createClass({
     } = this.props;
     return (
       <div className="increase-form-wrapper">
-        <Button onClick={dispatchShowModal}>录入表单</Button>
+        <Button onClick={dispatchShowModal}>录入定增数据</Button>
         <If when={visible}>
           <CollectionCreateForm />
         </If>

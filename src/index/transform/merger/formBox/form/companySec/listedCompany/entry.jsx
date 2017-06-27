@@ -20,6 +20,8 @@ const ListedCompany = React.createClass({
     return (
       <div className="listed-company">
 
+        <label>上市公司</label>
+
         <FormItem {...formItemLayout} label="股票代码">
           { getFieldDecorator('listCompanyId', {
 

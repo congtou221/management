@@ -3,35 +3,45 @@ function userReducer(
     submit: false,
     retData: [],
     mergerForm:{
-      visible: false,
+      visible: true,
       form: {},
       showRecruitSec: false
     },
     increaseForm:{
-      visible: false,
+      visible: true,
       form: {}
     },
-    formBox:{
-        visible: false,
-        form: {}
+    encourageForm:{
+      visible: true,
+      form: {}
     },
-    historyFormBox:{
-        visible: false,
-        form: {}
-    }
+    holdingForm: {
+      visible: true,
+      form: {}
+    }// ,
+    // formBox:{
+    //     visible: false,
+    //     form: {}
+    // },
+    // historyFormBox:{
+    //     visible: false,
+    //     form: {}
+    // }
   }, action) {
   switch (action.type) {
-     case 'upload':
+    case 'upload':
        return {
-         submit: true,
-         retData: action.retData,
-         mergerForm: {
-            visible: state.mergerForm.visible,
-            form: state.mergerForm.form,
-            showRecruitSec: state.mergerForm.showRecruitSec
-         },
-         increaseForm: state.increaseForm
-       }
+        submit: true,
+        retData: action.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: state.mergerForm.form,
+          showRecruitSec: state.mergerForm.showRecruitSec
+        },
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm
+      }
     case 'saveMergerForm':
       return {
         submit: true,
@@ -41,7 +51,9 @@ function userReducer(
           form: action.form,
           showRecruitSec: state.mergerForm.showRecruitSec
         },
-        increaseForm: state.increaseForm
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm
       }
     case 'createMergerForm':
       return {
@@ -52,7 +64,9 @@ function userReducer(
           form: state.mergerForm.form,
           showRecruitSec: state.mergerForm.showRecruitSec
         },
-        increaseForm: state.increaseForm
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm
       }
     case 'showMergerForm':
       return {
@@ -63,7 +77,9 @@ function userReducer(
             form: state.mergerForm.form,
             showRecruitSec: state.mergerForm.showRecruitSec
         },
-        increaseForm: state.increaseForm
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm
       }
     case 'showRecruitSec' :
       return {
@@ -74,16 +90,80 @@ function userReducer(
           form: state.mergerForm.form,
           showRecruitSec: action.showRecruitSec
         },
-        increaseForm: state.increaseForm
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm
       }
-  case 'showIncreaseForm' :
+    case 'showIncreaseForm' :
       return {
-          submit: true,
-          retData: state.retData,
-          mergerForm: state.mergerForm,
-          increaseForm: {
-              visible: true
-          }
+        submit: true,
+        retData: state.retData,
+        mergerForm: state.mergerForm,
+        increaseForm: {
+          visible: true
+        },
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm
+      }
+    case 'createIncreaseForm' :
+      return {
+        submit: true,
+        retData: action.retData,
+        mergerForm: state.mergerForm,
+        increaseForm: {
+          visible: true
+        },
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm
+
+      }
+    case 'showEncourageForm' :
+      return {
+        submit: true,
+        retData: state.retData,
+        mergerForm: state.mergerForm,
+        increaseForm: state.increaseForm,
+        encourageForm: {
+          visible: true,
+          form: state.encourageForm.form
+        },
+        holdingForm: state.holdingForm
+      }
+    case 'createEncourageForm':
+      return {
+        submit: true,
+        retData: action.retData,
+        mergerForm: state.mergerForm,
+        increaseForm: state.increaseForm,
+        encourageForm: {
+          visible: true,
+          form: action.encourageForm.form
+        },
+        holdingForm: state.holdingForm
+      }
+    case 'showHoldingForm':
+      return {
+        submit: true,
+        retData: state.retData,
+        mergerForm: state.mergerForm,
+        increaseForm: state.increaseForm,
+        encourageForm:state.encourageForm,
+        holdingForm: {
+          visible: true,
+          form: state.holdingForm.form
+        }
+      }
+    case 'createHoldingForm':
+      return {
+        submit: true,
+        retData: action.retData,
+        mergerForm: state.mergerForm,
+        increaseForm: state.increaseForm,
+        encourageForm:state.encourageForm,
+        holdingForm: {
+          visible: true,
+          form: state.holdingForm.form
+        }
       }
 
     // case 'saveFormRef':

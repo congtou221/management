@@ -1,0 +1,19 @@
+#upload-holding-container{
+    .status-sec{
+        background-color: #ecf6fd;
+        border: 1px solid #ececec;
+        padding: 20px 0;
+        .status-detail{
+            width: 50%;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #999999;
+            .floor-status-detail,
+            .ceiling-status-detail{
+                margin: 15px 0;
+                padding: 15px;
+                border: 1px dotted #999999;
+            }
+        }
+    }
+}

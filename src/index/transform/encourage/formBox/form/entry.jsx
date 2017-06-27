@@ -1,22 +1,24 @@
 import $ from 'jquery';
 import React from 'react';
-import { Modal, Form, Input, Radio, DatePicker, Select, Button, message} from 'antd';
+import { Form, Input, Radio, DatePicker, Button, message, Select} from 'antd';
 import { connect } from 'react-redux';
 
-import RecruitSection from './recruitSec/entry';
-import CompanySection from './companySec/entry';
-import DealinfoSection from './dealinfoSec/entry';
+//import RecruitSection from './recruitSec/entry';
+//import CompanySection from './companySec/entry';
+import UnlockSection from './unlockSec/entry';
 
 require('./style.scss');
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 const RadioGroup = Radio.Group;
+const Option = Select.Option;
 
 const CollectionForm = React.createClass({
+  handleChange() {
 
+  },
   handleCreate() {
-    let { form, dispatchMergerFormCreated } = this.props;
+    let { form, dispatchEncourageFormCreated } = this.props;
     form.validateFields((err, values) => {
       if (err) {
         return;
@@ -34,30 +36,25 @@ const CollectionForm = React.createClass({
           /* fetch new data after upload the form*/
           /* should be a get request*/
           form.resetFields();
-          dispatchMergerFormCreated(retData);
+          dispatchEncourageFormCreated(retData);
           message.success('提交成功！')
         }
       })
     });
   },
 
-  handleChange(value){
-    console.log('selected', value)
-  },
-
   render(){
-    let { form, dispatchSaveMergerForm } = this.props;
+    let { form, dispatchSaveEncourageForm } = this.props;
 
-    let { getFieldDecorator, getFieldValue } = form;
+    let { getFieldDecorator } = form;
 
     const formItemLayout = {
       labelCol: { span: 8 },
       wrapperCol: { span : 8 }
     }
 
-
     return (
-      <Form className="merger-form"
+      <Form className="encourage-form"
             layout="horizontal"
             onSubmit={this.handleCreate}>
         <FormItem {...formItemLayout} label="股票代码">
@@ -76,7 +73,6 @@ const CollectionForm = React.createClass({
              }],
           })(<DatePicker />)}
         </FormItem>
-
         <FormItem {...formItemLayout} label="进程">
           {getFieldDecorator('process', {
              rules: [{
@@ -92,13 +88,9 @@ const CollectionForm = React.createClass({
                filterOption={false}
                onChange={this.handleChange}
                >
-              <Option key='预案'>预案</Option>
-              <Option key='草案'>草案</Option>
-              <Option key='修订'>修订</Option>
-              <Option key='审批'>审批</Option>
-              <Option key='核准'>核准</Option>
-              <Option key='终止'>终止</Option>
-              <Option key='交割'>交割</Option>
+              <Option key='计划'>计划</Option>
+              <Option key='进展'>进展</Option>
+              <Option key='结束'>结束</Option>
 
              </Select>
            )}
@@ -110,62 +102,45 @@ const CollectionForm = React.createClass({
           })(<Input />)}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="是否借壳">
-          {getFieldDecorator('isShell', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
 
-        <FormItem {...formItemLayout} label="是否有资产置出">
-          {getFieldDecorator('isExchanged', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
-
-        <FormItem {...formItemLayout} label="收购方是否热门">
-          {getFieldDecorator('isPopularBuyer', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
-
-        <FormItem {...formItemLayout} label="被收购方是否热门">
-          {getFieldDecorator('isPopularSeller', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
-
-        <FormItem {...formItemLayout} label="被收购方概念">
-          {getFieldDecorator('seller-concept', {
+        <FormItem {...formItemLayout} label="股票概念">
+          {getFieldDecorator('shares-concept', {
 
           })(<Input />)}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="被收购方行业">
-          {getFieldDecorator('seller-industry', {
+        <FormItem {...formItemLayout} label="授予价">
+          {getFieldDecorator('price', {
 
           })(<Input />)}
         </FormItem>
 
+        <FormItem {...formItemLayout} label="股份数量">
+          {getFieldDecorator('amount', {
 
-        <DealinfoSection />
-        <RecruitSection />
-        <CompanySection />
+          })(<Input />)}
+        </FormItem>
+
+        <FormItem {...formItemLayout} label="类型">
+          {getFieldDecorator('type', {
+          })(
+             <RadioGroup>
+               <Radio value="限制性股票激励">限制性股票激励</Radio>
+               <Radio value="股票期权激励">股票期权激励</Radio>
+             </RadioGroup>
+           )}
+        </FormItem>
+
+        <FormItem {...formItemLayout} label="基准年">
+          {getFieldDecorator('basedate', {
+             rules: [{
+               required: true,
+               message: '请选择基准年！'
+             }],
+          })(<DatePicker />)}
+        </FormItem>
+
+        <UnlockSection />
 
         <FormItem style={{textAlign: 'center'}}>
           <Button className="submit-btn" type="primary" htmlType="submit" size="large">提交</Button>
@@ -193,8 +168,8 @@ function mapDispatchToProps(dispatch) {
       *     form: form
       *   })
       * }*/
-     dispatchMergerFormCreated: retData => {
-       return dispatch({type: 'createMergerForm', retData: retData})
+     dispatchEncourageFormCreated: retData => {
+       return dispatch({type: 'createEncourageForm', retData: retData})
      }
     }
   }

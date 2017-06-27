@@ -16,7 +16,7 @@ const RadioGroup = Radio.Group;
 const CollectionForm = React.createClass({
 
   handleCreate() {
-    let { form, dispatchMergerFormCreated } = this.props;
+    let { form, dispatchIncreaseFormCreated } = this.props;
     form.validateFields((err, values) => {
       if (err) {
         return;
@@ -34,7 +34,7 @@ const CollectionForm = React.createClass({
           /* fetch new data after upload the form*/
           /* should be a get request*/
           form.resetFields();
-          dispatchMergerFormCreated(retData);
+          dispatchIncreaseFormCreated(retData);
           message.success('提交成功！')
         }
       })
@@ -71,6 +71,38 @@ const CollectionForm = React.createClass({
              }],
           })(<DatePicker />)}
         </FormItem>
+        <FormItem {...formItemLayout} label="本次定增的进程">
+          {getFieldDecorator('process', {
+             rules: [{
+               required: true,
+               message: '请选择进程！'
+             }],
+          })(
+             <Select
+               mode="combobox"
+               notFoundContent=""
+               defaultActiveFirstOption={false}
+               showArrow={true}
+               filterOption={false}
+               onChange={this.handleChange}
+               >
+              <Option key='预案'>预案</Option>
+              <Option key='草案'>草案</Option>
+              <Option key='修订'>修订</Option>
+              <Option key='审批'>审批</Option>
+              <Option key='核准'>核准</Option>
+              <Option key='终止'>终止</Option>
+              <Option key='交割'>交割</Option>
+
+             </Select>
+           )}
+        </FormItem>
+
+        <FormItem {...formItemLayout} label="事件简述">
+          {getFieldDecorator('description', {
+
+          })(<Input />)}
+        </FormItem>
 
         <FormItem {...formItemLayout} label="本次定增事件是否热门">
           {getFieldDecorator('isHot', {
@@ -92,25 +124,6 @@ const CollectionForm = React.createClass({
           {getFieldDecorator('majorAfterIncrase', {
 
           })(<Input />)}
-        </FormItem>
-
-        <FormItem {...formItemLayout} label="本次定增的进程">
-          {getFieldDecorator('process', {
-             rules: [{
-               required: true,
-               message: '请选择进程！'
-             }],
-          })(
-             <Select>
-               <Option value="预案">预案</Option>
-               <Option value="草案">草案</Option>
-               <Option value="修订">修订</Option>
-               <Option value="审批">审批</Option>
-               <Option value="核准">核准</Option>
-               <Option value="终止">终止</Option>
-               <Option value="交割">交割</Option>
-             </Select>
-           )}
         </FormItem>
 
 
@@ -144,8 +157,8 @@ function mapDispatchToProps(dispatch) {
      *     form: form
      *   })
      * }*/
-    dispatchMergerFormCreated: retData => {
-      return dispatch({type: 'createMergerForm', retData: retData})
+    dispatchIncreaseFormCreated: retData => {
+      return dispatch({type: 'createIncreaseForm', retData: retData})
     }
   }
 }

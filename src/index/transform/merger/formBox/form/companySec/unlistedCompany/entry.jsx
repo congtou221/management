@@ -24,6 +24,8 @@ const UnlistedCompany = React.createClass({
     return (
       <div className="unlisted-company">
 
+        <label>非上市公司</label>
+
         <FormItem {...formItemLayout} label="公司名称">
           { getFieldDecorator('unlistedCompanyName', {
 

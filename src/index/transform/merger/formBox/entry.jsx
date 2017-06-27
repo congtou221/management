@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
-import { Button, Modal, Form, Input, Radio } from 'antd';
+import { Button, Form, Input, Radio } from 'antd';
 import { connect } from 'react-redux';
 import If from '../../../common/if';
 import CollectionCreateForm from './form/entry';
@@ -13,7 +13,7 @@ const CollectionsPage = React.createClass({
     } = this.props;
     return (
       <div className="merger-form-wrapper">
-        <Button onClick={dispatchShowModal}>录入表单</Button>
+        <Button onClick={dispatchShowModal}>录入并购数据</Button>
         <If when={visible}>
           <CollectionCreateForm />
         </If>

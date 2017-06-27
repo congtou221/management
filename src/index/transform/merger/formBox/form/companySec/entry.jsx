@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Radio } from 'antd';
+import { Form, Radio, Icon, Button } from 'antd';
 
 import { connect } from 'react-redux';
 
@@ -15,12 +15,52 @@ require('./style.scss');
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
+let uuid = 0;
 const CompanySection = React.createClass({
 
-  handleRadioChange(){
+  addListedCompany(){
+    const { form } = this.props;
+    const { getFieldValue, setFieldsValue } = form;
+
+    const companyKeys = getFieldValue('companyKeys');
+
+    uuid++;
+    companyKeys.push({
+      type: 'list',
+      key: uuid
+    })
+
+    setFieldsValue({
+      companyKeys: companyKeys
+    })
+  },
+  addUnlistedCompany(){
+    const { form } = this.props;
+    const { getFieldValue, setFieldsValue } = form;
+
+    const companyKeys = getFieldValue('companyKeys');
+
+    uuid++;
+    companyKeys.push({
+      type: 'unlist',
+      key: uuid
+    })
+
+    setFieldsValue({
+      companyKeys: companyKeys
+    })
+  },
+  remove(k){
+    const { form } = this.props;
+    const { getFieldValue, setFieldsValue } = form;
+
+    const companyKeys = getFieldValue('companyKeys');
+
+    setFieldsValue({
+      companyKeys: companyKeys.filter(keyObj => keyObj.key !==k )
+    })
 
   },
-
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -30,28 +70,58 @@ const CompanySection = React.createClass({
       wrapperCol: { span: 8 }
     }
 
+    getFieldDecorator('companyKeys', {initialValue: []});
+    const companyKeys = getFieldValue('companyKeys');
+
+    let list = companyKeys.map((keyObj, index) => {
+      let { key, type }  = keyObj;
+      return (
+        <div className="company-item" key={key} >
+          <Icon
+            className="dynamic-delete-button"
+            type="minus-circle-o"
+            onClick={() => this.remove(key)}
+          />
+
+          <If when={ type === 'list' }>
+            {/* 上市公司 */}
+            <ListedCompany />
+          </If>
+
+          <If when={ type === 'unlist' }>
+            {/* 非上市公司 */}
+            <UnlistedCompany />
+          </If>
+
+        </div>
+      )
+    })
+
     return (
       <div className="company-sec">
-        <FormItem {...formItemLayout} label="被收购公司是否为上市公司">
-          { getFieldDecorator('isListed', {
-              initialValue: true
-          })(
-              <RadioGroup onChange={this.handleRadioChange}>
-                <Radio value={true}>是</Radio>
-                <Radio value={false}>否</Radio>
-              </RadioGroup>
-            )}
-        </FormItem>
 
-        <If when={ getFieldValue('isListed') }>
-          {/* 上市公司 */}
-          <ListedCompany />
-        </If>
+        <div className="company-list">
+          <FormItem {...formItemLayout}>
+            {getFieldDecorator('listedCompany')(
+               <Button type="dashed" onClick={this.addListedCompany}>
+                 <Icon type="plus" />增加上市公司信息
+               </Button>
+             )}
+          </FormItem>
 
-        <If when={ !getFieldValue('isListed')}>
-          {/* 非上市公司 */}
-          <UnlistedCompany />
-        </If>
+          <FormItem {...formItemLayout}>
+            {getFieldDecorator('unlistedCompany')(
+              <Button type="dashed" onClick={this.addUnlistedCompany}>
+                 <Icon type="plus" />增加非上市公司信息
+              </Button>
+             )}
+          </FormItem>
+
+          <div className="company-item-wrapper">
+            {list}
+          </div>
+
+        </div>
 
       </div>
     )

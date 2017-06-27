@@ -15,10 +15,10 @@ const UploadContainer = React.createClass({
     const {isSubmit, retData, receivedData} = this.props;
     return(
       <div id="upload-encourage-container">
-        激励
-        Please choose to <UploadBox /> or <FormBox />
-        {/* <InputBox /> */}
-        {/* <Button onClick={this.showForm}> click me to fill a form </Button> */}
+
+        <UploadBox />
+        <FormBox />
+
         <If when={isSubmit}>
           <TableBox dataSource={retData}/>
         </If>
