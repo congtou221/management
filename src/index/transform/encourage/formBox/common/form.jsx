@@ -54,7 +54,8 @@ const CollectionForm = React.createClass({
             rules: [{ required: true, message: '请输入授予价格！'}]
           })(<Input />)}
         </FormItem>
-        <FormItem label="公告类型">
+
+      <FormItem label="公告类型">
           {getFieldDecorator('type', {
              initialValue: 'restriction'
           })(
@@ -65,18 +66,6 @@ const CollectionForm = React.createClass({
            )}
         </FormItem>
 
-        <FormItem label="资金总额">
-          {getFieldDecorator('all-money', {
-          })(<Input />)}
-        </FormItem>
-        <FormItem label="股价">
-          {getFieldDecorator('price', {
-          })(<Input />)}
-        </FormItem>
-        <FormItem label="股份数量">
-          {getFieldDecorator('amount', {
-          })(<Input />)}
-        </FormItem>
 
         <FormItem label="Description">
           {getFieldDecorator('description')(<Input type="textarea" />)}

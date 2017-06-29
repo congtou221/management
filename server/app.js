@@ -9,6 +9,7 @@ const app = express();
 const proxy = require('express-http-proxy');
 const jsonServer = require('./mock/jsonServer');
 
+const controller = require('./controller/index');
 
 // view engine setup
 app.engine('html', consolidate.ejs);
@@ -41,7 +42,7 @@ if(process.env.NODE_ENV == 'local') {
 
 } else {
   // 静态资源路径
-  app.use(express.static(path.join(__dirname, '../build')));
+  app.use(express.static(path.join(__dirname, '../dist')));
 }
 
 // mock数据  开发环境下代理到jsonServer，生产环境代理到线上服务器
@@ -52,16 +53,13 @@ if(process.env.NODE_ENV == 'local') {
 
   app.use('/api', proxy('http://localhost:3004'));
 } else {
-  app.use('/api', proxy('https://test.joudou.com'));
+  app.use('/api', proxy('https://beta.joudou.com'));
 }
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/', router);
-router.get('/', function(req, res, next){
-  res.render('index');
-});
-
+//路由
+controller(app);
 
 module.exports = app;

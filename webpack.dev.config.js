@@ -9,7 +9,7 @@ var config = {
   },
   output: {
     publicPath: 'http://localhost:3000/',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'build/tmp'),
     filename: 'bundle.js'
   },
   devtool: 'eval-source-map',

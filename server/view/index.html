@@ -2,14 +2,21 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
+    <script>
+      window.status = <%-status%>
+    </script>
   </head>
   <body>
     <div id="app" style="height: 100%"></div>
 
-    <script src="/vendors.dll.js"></script>
-    <script src="/bundle.js"></script>
     <% if (env === 'local') { %>
-        <script src="/reload/reload.js"></script>
+      <script src="/vendors.dll.js"></script>
+    <% } %>
+
+    <script src="/bundle.js"></script>
+
+    <% if (env === 'local') { %>
+      <script src="/reload/reload.js"></script>
     <% } %>
 
   </body>
