@@ -60,7 +60,8 @@
     "reload": "^1.1.3"
   },
   "scripts": {
-    "build": "webpack --progress --colors --config webpack.production.config.js && cross-env NODE_ENV=production PORT=3001 node server/http.js",
+    "build": "webpack --progress --colors --config webpack.production.config.js && cross-env NODE_ENV=production PORT=3001 pm2 restart server/http.js",
+
     "dev": "webpack --config webpack.dev.config.js &&  cross-env NODE_ENV=local PORT=3000 supervisor -w server -e node,js,html server/http.js"
   },
   "theme": "./theme.js"
