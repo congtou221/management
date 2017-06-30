@@ -43,6 +43,10 @@ var config = {
       compress: {
         warnings: false
       }
+    }),
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: require('./production.manifest.json')
     })
   ]
 }
