@@ -16,6 +16,9 @@ app.engine('html', consolidate.ejs);
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'view'));
 
+// app.set('views', path.join(__dirname, 'view'));
+// app.set('view engine', 'ejs');
+
 // local variables for all views
 app.locals.env = process.env.NODE_ENV || 'local';
 app.locals.reload = true;

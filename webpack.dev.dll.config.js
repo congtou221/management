@@ -24,5 +24,5 @@ module.exports = {
       name: '[name]_dev_lib',
       context: __dirname
     })
-  ],
+  ]
 };

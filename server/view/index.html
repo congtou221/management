@@ -2,8 +2,9 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
+
     <script>
-      window.status = <%-status%>
+      window.status = <%=status%>
     </script>
   </head>
   <body>
@@ -12,6 +13,8 @@
     <% if (env === 'local') { %>
       <script src="/reload/reload.js"></script>
     <% } %>
+      <script src="vendors.dll.js"></script>
+      <script src="bundle.js"></script>
 
   </body>
 </html>

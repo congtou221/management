@@ -48,8 +48,8 @@ var config = {
         test: /\.less$/,
         loader: 'style!css!less'
     },{
-      test: /\.html$/,
-      loader: 'html'
+        test: /\.html$/,
+        loader: 'html'
     }]
   },
   resolve: {
@@ -62,18 +62,18 @@ var config = {
     new webpack.NoErrorsPlugin(),
     new webpack.DllReferencePlugin({
       context: __dirname,
-      manifest: require('./dev.manifest.json'),
+      manifest: require('./dev.manifest.json')
     }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'server/view/index.html'),
-      filename: 'index.html',
-      hash: true
-    }),
-    new MyPlugin({
-      path: './build',
-      filename: 'vendors.dll.js',
-      hash: true
-    }),
+    // new HtmlWebpackPlugin({
+    //   title: 'Custom template',
+    //   template: path.join(__dirname, 'server/view/index.html'),
+    //   inject: 'body'
+    // }),
+    // new MyPlugin({
+    //   path: './build',
+    //   filename: 'vendors.dll.js',
+    //   hash: true
+    // }),
     new webpack.ProvidePlugin({
       $: "jquery"
     })
