@@ -1,7 +1,6 @@
 var path = require('path');
 var webpack = require("webpack");
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var MyPlugin = require('./myPlugin');
+
 
 var hotMiddlewareScript = 'webpack-hot-middleware/client?reload=true';
 
@@ -11,7 +10,7 @@ var config = {
   },
   output: {
     publicPath: 'http://localhost:3000/',
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, 'build/tmp'),
     filename: 'bundle.js'
   },
   devtool: 'eval-source-map',
@@ -47,9 +46,6 @@ var config = {
     },{
         test: /\.less$/,
         loader: 'style!css!less'
-    },{
-        test: /\.html$/,
-        loader: 'html'
     }]
   },
   resolve: {
@@ -64,16 +60,6 @@ var config = {
       context: __dirname,
       manifest: require('./dev.manifest.json')
     }),
-    // new HtmlWebpackPlugin({
-    //   title: 'Custom template',
-    //   template: path.join(__dirname, 'server/view/index.html'),
-    //   inject: 'body'
-    // }),
-    // new MyPlugin({
-    //   path: './build',
-    //   filename: 'vendors.dll.js',
-    //   hash: true
-    // }),
     new webpack.ProvidePlugin({
       $: "jquery"
     })

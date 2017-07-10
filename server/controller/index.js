@@ -9,11 +9,12 @@ module.exports = app => {
 router.get('/', function(req, res, next){
 
   request({
-    url: 'https://beta.joudou.com/stockinfogate/camp'
+    url: 'https://www.joudou.com/stockinfogate/camp'
+    // url: 'http://localhost:3003/test'
   }, function(error, response, body){
 
     let obj = JSON.parse(body);
-    let data = obj.data;
+    let data = obj.status;
 
     res.render('index', {
       status: data

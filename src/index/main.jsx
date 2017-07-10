@@ -15,7 +15,7 @@ export default React.createClass({
         <Head />
         <Layout className="ant-layout-has-sider">
           <Sidebar />
-          <Layout style={{ padding: '0 24px 24px' }}>
+          <Layout style={{ padding: '0px 24px 24px' }}>
             <Breadcrumb style={{ margin: '12px 0' }}>
               <Breadcrumb.Item>Home</Breadcrumb.Item>
               <Breadcrumb.Item>List</Breadcrumb.Item>

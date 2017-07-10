@@ -23,14 +23,15 @@ const CollectionForm = React.createClass({
       }
 
       /* create successfully*/
-      $.post({
+      $.ajax({
         type: 'POST',
-        url: 'api/posts',
+        url: 'test/test2',
         dataType: 'json',
         data: {
-          input: JSON.stringify(values) //values need to be processed
+         // input: JSON.stringify(values) //values need to be processed
         },
         success: retData => {
+          console.log(retData);debugger;
           /* fetch new data after upload the form*/
           /* should be a get request*/
           form.resetFields();
@@ -92,15 +93,15 @@ const CollectionForm = React.createClass({
                filterOption={false}
                onChange={this.handleChange}
                >
-              <Option key='草案'>草案</Option>
-              <Option key='修订稿'>修订稿</Option>
-              <Option key='部门批复'>部门批复</Option>
-              <Option key='证监会受理'>证监会受理</Option>
-              <Option key='通过'>通过</Option>
-              <Option key='证监会核准'>证监会核准</Option>
-              <Option key='失败'>失败</Option>
-              <Option key='上市'>上市</Option>
-              <Option key='中止'>中止</Option>
+              <Option key="草案">草案</Option>
+              <Option key="修订稿">修订稿</Option>
+              <Option key="部门批复">部门批复</Option>
+              <Option key="证监会受理">证监会受理</Option>
+              <Option key="通过">通过</Option>
+              <Option key="证监会核准">证监会核准</Option>
+              <Option key="失败">失败</Option>
+              <Option key="上市">上市</Option>
+              <Option key="中止">中止</Option>
 
             </Select>
            )}

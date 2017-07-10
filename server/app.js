@@ -23,6 +23,17 @@ app.set('views', path.join(__dirname, 'view'));
 app.locals.env = process.env.NODE_ENV || 'local';
 app.locals.reload = true;
 
+// mock数据  开发环境下代理到jsonServer，生产环境代理到线上服务器
+if(process.env.NODE_ENV == 'local') {
+  jsonServer.listen(3004, () => {
+    console.log('JSON Server is running');
+  });
+    console.log(proxy);
+  app.use('/test', proxy('http://localhost:3003'));
+} else {
+  app.use('/api', proxy('https://beta.joudou.com'));
+}
+
 if(process.env.NODE_ENV == 'local') {
   const webpack = require('webpack');
   const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -48,16 +59,6 @@ if(process.env.NODE_ENV == 'local') {
   app.use(express.static(path.join(__dirname, '../dist')));
 }
 
-// mock数据  开发环境下代理到jsonServer，生产环境代理到线上服务器
-if(process.env.NODE_ENV == 'local') {
-  jsonServer.listen(3004, () => {
-    console.log('JSON Server is running');
-  });
-
-  app.use('/api', proxy('http://localhost:3004'));
-} else {
-  app.use('/api', proxy('https://beta.joudou.com'));
-}
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
