@@ -44,7 +44,7 @@ const FinancialData = React.createClass({
 
   componentDidMount(){
     companyId = $(this.refs.financialDataItem).parent().parent().data("key");
-    console.log($(this.refs.financialDataItem).parent().parent().data("key") );
+
     //    financialDataId = $(this.refs.financialDataItem.data("key"));
   },
   render(){
@@ -122,8 +122,6 @@ const FinancialData = React.createClass({
 
 const WrappedFinancialData = Form.create({
   onFieldsChange(props, changedFields){
-
-    console.log(changedFields);
 
     let changeItem = Object.keys(changedFields)[0];
 

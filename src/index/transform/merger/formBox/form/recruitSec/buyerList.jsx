@@ -195,7 +195,6 @@ const WrappedBuyerList = Form.create({
       tmpBuyerlistData = tmpArr.map((item) => {
         if(item.key == +index){
           item[nameWithoutIndex] = value;
-          console.log(item);
           return item;
         }
         return item;
@@ -211,7 +210,7 @@ const WrappedBuyerList = Form.create({
     }
 
     props.submitData["交易信息"]["配募"]["配募方"] = tmpBuyerlistData;
-    console.log(props.submitData)
+
   }
 })(BuyerList);
 

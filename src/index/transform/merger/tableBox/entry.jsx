@@ -1,56 +1,56 @@
 import React from 'react'
-import { Table, Icon, Tree } from 'antd';
+import { Icon, Tree } from 'antd';
 import { connect } from 'react-redux';
 
 const TreeNode = Tree.TreeNode;
-
-const columns = [{
-  title: '事件',
-  dataIndex: 'event',
-  key: 'event'
-}, {
-  title: '股票代码',
-  dataIndex: 'id',
-  key: 'id',
-}, {
-  title: '公告日期',
-  dataIndex: 'date',
-  key: 'date',
-}, {
-  title: '进程',
-  dataIndex: 'process',
-  key: 'process',
-}, {
-  title: 'Action',
-  key: 'action',
-  render: (text, record) => {return (
-    <a href="#">编辑 一 {record.event}</a>
-  )},
-}];
-
-const data = [{
-  key: '1',
-  name: 'John Brown',
-  age: 32,
-  address: 'New York No. 1 Lake Park',
-}, {
-  key: '2',
-  name: 'Jim Green',
-  age: 42,
-  address: 'London No. 1 Lake Park',
-}, {
-  key: '3',
-  name: 'Joe Black',
-  age: 32,
-  address: 'Sidney No. 1 Lake Park',
-}];
-
+/*
+ * const columns = [{
+ *   title: '事件',
+ *   dataIndex: 'event',
+ *   key: 'event'
+ * }, {
+ *   title: '股票代码',
+ *   dataIndex: 'id',
+ *   key: 'id',
+ * }, {
+ *   title: '公告日期',
+ *   dataIndex: 'date',
+ *   key: 'date',
+ * }, {
+ *   title: '进程',
+ *   dataIndex: 'process',
+ *   key: 'process',
+ * }, {
+ *   title: 'Action',
+ *   key: 'action',
+ *   render: (text, record) => {return (
+ *     <a href="#">编辑 一 {record.event}</a>
+ *   )},
+ * }];
+ *
+ * const data = [{
+ *   key: '1',
+ *   name: 'John Brown',
+ *   age: 32,
+ *   address: 'New York No. 1 Lake Park',
+ * }, {
+ *   key: '2',
+ *   name: 'Jim Green',
+ *   age: 42,
+ *   address: 'London No. 1 Lake Park',
+ * }, {
+ *   key: '3',
+ *   name: 'Joe Black',
+ *   age: 32,
+ *   address: 'Sidney No. 1 Lake Park',
+ * }];
+ * */
 const tableBox = React.createClass({
   formatData(){
     let { calcResult } = this.props;
     let columns = ['key', 'event', 'id', 'date', 'process'];
-    let tmp = JSON.parse(calcResult.body);debugger
-    console.log(tmp.data.data);
+    let tmp = JSON.parse(calcResult.body);
+
     return tmp.data.data;
   },
 

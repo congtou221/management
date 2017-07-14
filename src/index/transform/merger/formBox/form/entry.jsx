@@ -58,10 +58,7 @@ const CollectionForm = React.createClass({
       })
     });
   },
-  handleChange(value){
 
-    console.log('selected', value)
-  },
   render(){
     let { form, dispatchSaveMergerForm } = this.props;
 
@@ -98,7 +95,6 @@ const CollectionForm = React.createClass({
                defaultActiveFirstOption={false}
                showArrow={true}
                filterOption={false}
-               onChange={this.handleChange}
                >
               <Option key="草案">草案</Option>
               <Option key="修订稿">修订稿</Option>

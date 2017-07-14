@@ -117,19 +117,9 @@ const WrappedRecruitSection = Form.create({
     }
     props.submitData["交易信息"]["配募"] = tmpRecruitData;
 
-    /* console.log(props.submitData["配募"]);*/
-  },
-  /* mapPropsToFields(props) {
-   *   return {
-   *     username: {
-   *       ...props.username,
-   *       value: props.username.value.toUpperCase(),
-   *     },
-   *   };
-   * },*/
-  /* onValuesChange(_, values) {
-   *   //console.log(values);
-   * },*/
+
+  }
+
 })(RecruitSection);
 
 export default connect(
