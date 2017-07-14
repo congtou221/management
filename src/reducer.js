@@ -1,11 +1,19 @@
 function userReducer(
   state = {
+    isLogin: true,
+    logForm: {
+      visible: false,
+      form: {}
+    },
     submit: false,
     retData: [],
     mergerForm:{
       visible: true,
       form: {},
-      showRecruitSec: false
+      showRecruitSec: false,
+      submitData: {},
+      calcResult: {},
+      submit: false
     },
     increaseForm:{
       visible: true,
@@ -29,6 +37,128 @@ function userReducer(
     }
   }, action) {
   switch (action.type) {
+    case 'calcResultReceived':
+      return {
+        isLogin: state.status,
+        logForm: {
+          form : state.logForm.form,
+          visible: state.logForm.visible
+        },
+        submit: state.submit,
+        retData: state.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: state.mergerForm.form,
+          showRecruitSec: state.mergerForm.showRecruitSec,
+          submitData: Object.assign(state.mergerForm.submitData, action.values),
+          calcResult: action.result,
+          submit: true
+        },
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
+      }
+    case 'updateMergerFormData':
+      return {
+        isLogin: state.status,
+        logForm: {
+          form : state.logForm.form,
+          visible: state.logForm.visible
+        },
+        submit: state.submit,
+        retData: state.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: state.mergerForm.form,
+          showRecruitSec: state.mergerForm.showRecruitSec,
+          submitData: Object.assign(state.mergerForm.submitData, action.values)
+        },
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
+      }
+    case 'updateLogStatus':
+      return {
+        isLogin: action.status,
+        logForm: {
+          form : state.logForm.form,
+          visible: state.logForm.visible
+        },
+        submit: state.submit,
+        retData: state.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: state.mergerForm.form,
+          showRecruitSec: state.mergerForm.showRecruitSec,
+          submitData: state.mergerForm.submitData
+        },
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
+      }
+    case 'saveLogForm':
+      return {
+        isLogin: state.isLogin,
+        logForm: {
+          form : action.form,
+          visible: state.logForm.visible
+        },
+        submit: state.submit,
+        retData: state.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: state.mergerForm.form,
+          showRecruitSec: state.mergerForm.showRecruitSec,
+          submitData: state.mergerForm.submitData
+        },
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
+      }
+    case 'showLogForm':
+      return {
+        isLogin: state.isLogin,
+        logForm: {
+          visible: true,
+          form: state.logForm.form
+        },
+        submit: state.submit,
+        retData: state.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: state.mergerForm.form,
+          showRecruitSec: state.mergerForm.showRecruitSec,
+          submitData: state.mergerForm.submitData
+        },
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
+      }
+    case 'hideLogForm':
+    return  {
+        isLogin: state.isLogin,
+        logForm: {
+          visible: false,
+          form: state.logForm.form
+        },
+        submit: state.submit,
+        retData: state.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: state.mergerForm.form,
+          showRecruitSec: state.mergerForm.showRecruitSec,
+          submitData: state.mergerForm.submitData
+        },
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
+      }
     case 'upload':
        return {
         submit: true,
@@ -86,10 +216,18 @@ function userReducer(
         historyFormBox: state.historyFormBox
       }
     case 'showRecruitSec' :
-      return {
-        submit: true,
+    return {
+        submit: state.submit,
         retData: state.retData,
+        isLogin: state.isLogin,
+        logForm:{
+          visible: false,
+          form: {}
+        },
         mergerForm: {
+          submitData: state.mergerForm.submitData,
+          calcResult: state.mergerForm.calcResult,
+          submit: state.mergerForm.submit,
           visible: true,
           form: state.mergerForm.form,
           showRecruitSec: action.showRecruitSec

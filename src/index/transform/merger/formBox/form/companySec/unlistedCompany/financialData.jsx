@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { Form, Button, Icon, Input, DatePicker } from 'antd';
+import { Form, Button, Icon, Input, InputNumber, DatePicker } from 'antd';
 
 import { connect } from 'react-redux';
 
@@ -10,6 +10,10 @@ const { MonthPicker, RangePicker } = DatePicker;
 require('./financialData.scss');
 
 let uuid = 0;
+
+let tmpFinancialData = [];
+
+let companyId;
 
 const FinancialData = React.createClass({
 
@@ -38,6 +42,11 @@ const FinancialData = React.createClass({
     })
   },
 
+  componentDidMount(){
+    companyId = $(this.refs.financialDataItem).parent().parent().data("key");
+    console.log($(this.refs.financialDataItem).parent().parent().data("key") );
+    //    financialDataId = $(this.refs.financialDataItem.data("key"));
+  },
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -53,7 +62,7 @@ const FinancialData = React.createClass({
 
     let list = financialDataKeys.map((key, index) => {
       return (
-        <div className="financial-dataitem" key={key}>
+        <div className="financial-dataitem" key={key} >
           <Icon
             className="dynamic-delete-button"
             type="minus-circle-o"
@@ -62,38 +71,9 @@ const FinancialData = React.createClass({
 
           <FormItem
             {...formItemLayout}
-            label="已实现业绩的时间范围"
+            label="已实现业绩的时间"
           >
-            {getFieldDecorator('financial-time', {
-               rules: [{
-                 type: 'array',
-                 message: '请选择时间！'
-               }],
-               initialValue: [
-                 moment(`${new Date().getFullYear()}/01/01`, dateFormat),
-                 moment(`${new Date().getFullYear()}/12/31`, dateFormat)
-               ]
-            })(
-               <RangePicker />
-             )}
-          </FormItem>
-
-          <FormItem
-            {...formItemLayout}
-            label="已实现业绩的净利润"
-          >
-            {getFieldDecorator('financial-profile', {
-
-            })(
-               <Input />
-             )}
-          </FormItem>
-
-          <FormItem
-            {...formItemLayout}
-            label="承诺业绩的时间"
-          >
-            {getFieldDecorator('financial-promise-time', {
+            {getFieldDecorator(`已实现业绩的时间-${key}`, {
                rules: [{
                  type: 'object',
                  message: '请选择时间！'
@@ -106,12 +86,12 @@ const FinancialData = React.createClass({
 
           <FormItem
             {...formItemLayout}
-            label="承诺业绩的净利润"
+            label="已实现业绩的净利润"
           >
-            {getFieldDecorator('financial-primise-profile', {
+            {getFieldDecorator(`已实现业绩的净利润-${key}`, {
 
             })(
-               <Input />
+               <InputNumber />
              )}
           </FormItem>
 
@@ -121,11 +101,11 @@ const FinancialData = React.createClass({
     });
 
     return (
-      <div className="financial-datalist">
+      <div className="financial-datalist" ref="financialDataItem">
         <FormItem {...formItemLayout}>
           {getFieldDecorator('add-financial-data')(
              <Button type="dashed" onClick={this.addFinancialData}>
-               <Icon type="plus" />增加一条财务数据
+               <Icon type="plus" />增加一条已实现财务数据
              </Button>
            )}
         </FormItem>
@@ -140,10 +120,78 @@ const FinancialData = React.createClass({
   }
 })
 
-const WrappedFinancialData = Form.create()(FinancialData)
+const WrappedFinancialData = Form.create({
+  onFieldsChange(props, changedFields){
+
+    console.log(changedFields);
+
+    let changeItem = Object.keys(changedFields)[0];
+
+    if(changeItem == 'financialDataKeys'){
+      let changedArr = changedFields[changeItem].value;
+
+      let filtered = tmpFinancialData.filter(value => {
+        if(!value.key){
+          return false;
+        }
+        if(changedArr.indexOf(value.key) > -1){
+          return true;
+        }
+        return false;
+      })
+
+      let newArr = changedArr.map(key => {
+        if(filtered.indexOf(key) < 0){
+          return {key: key}
+        }
+        return tmpFinancialData.find(item => {
+          return item.key == key;
+        })
+      })
+
+      tmpFinancialData = newArr;
+    } else {
+      let {name, value} = changedFields[changeItem];
+      let index = name.slice(-1);
+      let nameWithoutIndex = name.slice(0, -2);
+
+
+      if(!!value && !!value.constructor && value.constructor === moment.prototype.constructor){
+        value = value.format('YYYYMM')
+      }
+
+      let tmpArr = tmpFinancialData;
+
+      tmpFinancialData = tmpArr.map(item => {
+        if(item.key == +index){
+          item[nameWithoutIndex] = value;
+          return item;
+        }
+        return item;
+      })
+
+      if(typeof props.submitData["被收购公司"] == 'undefined'){
+        props.submitData["被收购公司"] = [];
+      }
+
+      let tmpCompanyList = props.submitData["被收购公司"];
+
+      let tmpCompanyCalcResult = tmpCompanyList.map(item => {
+        if(item.key == companyId){
+          item["历史业绩"] = tmpFinancialData;
+          return item;
+        }
+        return item;
+      })
+      props.submitData["被收购公司"] = tmpCompanyCalcResult;
+    }
+  }
+})(FinancialData)
 
 function mapStateToProps(state) {
-  return {}
+  return {
+    submitData: state.mergerForm.submitData
+  }
 }
 
 function mapDispatchToProps(dispatch){

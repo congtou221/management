@@ -9,8 +9,8 @@ module.exports = app => {
 router.get('/', function(req, res, next){
 
   request({
-    url: 'https://www.joudou.com/stockinfogate/camp'
-    // url: 'http://localhost:3003/test'
+//    url: 'https://www.joudou.com/stockinfogate/camp'
+    url: 'http://localhost:3003/test'
   }, function(error, response, body){
 
     let obj = JSON.parse(body);
@@ -19,6 +19,6 @@ router.get('/', function(req, res, next){
     res.render('index', {
       status: data
     });
-  });
+  })
 
 });

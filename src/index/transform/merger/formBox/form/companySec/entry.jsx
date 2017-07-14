@@ -15,6 +15,8 @@ require('./style.scss');
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
+let tmpCompanyData = [];
+
 let uuid = 0;
 const CompanySection = React.createClass({
 
@@ -76,7 +78,7 @@ const CompanySection = React.createClass({
     let list = companyKeys.map((keyObj, index) => {
       let { key, type }  = keyObj;
       return (
-        <div className="company-item" key={key} >
+        <div className="company-item" key={key} data-key={key} >
           <Icon
             className="dynamic-delete-button"
             type="minus-circle-o"
@@ -129,11 +131,46 @@ const CompanySection = React.createClass({
 
 )
 
-const WrappedCompanySection = Form.create()(CompanySection);
+const WrappedCompanySection = Form.create({
+  onFieldsChange(props, changedFields){
+
+    let tmpCompanyData = props.submitData["被收购公司"] || [];
+
+    let changeItem = Object.keys(changedFields)[0];
+
+    if(changeItem === 'companyKeys'){
+      let changedArr = changedFields[changeItem].value;
+
+      let filtered = tmpCompanyData.filter((value) => {
+        if(!value.key){
+          return false;
+        }
+        if(changedArr.indexOf(value.key) > -1){
+          return true;
+        }
+        return false;
+      })
+
+      let newArr = changedArr.map((changedItem) => {
+        if(filtered.indexOf(changedItem.key) < 0){
+          return {key: changedItem.key, "上市公司": changedItem.type === "list" }
+        }
+        return tmpCompanyData.find((item) => {
+          return item.key == changedItem.key;
+        })
+      })
+
+      tmpCompanyData = newArr;
+    }
+
+    props.submitData["被收购公司"] = tmpCompanyData;
+    console.log(props.submitData);
+  }
+})(CompanySection);
 
 function mapStateToProps(state) {
   return {
-
+    submitData: state.mergerForm.submitData
   }
 }
 

@@ -1,7 +1,9 @@
 import React from 'react';
 import NavLink from './navlink.js';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button, Row, Col } from 'antd';
 const {Header} = Layout;
+
+import LogForm from './logform';
 
 require('./head.scss');
 
@@ -10,7 +12,17 @@ export default React.createClass({
     return (
       <div>
         <Header className="header">
-          <div className="logo" />
+    <Row>
+      <Col span={6}>
+        <div className="logo" />
+      </Col>
+      <Col span={6} offset={12} style={{ textAlign: 'right' }}>
+        <LogForm />
+      </Col>
+    </Row>
+
+
+
           {/* <Menu
               theme="dark"
               mode="horizontal"

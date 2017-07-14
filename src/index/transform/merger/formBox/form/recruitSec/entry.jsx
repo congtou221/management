@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Radio, Input, Button, Icon, Select} from 'antd';
+import { Form, Radio, Input, InputNumber, Button, Icon, Select} from 'antd';
 import { connect } from 'react-redux';
 
 import BuyerList from './buyerList';
@@ -10,13 +10,14 @@ require('./style.scss');
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
+let tmpRecruitData = {};
+
 const RecruitSection = React.createClass({
 
   onRadioChange(e){
     let { dispatchShowRecruitSec } = this.props;
     dispatchShowRecruitSec(e.target.value);
   },
-
 
   render(){
     let { form, showRecruitSec } = this.props;
@@ -26,10 +27,11 @@ const RecruitSection = React.createClass({
       labelCol: { span: 8 },
       wrapperCol: { span: 8 }
     }
+
     return (
       <div className="recruit-sec">
         <FormItem {...formItemLayout} label="是否配募">
-          {getFieldDecorator('recruit', {
+          {getFieldDecorator('是否配募', {
             initialValue: false
           })(
              <RadioGroup onChange={this.onRadioChange} >
@@ -41,23 +43,23 @@ const RecruitSection = React.createClass({
 
         <If when={showRecruitSec}>
           <div className="recruit-detail">
-            <FormItem {...formItemLayout} label="配募总金额">
-              {getFieldDecorator('money')(
-                 <Input />
+            <FormItem {...formItemLayout} label="实际募集资金">
+              {getFieldDecorator('实际募集资金')(
+                 <InputNumber />
                )}
             </FormItem>
-            <FormItem {...formItemLayout} label="配募价格">
-              {getFieldDecorator('price')(
-                 <Input />
+            <FormItem {...formItemLayout} label="配募股价">
+              {getFieldDecorator('配募股价')(
+                 <InputNumber />
                )}
             </FormItem>
-           <FormItem {...formItemLayout} label="配募数量">
-              {getFieldDecorator('amount')(
-                 <Input />
+           <FormItem {...formItemLayout} label="股份数">
+              {getFieldDecorator('股份数')(
+                 <InputNumber />
                )}
             </FormItem>
             <FormItem {...formItemLayout} label="定价方式">
-              {getFieldDecorator('setprice')(
+              {getFieldDecorator('定价方式')(
                  <Input />
                )}
             </FormItem>
@@ -73,7 +75,8 @@ function mapStateToProps(state) {
   return {
     showRecruitSec: state.mergerForm.showRecruitSec,
     buyerNumber: state.mergerForm.recruitBuyerNumber,
-    buyerList: state.mergerForm.recruitBuyerList
+    buyerList: state.mergerForm.recruitBuyerList,
+    submitData: state.mergerForm.submitData
   }
 }
 
@@ -102,7 +105,32 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-const WrappedRecruitSection = Form.create()(RecruitSection);
+const WrappedRecruitSection = Form.create({
+  onFieldsChange(props, changedFields) {
+
+    let {name, value} = changedFields[Object.keys(changedFields)[0]];
+
+    tmpRecruitData[name] = value;
+
+    if(typeof props.submitData["交易信息"] == 'undefined'){
+      props.submitData["交易信息"] = {};
+    }
+    props.submitData["交易信息"]["配募"] = tmpRecruitData;
+
+    /* console.log(props.submitData["配募"]);*/
+  },
+  /* mapPropsToFields(props) {
+   *   return {
+   *     username: {
+   *       ...props.username,
+   *       value: props.username.value.toUpperCase(),
+   *     },
+   *   };
+   * },*/
+  /* onValuesChange(_, values) {
+   *   //console.log(values);
+   * },*/
+})(RecruitSection);
 
 export default connect(
   mapStateToProps,

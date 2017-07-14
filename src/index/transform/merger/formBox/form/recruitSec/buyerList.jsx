@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button, Icon, Select } from 'antd';
+import { Form, Input, InputNumber, Button, Icon, Select } from 'antd';
 import { connect } from 'react-redux';
 
 require('./buyerList.scss');
@@ -8,6 +8,7 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 
 let uuid = 0;
+let tmpBuyerlistData = [];
 
 const BuyerList = React.createClass({
   addKnowBuyer(){
@@ -69,32 +70,32 @@ const BuyerList = React.createClass({
             onClick={() => this.remove(key)}
           />
           <FormItem {...formItemLayout} label="配募方股东名称">
-            {getFieldDecorator(`buyer-${key}-name`)(
+            {getFieldDecorator(`股东名称-${key}`)(
                <Input />
              )}
           </FormItem>
           <FormItem {...formItemLayout} label="配募方认购金额">
-            {getFieldDecorator(`buyer-${key}-money`)(
-               <Input />
+            {getFieldDecorator(`认购金额-${key}`)(
+               <InputNumber />
              )}
           </FormItem>
           <FormItem {...formItemLayout} label="配募方认购股份数量">
-            {getFieldDecorator(`buyer-${key}-amount`)(
-               <Input />
+            {getFieldDecorator(`认购股份数-${key}`)(
+               <InputNumber />
              )}
           </FormItem>
           <FormItem {...formItemLayout} label="配募方认购价格">
-            {getFieldDecorator(`buyer-${key}-price`)(
-               <Input />
+            {getFieldDecorator(`认购价格-${key}`)(
+               <InputNumber />
              )}
           </FormItem>
           <FormItem {...formItemLayout} label="配募前后持股比例变化">
-            {getFieldDecorator(`buyer-${key}-precentage`)(
+            {getFieldDecorator(`持股比例变化-${key}`)(
                <Input />
              )}
           </FormItem>
           <FormItem {...formItemLayout} label="是否大股东/关联方">
-            {getFieldDecorator(`buyer-${key}-majorbuyer`, {
+            {getFieldDecorator(`关联方-${key}`, {
                initialValue: 'notRelated'
             })(
                <Select
@@ -103,9 +104,9 @@ const BuyerList = React.createClass({
                  optionFilterProp="children"
                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                  >
-                 <Option value="major">大股东</Option>
-                 <Option value="realted">关联方</Option>
-                 <Option value="notRelated">不是大股东/关联方</Option>
+                 <Option value="true">大股东</Option>
+                 <Option value="true">关联方</Option>
+                 <Option value="false">不是大股东/关联方</Option>
                </Select>
              )}
           </FormItem>
@@ -143,7 +144,7 @@ const BuyerList = React.createClass({
 
 function mapStateToProps(state){
   return {
-
+    submitData: state.mergerForm.submitData
   }
 }
 
@@ -153,7 +154,66 @@ function mapDispatchToProps(dispatch){
   }
 }
 
-const WrappedBuyerList = Form.create()(BuyerList);
+const WrappedBuyerList = Form.create({
+  onFieldsChange(props, changedFields) {
+
+    let changeItem = Object.keys(changedFields)[0];
+
+    if(changeItem === 'buyerKeys'){
+      let changedArr = changedFields[changeItem].value;
+
+      let filtered = tmpBuyerlistData.filter((value) => {debugger;
+        if(!value.key){
+          return false;
+        }
+        if(changedArr.indexOf(value.key) > -1){
+          return true;
+        }
+        return false;
+
+      })
+
+      let newArr = changedArr.map((key, index) => {
+        if(filtered.indexOf(key) < 0){
+          return {key : key}
+        }
+        return tmpBuyerlistData.find((item) => {
+          return item.key == key;
+        })
+      })
+
+      tmpBuyerlistData = newArr;
+
+    } else {
+
+      let {name, value} = changedFields[changeItem];
+      let index = name.slice(-1);
+      let nameWithoutIndex = name.slice(0, -2);
+
+      let tmpArr = tmpBuyerlistData;
+
+      tmpBuyerlistData = tmpArr.map((item) => {
+        if(item.key == +index){
+          item[nameWithoutIndex] = value;
+          console.log(item);
+          return item;
+        }
+        return item;
+      })
+
+    }
+
+    if(typeof props.submitData["交易信息"] == "undefined" ){
+      props.submitData["交易信息"] = {};
+    }
+    if(typeof props.submitData["交易信息"]["配募"] == "undefined"){
+      props.submitData["交易信息"]["配募"] = {};
+    }
+
+    props.submitData["交易信息"]["配募"]["配募方"] = tmpBuyerlistData;
+    console.log(props.submitData)
+  }
+})(BuyerList);
 
 export default connect(
   mapStateToProps,

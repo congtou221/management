@@ -1,12 +1,15 @@
 import React from 'react';
-import { Form, Input, Radio } from 'antd';
+import { Form, Input,InputNumber, Radio } from 'antd';
 
 import { connect } from 'react-redux';
+import EventProperty from './eventProperty';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
 require('./style.scss');
+
+let tmpDealinfoData = {};
 
 const DealInfo = React.createClass({
 
@@ -22,12 +25,12 @@ const DealInfo = React.createClass({
     return (
       <div className="dealinfo-sec">
         <FormItem {...formItemLayout} label="交易总金额">
-          {getFieldDecorator('deal-allmoney')(
-             <Input />
+          {getFieldDecorator('交易总金额')(
+             <InputNumber />
            )}
         </FormItem>
         <FormItem {...formItemLayout} label="交易方式">
-          {getFieldDecorator('deal-way')(
+          {getFieldDecorator('交易方式')(
              <RadioGroup>
                <Radio value="股份">股份</Radio>
                <Radio value="现金">现金</Radio>
@@ -37,29 +40,42 @@ const DealInfo = React.createClass({
         </FormItem>
 
         <FormItem {...formItemLayout} label="换股价">
-          {getFieldDecorator('deal-price')(
-             <Input />
+          {getFieldDecorator('换股价')(
+             <InputNumber />
            )}
         </FormItem>
-        <FormItem {...formItemLayout} label="换股数量">
-          {getFieldDecorator('deal-amount')(
-             <Input />
+        <FormItem {...formItemLayout} label="发行股份数量">
+          {getFieldDecorator('发行股份数量')(
+             <InputNumber />
            )}
         </FormItem>
-        <FormItem {...formItemLayout} label="现金金额">
-          {getFieldDecorator('deal-cash')(
-             <Input />
+        <FormItem {...formItemLayout} label="支付现金">
+          {getFieldDecorator('支付现金')(
+             <InputNumber />
            )}
         </FormItem>
+
+        <EventProperty />
       </div>
     )
   }
 })
 
-const WrappedDealInfo = Form.create()(DealInfo)
+const WrappedDealInfo = Form.create({
+  onFieldsChange(props, changedFields){
+    let {name, value} = changedFields[Object.keys(changedFields)[0]];
+
+    tmpDealinfoData[name] = value;
+
+    props.submitData["交易信息"] = tmpDealinfoData;
+
+  }
+})(DealInfo)
 
 function mapStateToProps(state) {
-  return {}
+  return {
+    submitData: state.mergerForm.submitData
+  }
 }
 
 function mapDispatchToProps(dispatch){

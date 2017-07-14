@@ -28,8 +28,8 @@ if(process.env.NODE_ENV == 'local') {
   jsonServer.listen(3004, () => {
     console.log('JSON Server is running');
   });
-    console.log(proxy);
-  app.use('/test', proxy('http://localhost:3003'));
+
+  app.use('/api', proxy('http://localhost:3003'));
 } else {
   app.use('/api', proxy('https://beta.joudou.com'));
 }

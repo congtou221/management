@@ -1,8 +1,10 @@
 import $ from 'jquery';
 import React from 'react';
-import { Modal, Form, Input, Radio, DatePicker, Select, Button, message} from 'antd';
+import moment from 'moment';
+import { Modal, Form, Input, Radio, DatePicker, Select, Button, message, Icon} from 'antd';
 import { connect } from 'react-redux';
 
+import BuyerBriefIntro from './buyerBriefIntro';
 import RecruitSection from './recruitSec/entry';
 import CompanySection from './companySec/entry';
 import DealinfoSection from './dealinfoSec/entry';
@@ -13,39 +15,53 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
 
+let tmpMergerFormData = {};
+
 const CollectionForm = React.createClass({
 
   handleCreate() {
-    let { form, dispatchMergerFormCreated } = this.props;
+    let {
+      form,
+      submitData,
+      dispatchMergerFormSubmited,
+      dispatchMergerFormCalcResult
+    } = this.props;
+
     form.validateFields((err, values) => {
       if (err) {
         return;
       }
+      submitData["type"] = "merge";
+
+      console.log(submitData); debugger;
+      let newData = Object.assign(values, submitData);
+      /* 将本组件内的数据，用来进行post请求；
+       * 与此同时，更新store里的mergerForm.submitData*/
+      /* dispatchMergerFormSubmitBtnClicked();*/
 
       /* create successfully*/
       $.ajax({
         type: 'POST',
-        url: 'test/test2',
-        dataType: 'json',
-        data: {
-         // input: JSON.stringify(values) //values need to be processed
-        },
+        url: 'api/test2',
+        contentType: 'application/json; charset=UTF-8',
+        data: JSON.stringify(submitData),
         success: retData => {
+          dispatchMergerFormCalcResult(retData);
           console.log(retData);debugger;
           /* fetch new data after upload the form*/
           /* should be a get request*/
           form.resetFields();
-          dispatchMergerFormCreated(retData);
+          dispatchMergerFormSubmited(retData);
           message.success('提交成功！')
+
         }
       })
     });
   },
-
   handleChange(value){
+
     console.log('selected', value)
   },
-
   render(){
     let { form, dispatchSaveMergerForm } = this.props;
 
@@ -56,13 +72,12 @@ const CollectionForm = React.createClass({
       wrapperCol: { span : 8 }
     }
 
-
-    return (
+     return (
       <Form className="merger-form"
             layout="horizontal"
             onSubmit={this.handleCreate}>
         <FormItem {...formItemLayout} label="股票代码">
-          {getFieldDecorator('id', {
+          {getFieldDecorator('股票代码', {
              rules: [{
                required: true,
                message: '请输入股票代码！'
@@ -70,20 +85,12 @@ const CollectionForm = React.createClass({
           })(<Input />)}
         </FormItem>
         <FormItem {...formItemLayout} label="公告日期">
-          {getFieldDecorator('date', {
-             rules: [{
-               required: true,
-               message: '请选择公告日期！'
-             }],
+          {getFieldDecorator('公告日期', {
           })(<DatePicker />)}
         </FormItem>
 
         <FormItem {...formItemLayout} label="进程">
-          {getFieldDecorator('process', {
-             rules: [{
-               required: true,
-               message: '请选择进程！'
-             }],
+          {getFieldDecorator('进程', {
           })(
              <Select
                mode="combobox"
@@ -107,14 +114,20 @@ const CollectionForm = React.createClass({
            )}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="事件简述">
-          {getFieldDecorator('description', {
+        <FormItem {...formItemLayout} label="事件描述">
+          {getFieldDecorator('事件描述', {
 
           })(<Input />)}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="是否借壳">
-          {getFieldDecorator('isShell', {
+        <FormItem {...formItemLayout} label="父进程日期">
+          {getFieldDecorator('父进程日期', {
+          })(<DatePicker />)}
+        </FormItem>
+
+        <FormItem {...formItemLayout} label="是否只录标题">
+          {getFieldDecorator('是否只录标题', {
+
           })(
              <RadioGroup>
                <Radio value={true}>是</Radio>
@@ -123,8 +136,14 @@ const CollectionForm = React.createClass({
            )}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="是否有资产置出">
-          {getFieldDecorator('isExchanged', {
+        <FormItem {...formItemLayout} label="链接">
+          {getFieldDecorator('链接', {
+
+          })(<Input />)}
+        </FormItem>
+
+        <FormItem {...formItemLayout} label="收购方概念是否热门">
+          {getFieldDecorator('收购方概念是否热门', {
           })(
              <RadioGroup>
                <Radio value={true}>是</Radio>
@@ -133,18 +152,8 @@ const CollectionForm = React.createClass({
            )}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="收购方是否热门">
-          {getFieldDecorator('isPopularBuyer', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
-
-        <FormItem {...formItemLayout} label="被收购方是否热门">
-          {getFieldDecorator('isPopularSeller', {
+        <FormItem {...formItemLayout} label="被收购方概念是否热门">
+          {getFieldDecorator('被收购方概念是否热门', {
           })(
              <RadioGroup>
                <Radio value={true}>是</Radio>
@@ -154,17 +163,18 @@ const CollectionForm = React.createClass({
         </FormItem>
 
         <FormItem {...formItemLayout} label="被收购方概念">
-          {getFieldDecorator('seller-concept', {
+          {getFieldDecorator('被收购方概念', {
 
           })(<Input />)}
         </FormItem>
 
         <FormItem {...formItemLayout} label="被收购方行业">
-          {getFieldDecorator('seller-industry', {
+          {getFieldDecorator('被收购方行业', {
 
           })(<Input />)}
         </FormItem>
 
+        <BuyerBriefIntro />
 
         <DealinfoSection />
         <RecruitSection />
@@ -173,18 +183,36 @@ const CollectionForm = React.createClass({
         <FormItem style={{textAlign: 'center'}}>
           <Button className="submit-btn" type="primary" htmlType="submit" size="large">提交</Button>
         </FormItem>
+
       </Form>
     )
   }
 
 })
 
-const WrappedCollectionForm = Form.create()(CollectionForm);
+const WrappedCollectionForm = Form.create({
+  onFieldsChange(props, changedFields){
+    if($.isEmptyObject(changedFields)){
+      return;
+    }
+
+    let {name, value} = changedFields[Object.keys(changedFields)[0]];
+
+    if(!!value && !!value.constructor && value.constructor === moment.prototype.constructor){
+      value = value.format('YYYY/MM/DD')
+    }
+
+    tmpMergerFormData[name] = value;
+
+    Object.assign(props.submitData, tmpMergerFormData);
+
+  }
+})(CollectionForm);
 
  function mapStateToProps(state) {
 
    return {
-
+     submitData: state.mergerForm.submitData
    }
  }
 
@@ -196,8 +224,14 @@ function mapDispatchToProps(dispatch) {
       *     form: form
       *   })
       * }*/
-     dispatchMergerFormCreated: retData => {
+     dispatchMergerFormSubmited: retData => {
        return dispatch({type: 'createMergerForm', retData: retData})
+     },
+     dispatchMergerFormChanged: values => {
+       return dispatch({type: 'updateMergerFormData', values: values})
+     },
+     dispatchMergerFormCalcResult: result => {
+       return dispatch({type: 'calcResultReceived', result: result})
      }
     }
   }

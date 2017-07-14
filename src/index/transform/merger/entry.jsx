@@ -29,8 +29,8 @@ const UploadContainer = React.createClass({
 // Map Redux state to component props
 function mapStateToProps(state) {
   return {
-    isSubmit: state.submit,
-    retData: state.retData
+    isSubmit: state.mergerForm.submit,
+    retData: state.mergerForm.calcResult
   }
 }
 

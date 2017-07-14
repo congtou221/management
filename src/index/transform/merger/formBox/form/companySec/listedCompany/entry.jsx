@@ -1,12 +1,17 @@
 import React from 'react';
-import { Form, Input } from 'antd';
+import { Form, Input, InputNumber } from 'antd';
 
 import { connect } from 'react-redux';
 
 const FormItem = Form.Item;
 
+let companyId;
+
 const ListedCompany = React.createClass({
 
+  componentDidMount(){
+    companyId = $(this.refs.listCompanyItem.parentNode).data("key");
+  },
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -16,59 +21,58 @@ const ListedCompany = React.createClass({
       wrapperCol: { span: 8}
     }
 
-
     return (
-      <div className="listed-company">
+      <div className="listed-company" ref="listCompanyItem">
 
         <label>上市公司</label>
 
         <FormItem {...formItemLayout} label="股票代码">
-          { getFieldDecorator('listCompanyId', {
+          { getFieldDecorator('股票代码', {
 
           })(
               <Input />
             )}
         </FormItem>
         <FormItem {...formItemLayout} label="换股价">
-          { getFieldDecorator('listCompanyPrice', {
+          { getFieldDecorator('换股价', {
 
           })(
-              <Input />
+              <InputNumber />
             )}
         </FormItem>
         <FormItem {...formItemLayout} label="换股比例">
-          { getFieldDecorator('listCompanyRate', {
+          { getFieldDecorator('换股比例', {
 
           })(
-              <Input />
+              <InputNumber />
             )}
         </FormItem>
         <FormItem {...formItemLayout} label="收购价格">
-          { getFieldDecorator('listCompanySalePrice', {
+          { getFieldDecorator('收购价格', {
 
           })(
-              <Input />
+              <InputNumber />
             )}
         </FormItem>
         <FormItem {...formItemLayout} label="收购比例">
-          { getFieldDecorator('listCompanySaleRate', {
+          { getFieldDecorator('收购比例', {
 
           })(
-              <Input />
+              <InputNumber />
             )}
         </FormItem>
         <FormItem {...formItemLayout} label="收购金额">
-          { getFieldDecorator('listCompanySaleMoney', {
+          { getFieldDecorator('收购金额', {
 
           })(
-              <Input />
+              <InputNumber />
             )}
         </FormItem>
         <FormItem {...formItemLayout} label="收购现金">
-          { getFieldDecorator('listCompanySaleCash', {
+          { getFieldDecorator('收购现金', {
 
           })(
-              <Input />
+              <InputNumber />
             )}
         </FormItem>
 
@@ -77,10 +81,34 @@ const ListedCompany = React.createClass({
   }
 })
 
-const WrappedListedCompany = Form.create()(ListedCompany)
+const WrappedListedCompany = Form.create({
+  onFieldsChange(props, changedFields){
+
+    if(typeof props.submitData["被收购公司"] == "undefined"){
+      props.submitData["被收购公司"] = [];
+    }
+
+    let changeItem = Object.keys(changedFields)[0];
+
+    let {name, value} = changedFields[changeItem];
+
+    let tmpCompanyData = props.submitData["被收购公司"].map(item => {
+      if(item.key == companyId){
+        item[name] = value;
+        return item;
+      }
+      return item;
+    })
+
+    props.submitData["被收购公司"] = tmpCompanyData;
+
+  }
+})(ListedCompany)
 
 function mapStateToProps(state) {
-  return {}
+  return {
+    submitData: state.mergerForm.submitData
+  }
 }
 
 function mapDispatchToProps(dispatch){

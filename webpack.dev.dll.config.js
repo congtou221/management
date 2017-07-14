@@ -6,7 +6,8 @@ const vendors = [
   'react-dom',
   'react-redux',
   'react-router',
-  'redux'
+  'redux',
+  'moment'
 ];
 
 module.exports = {

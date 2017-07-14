@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form,  Input, Select, Button, Icon } from 'antd';
+import { Form, Input, InputNumber, Select, Button, Icon } from 'antd';
 
 import { connect } from 'react-redux';
 
@@ -9,6 +9,10 @@ const Option = Select.Option;
 require('./shareholder.scss');
 
 let uuid = 0;
+
+let tmpShareholderData = [];
+
+let companyId;
 
 const Shareholder = React.createClass({
 
@@ -37,6 +41,10 @@ const Shareholder = React.createClass({
     })
   },
 
+  componentDidMount(){
+    companyId = $(this.refs.shareholderItem).parent().parent().data("key");
+   // companyId = $(this.ref.shareholderItem).parent().parent().data("key");
+  },
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -63,7 +71,7 @@ const Shareholder = React.createClass({
             {...formItemLayout}
             label="股东名称"
           >
-            {getFieldDecorator('shareholder-name', {
+            {getFieldDecorator(`股东名称-${key}`, {
 
             })(
                <Input />
@@ -74,7 +82,7 @@ const Shareholder = React.createClass({
             {...formItemLayout}
             label="股东简称"
           >
-            {getFieldDecorator('shareholder-simple-name', {
+            {getFieldDecorator(`股东简称-${key}`, {
 
             })(
                <Input />
@@ -85,10 +93,10 @@ const Shareholder = React.createClass({
             {...formItemLayout}
             label="持股比例"
           >
-            {getFieldDecorator('shareholder-hold-percent', {
+            {getFieldDecorator(`持股比例-${key}`, {
 
             })(
-               <Input />
+               <InputNumber />
              )}
           </FormItem>
 
@@ -96,10 +104,10 @@ const Shareholder = React.createClass({
             {...formItemLayout}
             label="股份收购数量"
           >
-            {getFieldDecorator('shareholder-amount', {
+            {getFieldDecorator(`股份收购数量-${key}`, {
 
             })(
-               <Input />
+               <InputNumber />
              )}
           </FormItem>
 
@@ -107,10 +115,10 @@ const Shareholder = React.createClass({
             {...formItemLayout}
             label="收购比例"
           >
-            {getFieldDecorator('shareholder-purchase-percent', {
+            {getFieldDecorator(`收购比例-${key}`, {
 
             })(
-               <Input />
+               <InputNumber />
              )}
           </FormItem>
 
@@ -118,7 +126,7 @@ const Shareholder = React.createClass({
             {...formItemLayout}
             label="是否收购方大股东"
           >
-            {getFieldDecorator('is-majorshareholder', {
+            {getFieldDecorator(`是否大股东-${key}`, {
                initialValue: 'notRelated'
             })(
                <Select
@@ -127,9 +135,9 @@ const Shareholder = React.createClass({
                  optionFilterProp="children"
                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                  >
-                 <Option value="major">大股东</Option>
-                 <Option value="realted">关联方</Option>
-                 <Option value="notRelated">不是大股东/关联方</Option>
+                 <Option value="大股东">大股东</Option>
+                 <Option value="关联方">关联方</Option>
+                 <Option value="false">不是大股东/关联方</Option>
                </Select>
              )}
           </FormItem>
@@ -140,7 +148,7 @@ const Shareholder = React.createClass({
     });
 
     return (
-      <div className="shareholder-list">
+      <div className="shareholder-list" ref="shareholderItem">
         <FormItem {...formItemLayout}>
           {getFieldDecorator('add-shareholder')(
              <Button type="dashed" onClick={this.addShareholder}>
@@ -159,10 +167,73 @@ const Shareholder = React.createClass({
   }
 })
 
-const WrappedShareholder = Form.create()(Shareholder)
+const WrappedShareholder = Form.create({
+  onFieldsChange(props, changedFields){
+
+    let changeItem = Object.keys(changedFields)[0];
+
+    if(changeItem == 'shareholderKeys'){
+      let changedArr = changedFields[changeItem].value;
+
+      let filtered = tmpShareholderData.filter(value => {
+        if(!value.key){
+          return false;
+        }
+        if(changedArr.indexOf(value.key) > -1){
+          return true;
+        }
+        return false;
+      })
+
+      let newArr = changedArr.map(key => {
+        if(filtered.indexOf(key) < 0){
+          return {key: key}
+        }
+        return tmpShareholderData.find(item => {
+          return item.key == key;
+        })
+      })
+
+      tmpShareholderData = newArr;
+    } else {
+      let {name, value} = changedFields[changeItem];
+      let index = name.slice(-1);
+      let nameWithoutIndex = name.slice(0, -2);
+
+      let tmpArr = tmpShareholderData;
+
+      tmpShareholderData = tmpArr.map(item => {
+        if(item.key == +index){
+          item[nameWithoutIndex] = value;
+          return item;
+        }
+        return item;
+      })
+
+      if(typeof props.submitData["被收购公司"] == 'undefined'){
+        props.submitData["被收购公司"] = [];
+      }
+
+      let tmpCompanyList = props.submitData["被收购公司"];
+
+      let tmpCompanyCalcResult = tmpCompanyList.map(item => {
+        if(item.key == companyId){
+          item["股东信息"] = tmpShareholderData;
+          return item;
+        }
+        return item;
+      })
+      props.submitData["被收购公司"] = tmpCompanyCalcResult;
+      console.log(props.submitData["被收购公司"]);
+
+    }
+  }
+})(Shareholder)
 
 function mapStateToProps(state) {
-  return {}
+  return {
+    submitData: state.mergerForm.submitData
+  }
 }
 
 function mapDispatchToProps(dispatch){
