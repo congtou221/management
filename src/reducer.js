@@ -17,11 +17,14 @@ function userReducer(
     },
     increaseForm:{
       visible: true,
-      form: {}
+        form: {},
+        submitData: {},
+        calcResult: {}
     },
     encourageForm:{
       visible: true,
-      form: {}
+      form: {},
+      submitData: {}
     },
     holdingForm: {
       visible: true,
@@ -161,6 +164,8 @@ function userReducer(
       }
     case 'upload':
        return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: action.retData,
         mergerForm: {
@@ -175,6 +180,8 @@ function userReducer(
       }
     case 'saveMergerForm':
       return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: state.retData,
         mergerForm: {
@@ -189,6 +196,8 @@ function userReducer(
       }
     case 'createMergerForm':
       return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: action.retData,
         mergerForm: {
@@ -203,6 +212,8 @@ function userReducer(
       }
     case 'showMergerForm':
       return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: state.retData,
         mergerForm:{
@@ -217,6 +228,8 @@ function userReducer(
       }
     case 'showRecruitSec' :
     return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: state.submit,
         retData: state.retData,
         isLogin: state.isLogin,
@@ -239,23 +252,49 @@ function userReducer(
       }
     case 'showIncreaseForm' :
       return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: state.retData,
         mergerForm: state.mergerForm,
         increaseForm: {
-          visible: !state.increaseForm.visible
+            visible: !state.increaseForm.visible,
+            form: state.increaseForm.form,
+            submitData: action.retData
         },
         encourageForm: state.encourageForm,
         holdingForm: state.holdingForm,
         historyFormBox: state.historyFormBox
       }
-    case 'createIncreaseForm' :
+  case 'calcIncreaseResultReceived':
       return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: action.retData,
         mergerForm: state.mergerForm,
         increaseForm: {
-          visible: true
+            visible: true,
+            form: state.increaseForm.form,
+            submitData: state.increaseForm.submitData,
+            calcResult: action.result
+        },
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
+      }
+  case 'createIncreaseForm' :
+      return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
+        submit: true,
+        retData: action.retData,
+        mergerForm: state.mergerForm,
+        increaseForm: {
+            visible: true,
+            form: state.increaseForm.form,
+            submitData: state.increaseForm.submitData,
+            calcResult: state.increaseForm.calcResult
         },
         encourageForm: state.encourageForm,
         holdingForm: state.holdingForm,
@@ -264,6 +303,8 @@ function userReducer(
       }
     case 'showEncourageForm' :
       return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: state.retData,
         mergerForm: state.mergerForm,
@@ -277,6 +318,8 @@ function userReducer(
       }
     case 'createEncourageForm':
       return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: action.retData,
         mergerForm: state.mergerForm,
@@ -290,6 +333,8 @@ function userReducer(
       }
     case 'showHoldingForm':
       return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: state.retData,
         mergerForm: state.mergerForm,
@@ -303,6 +348,8 @@ function userReducer(
       }
     case 'createHoldingForm':
       return {
+        isLogin: state.isLogin,
+        logForm: state.logForm,
         submit: true,
         retData: action.retData,
         mergerForm: state.mergerForm,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button, Icon } from 'antd';
+import { Form, Input, InputNumber, Button, Icon } from 'antd';
 import { connect } from 'react-redux';
 
 require('./style.scss');
@@ -7,6 +7,7 @@ require('./style.scss');
 const FormItem = Form.Item;
 
 let uuid = 0;
+let tmpProjectData = [];
 
 const ProjectSection = React.createClass({
   addProject(){
@@ -54,17 +55,17 @@ const ProjectSection = React.createClass({
             onClick={() => this.remove(key)}
           />
           <FormItem {...formItemLayout} label="项目名称">
-            {getFieldDecorator(`project-${key}-name`)(
+            {getFieldDecorator(`项目名称-${key}`)(
                <Input />
              )}
           </FormItem>
           <FormItem {...formItemLayout} label="投资金额">
-            {getFieldDecorator(`project-${key}-money`)(
-               <Input />
+            {getFieldDecorator(`投资金额-${key}`)(
+               <InputNumber />
              )}
           </FormItem>
           <FormItem {...formItemLayout} label="建设期">
-            {getFieldDecorator(`project-${key}-building`)(
+            {getFieldDecorator(`建设期-${key}`)(
                <Input />
              )}
           </FormItem>
@@ -74,17 +75,17 @@ const ProjectSection = React.createClass({
             <div className="profile-data-1">
               <FormItem {...formItemLayout} label="项目总利润">
                 {getFieldDecorator(`profile-${key}-sum`)(
-                   <Input />
+                   <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="年均利润总和">
                 {getFieldDecorator(`profile-${key}-average-sum`)(
-                   <Input />
+                   <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="年均净利润">
                 {getFieldDecorator(`profile-${key}-average-net`)(
-                   <Input />
+                   <InputNumber />
                  )}
               </FormItem>
             </div>
@@ -133,7 +134,7 @@ const ProjectSection = React.createClass({
 
 function mapStateToProps(state){
   return {
-
+    submitData: state.increaseForm.submitData
   }
 }
 
@@ -143,7 +144,58 @@ function mapDispatchToProps(dispatch){
   }
 }
 
-const WrappedProjectSection = Form.create()(ProjectSection);
+const WrappedProjectSection = Form.create({
+  onFieldsChange(props, changedFields) {
+
+    let changeItem = Object.keys(changedFields)[0];
+
+    if(changeItem === 'projectKeys'){
+      let changedArr = changedFields[changeItem].value;
+
+      let filtered = tmpProjectData.filter((value) => {
+        if(!value.key){
+          return false;
+        }
+        if(changedArr.indexOf(value.key) > -1){
+          return true;
+        }
+        return false;
+
+      })
+
+      let newArr = changedArr.map((key, index) => {
+        if(filtered.indexOf(key) < 0){
+          return {key : key}
+        }
+        return tmpProjectData.find((item) => {
+          return item.key == key;
+        })
+      })
+
+      tmpProjectData = newArr;
+
+    } else {
+
+      let {name, value} = changedFields[changeItem];
+      let index = name.slice(-1);
+      let nameWithoutIndex = name.slice(0, -2);
+
+      let tmpArr = tmpProjectData;
+
+      tmpProjectData= tmpArr.map((item) => {
+        if(item.key == +index){
+          item[nameWithoutIndex] = value;
+          return item;
+        }
+        return item;
+      })
+
+    }
+
+    props.submitData["项目"] = tmpProjectData;
+
+  }
+})(ProjectSection);
 
 export default connect(
   mapStateToProps,

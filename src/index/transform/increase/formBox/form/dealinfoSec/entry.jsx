@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Radio } from 'antd';
+import { Form, InputNumber, Radio } from 'antd';
 
 import { connect } from 'react-redux';
 
@@ -7,6 +7,8 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
 require('./style.scss');
+
+let tmpDealinfoData = {};
 
 const DealInfo = React.createClass({
 
@@ -22,22 +24,22 @@ const DealInfo = React.createClass({
     return (
       <div className="dealinfo-sec">
         <FormItem {...formItemLayout} label="交易金额">
-          {getFieldDecorator('deal-allmoney')(
-             <Input />
+          {getFieldDecorator('交易金额')(
+             <InputNumber />
            )}
         </FormItem>
         <FormItem {...formItemLayout} label="增发股价">
-          {getFieldDecorator('deal-price')(
-             <Input />
+          {getFieldDecorator('增发股价')(
+             <InputNumber />
            )}
         </FormItem>
         <FormItem {...formItemLayout} label="增发数量">
-          {getFieldDecorator('deal-amount')(
-             <Input />
+          {getFieldDecorator('增发数量')(
+             <InputNumber />
            )}
         </FormItem>
         <FormItem {...formItemLayout} label="定价方式">
-          {getFieldDecorator('deal-type')(
+          {getFieldDecorator('定价方式')(
              <RadioGroup>
                <Radio value="查询">查询</Radio>
                <Radio value="定价">定价</Radio>
@@ -49,10 +51,20 @@ const DealInfo = React.createClass({
   }
 })
 
-const WrappedDealInfo = Form.create()(DealInfo)
+const WrappedDealInfo = Form.create({
+  onFieldsChange(props, changedFields){
+    let{name, value} = changedFields[Object.keys(changedFields)[0]];
+
+    tmpDealinfoData[name] = value;
+
+    props.submitData["交易信息"] = tmpDealinfoData;
+  }
+})(DealInfo)
 
 function mapStateToProps(state) {
-  return {}
+  return {
+    submitData: state.increaseForm.submitData
+  }
 }
 
 function mapDispatchToProps(dispatch){

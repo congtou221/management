@@ -162,7 +162,7 @@ const WrappedBuyerList = Form.create({
     if(changeItem === 'buyerKeys'){
       let changedArr = changedFields[changeItem].value;
 
-      let filtered = tmpBuyerlistData.filter((value) => {debugger;
+      let filtered = tmpBuyerlistData.filter((value) => {
         if(!value.key){
           return false;
         }

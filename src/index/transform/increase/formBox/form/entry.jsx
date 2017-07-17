@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
+import moment from 'moment';
 import { Modal, Form, Input, Radio, DatePicker, Select, Button, message} from 'antd';
 import { connect } from 'react-redux';
 
@@ -13,24 +14,34 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
 
+let tmpIncreaseFormData = {};
+
 const CollectionForm = React.createClass({
 
   handleCreate() {
-    let { form, dispatchIncreaseFormCreated } = this.props;
+    let {
+      form,
+      submitData,
+      dispatchIncreaseFormCreated,
+      dispatchIncreaseFormCalcResult
+    } = this.props;
     form.validateFields((err, values) => {
       if (err) {
         return;
       }
 
+      submitData["type"] = "increase";
+
+      console.log(submitData); debugger;
       /* create successfully*/
-      $.post({
+      $.ajax({
         type: 'POST',
-        url: 'api/posts',
-        dataType: 'json',
-        data: {
-          input: JSON.stringify(values) //values need to be processed
-        },
+        url: 'api/increase',
+        contentType: 'application/json; charset=UTF-8',
+        data: JSON.stringify(submitData), //values need to be processed,
         success: retData => {
+          dispatchIncreaseFormCalcResult(retData);
+          console.log(retData);
           /* fetch new data after upload the form*/
           /* should be a get request*/
           form.resetFields();
@@ -56,7 +67,7 @@ const CollectionForm = React.createClass({
             layout="horizontal"
             onSubmit={this.handleCreate}>
         <FormItem {...formItemLayout} label="股票代码">
-          {getFieldDecorator('id', {
+          {getFieldDecorator('股票代码', {
              rules: [{
                required: true,
                message: '请输入股票代码！'
@@ -64,19 +75,11 @@ const CollectionForm = React.createClass({
           })(<Input />)}
         </FormItem>
         <FormItem {...formItemLayout} label="公告日期">
-          {getFieldDecorator('date', {
-             rules: [{
-               required: true,
-               message: '请选择公告日期！'
-             }],
+          {getFieldDecorator('公告日期', {
           })(<DatePicker />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="本次定增的进程">
-          {getFieldDecorator('process', {
-             rules: [{
-               required: true,
-               message: '请选择进程！'
-             }],
+        <FormItem {...formItemLayout} label="进程">
+          {getFieldDecorator('进程', {
           })(
              <Select
                mode="combobox"
@@ -84,7 +87,6 @@ const CollectionForm = React.createClass({
                defaultActiveFirstOption={false}
                showArrow={true}
                filterOption={false}
-               onChange={this.handleChange}
                >
               <Option key='草案'>草案</Option>
               <Option key='修订稿'>修订稿</Option>
@@ -101,13 +103,13 @@ const CollectionForm = React.createClass({
         </FormItem>
 
         <FormItem {...formItemLayout} label="事件简述">
-          {getFieldDecorator('description', {
+          {getFieldDecorator('事件简述', {
 
           })(<Input />)}
         </FormItem>
 
         <FormItem {...formItemLayout} label="本次定增事件是否热门">
-          {getFieldDecorator('isHot', {
+          {getFieldDecorator('本次定增是否热门', {
           })(
              <RadioGroup>
                <Radio value={true}>是</Radio>
@@ -117,13 +119,13 @@ const CollectionForm = React.createClass({
         </FormItem>
 
         <FormItem {...formItemLayout} label="定增前主营业务">
-          {getFieldDecorator('majorBeforeIncrase', {
+          {getFieldDecorator('定增前主营业务', {
 
           })(<Input />)}
         </FormItem>
 
         <FormItem {...formItemLayout} label="定增后主营业务">
-          {getFieldDecorator('majorAfterIncrase', {
+          {getFieldDecorator('定增后主营业务', {
 
           })(<Input />)}
         </FormItem>
@@ -142,12 +144,29 @@ const CollectionForm = React.createClass({
 
 })
 
-const WrappedCollectionForm = Form.create()(CollectionForm);
+const WrappedCollectionForm = Form.create({
+  onFieldsChange(props, changedFields){
+    if($.isEmptyObject(changedFields)){
+      return;
+    }
+
+    let {name, value} = changedFields[Object.keys(changedFields)[0]];
+
+    if(!!value && !!value.format){
+      value = value.format('YYYY/MM/DD');
+    }
+
+    tmpIncreaseFormData[name] = value;
+
+    Object.assign(props.submitData, tmpIncreaseFormData);
+
+  }
+})(CollectionForm);
 
 function mapStateToProps(state) {
 
   return {
-
+    submitData: state.increaseForm.submitData
   }
 }
 
@@ -159,8 +178,12 @@ function mapDispatchToProps(dispatch) {
      *     form: form
      *   })
      * }*/
+
     dispatchIncreaseFormCreated: retData => {
       return dispatch({type: 'createIncreaseForm', retData: retData})
+    },
+    dispatchIncreaseFormCalcResult: result => {
+      return dispatch({type: 'calcIncreaseResultReceived', result: result})
     }
   }
 }

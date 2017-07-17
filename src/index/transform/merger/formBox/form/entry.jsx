@@ -194,7 +194,7 @@ const WrappedCollectionForm = Form.create({
 
     let {name, value} = changedFields[Object.keys(changedFields)[0]];
 
-    if(!!value && !!value.constructor && value.constructor === moment.prototype.constructor){
+    if(!!value && !!value.format){
       value = value.format('YYYY/MM/DD')
     }
 
