@@ -4,6 +4,11 @@ import { Form, Button, Icon, Input, InputNumber, DatePicker } from 'antd';
 
 import { connect } from 'react-redux';
 
+import Store from '../../../../../../../store';
+
+import { updateArray } from '../../../../../util/updateFieldValue';
+import { fillArrToForm, fillArrLenToForm } from '../../../../../util/fillJsonToForm';
+
 const FormItem = Form.Item;
 const { MonthPicker, RangePicker } = DatePicker;
 
@@ -43,9 +48,46 @@ const FinancialData = React.createClass({
   },
 
   componentDidMount(){
+    /* 获取DOM节点上的key*/
     companyId = $(this.refs.financialDataItem).parent().parent().data("key");
 
-    //    financialDataId = $(this.refs.financialDataItem.data("key"));
+    /* 回填json*/
+    let { form } = this.props;
+
+    let state = Store.getState();
+    if(state.type === 'mergerSubmittedDataArrived'){
+      let companys = state.mergerForm.submitData["被收购公司"];
+
+      let company = companys.filter(item => {
+        return item.key === companyId;
+      })[0];
+
+      let financialData = company["历史业绩"];
+
+      let keys = financialData.map(item => {
+        return item.key;
+      })
+
+      fillArrLenToForm({
+        form: form,
+        keys: keys,
+        keyname: 'financialDataKeys'
+      });
+       /*       更改financialDataKeys以后，需要等其render完毕，才能去对增加的表单项setValue，这里的解决办法不太好，需要再看看能不能找到回调函数*/
+      setTimeout(() => {
+
+        fillArrToForm({
+          form: form,
+          data: financialData
+        });
+
+      }, 2000);
+
+    }
+    /* 不能进入subscribe*/
+    /* Store.subscribe(() => {
+     * })*/
+
   },
   render(){
     let { form } = this.props;
@@ -73,14 +115,9 @@ const FinancialData = React.createClass({
             {...formItemLayout}
             label="已实现业绩的时间"
           >
-            {getFieldDecorator(`已实现业绩的时间-${key}`, {
-               rules: [{
-                 type: 'object',
-                 message: '请选择时间！'
-               }],
-               initialValue: moment(new Date(), dateFormat)
+            {getFieldDecorator(`时间-${key}`, {
             })(
-               <MonthPicker />
+               <Input />
              )}
           </FormItem>
 
@@ -88,7 +125,7 @@ const FinancialData = React.createClass({
             {...formItemLayout}
             label="已实现业绩的净利润"
           >
-            {getFieldDecorator(`已实现业绩的净利润-${key}`, {
+            {getFieldDecorator(`净利润-${key}`, {
 
             })(
                <InputNumber />
@@ -122,67 +159,32 @@ const FinancialData = React.createClass({
 
 const WrappedFinancialData = Form.create({
   onFieldsChange(props, changedFields){
-
-    let changeItem = Object.keys(changedFields)[0];
-
-    if(changeItem == 'financialDataKeys'){
-      let changedArr = changedFields[changeItem].value;
-
-      let filtered = tmpFinancialData.filter(value => {
-        if(!value.key){
-          return false;
-        }
-        if(changedArr.indexOf(value.key) > -1){
-          return true;
-        }
-        return false;
-      })
-
-      let newArr = changedArr.map(key => {
-        if(filtered.indexOf(key) < 0){
-          return {key: key}
-        }
-        return tmpFinancialData.find(item => {
-          return item.key == key;
-        })
-      })
-
-      tmpFinancialData = newArr;
-    } else {
-      let {name, value} = changedFields[changeItem];
-      let index = name.slice(-1);
-      let nameWithoutIndex = name.slice(0, -2);
-
-
-      if(!!value && !!value.constructor && value.constructor === moment.prototype.constructor){
-        value = value.format('YYYYMM')
-      }
-
-      let tmpArr = tmpFinancialData;
-
-      tmpFinancialData = tmpArr.map(item => {
-        if(item.key == +index){
-          item[nameWithoutIndex] = value;
-          return item;
-        }
-        return item;
-      })
-
-      if(typeof props.submitData["被收购公司"] == 'undefined'){
-        props.submitData["被收购公司"] = [];
-      }
-
-      let tmpCompanyList = props.submitData["被收购公司"];
-
-      let tmpCompanyCalcResult = tmpCompanyList.map(item => {
-        if(item.key == companyId){
-          item["历史业绩"] = tmpFinancialData;
-          return item;
-        }
-        return item;
-      })
-      props.submitData["被收购公司"] = tmpCompanyCalcResult;
+    if($.isEmptyObject(changedFields)){
+      return;
     }
+
+    tmpFinancialData = updateArray({
+      props: props,
+      changedFields: changedFields,
+      addKey: 'financialDataKeys',
+      tmpData: tmpFinancialData
+    });
+
+    if(typeof props.submitData["被收购公司"] == 'undefined'){
+      props.submitData["被收购公司"] = [];
+    }
+
+    let tmpCompanyList = props.submitData["被收购公司"];
+
+    let tmpCompanyCalcResult = tmpCompanyList.map(item => {
+      if(item.key == companyId){
+        item["历史业绩"] = tmpFinancialData;
+        return item;
+      }
+      return item;
+    })
+    props.submitData["被收购公司"] = tmpCompanyCalcResult;
+
   }
 })(FinancialData)
 

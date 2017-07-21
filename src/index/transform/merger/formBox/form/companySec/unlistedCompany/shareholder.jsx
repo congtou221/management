@@ -1,10 +1,12 @@
 import React from 'react';
-import { Form, Input, InputNumber, Select, Button, Icon } from 'antd';
+import { Form, Input, InputNumber, Select, Button, Icon, Radio } from 'antd';
 
 import { connect } from 'react-redux';
 
+import Store from '../../../../../../../store';
+
 const FormItem = Form.Item;
-const Option = Select.Option;
+const RadioGroup = Radio.Group;
 
 require('./shareholder.scss');
 
@@ -42,8 +44,52 @@ const Shareholder = React.createClass({
   },
 
   componentDidMount(){
+    /* 获取DOM节点上的key*/
     companyId = $(this.refs.shareholderItem).parent().parent().data("key");
-   // companyId = $(this.ref.shareholderItem).parent().parent().data("key");
+
+    /* 回填json*/
+    let { form } = this.props;
+
+    let state = Store.getState();
+    if(state.type === 'mergerSubmittedDataArrived'){
+      let submitData = state.mergerForm.submitData;
+      let companys = submitData["被收购公司"];
+
+      let company = companys.filter(item => {
+        return item.key === companyId;
+      })[0];
+
+      let financialData = company["股东信息"];
+
+      let keys = financialData.map(item => {
+        return item.key;
+      })
+
+      form.setFieldsValue({
+        'shareholderKeys': keys
+      })
+
+      setTimeout(() => {
+        financialData.forEach(item => {
+          let key = item.key;
+
+          delete item.key;
+          let newData = Object.keys(item).reduce((prev, cur) => {
+
+            prev[`${cur}-${key}`] = item[cur];
+
+            form.setFieldsValue({
+
+            })
+
+            return prev;
+          }, {});
+
+          form.setFieldsValue(newData);
+        })
+
+      }, 2000)
+    }
   },
   render(){
     let { form } = this.props;
@@ -126,19 +172,14 @@ const Shareholder = React.createClass({
             {...formItemLayout}
             label="是否收购方大股东"
           >
-            {getFieldDecorator(`是否大股东-${key}`, {
+            {getFieldDecorator(`关联方-${key}`, {
                initialValue: 'notRelated'
             })(
-               <Select
-                 showSearch
-                 style={{ width: 200 }}
-                 optionFilterProp="children"
-                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                 >
-                 <Option value="大股东">大股东</Option>
-                 <Option value="关联方">关联方</Option>
-                 <Option value="false">不是大股东/关联方</Option>
-               </Select>
+               <RadioGroup>
+                 <Radio value={true}>是</Radio>
+                 <Radio value={false}>否</Radio>
+               </RadioGroup>
+
              )}
           </FormItem>
 
@@ -169,64 +210,74 @@ const Shareholder = React.createClass({
 
 const WrappedShareholder = Form.create({
   onFieldsChange(props, changedFields){
-
-    let changeItem = Object.keys(changedFields)[0];
-
-    if(changeItem == 'shareholderKeys'){
-      let changedArr = changedFields[changeItem].value;
-
-      let filtered = tmpShareholderData.filter(value => {
-        if(!value.key){
-          return false;
-        }
-        if(changedArr.indexOf(value.key) > -1){
-          return true;
-        }
-        return false;
-      })
-
-      let newArr = changedArr.map(key => {
-        if(filtered.indexOf(key) < 0){
-          return {key: key}
-        }
-        return tmpShareholderData.find(item => {
-          return item.key == key;
-        })
-      })
-
-      tmpShareholderData = newArr;
-    } else {
-      let {name, value} = changedFields[changeItem];
-      let index = name.slice(-1);
-      let nameWithoutIndex = name.slice(0, -2);
-
-      let tmpArr = tmpShareholderData;
-
-      tmpShareholderData = tmpArr.map(item => {
-        if(item.key == +index){
-          item[nameWithoutIndex] = value;
-          return item;
-        }
-        return item;
-      })
-
-      if(typeof props.submitData["被收购公司"] == 'undefined'){
-        props.submitData["被收购公司"] = [];
-      }
-
-      let tmpCompanyList = props.submitData["被收购公司"];
-
-      let tmpCompanyCalcResult = tmpCompanyList.map(item => {
-        if(item.key == companyId){
-          item["股东信息"] = tmpShareholderData;
-          return item;
-        }
-        return item;
-      })
-      props.submitData["被收购公司"] = tmpCompanyCalcResult;
-      console.log(props.submitData["被收购公司"]);
-
+    if($.isEmptyObject(changedFields)){
+      return;
     }
+
+    let updateValues = (changeItem) => {
+
+      if(changeItem == 'shareholderKeys'){
+        let changedArr = changedFields[changeItem].value;
+
+        let filtered = tmpShareholderData.filter(value => {
+          if(!value.key){
+            return false;
+          }
+          if(changedArr.indexOf(value.key) > -1){
+            return true;
+          }
+          return false;
+        })
+
+        let newArr = changedArr.map(key => {
+          let keys = filtered.map(item => {
+            return item.key;
+          })
+          if(keys.indexOf(key) < 0){
+            return {key: key}
+          }
+          return tmpShareholderData.find(item => {
+            return item.key == key;
+          })
+        })
+
+        tmpShareholderData = newArr;
+      } else {
+        let {name, value} = changedFields[changeItem];
+        let index = name.slice(-1);
+        let nameWithoutIndex = name.slice(0, -2);
+
+        let tmpArr = tmpShareholderData;
+
+        tmpShareholderData = tmpArr.map(item => {
+          if(item.key == +index){
+            item[nameWithoutIndex] = value;
+            return item;
+          }
+          return item;
+        })
+
+        if(typeof props.submitData["被收购公司"] == 'undefined'){
+          props.submitData["被收购公司"] = [];
+        }
+
+        let tmpCompanyList = props.submitData["被收购公司"];
+
+        let tmpCompanyCalcResult = tmpCompanyList.map(item => {
+          if(item.key == companyId){
+            item["股东信息"] = tmpShareholderData;
+            return item;
+          }
+          return item;
+        })
+        props.submitData["被收购公司"] = tmpCompanyCalcResult;
+      }
+    }
+
+    Object.keys(changedFields).forEach(changeItem => {
+      updateValues(changeItem);
+    })
+
   }
 })(Shareholder)
 

@@ -53,7 +53,7 @@ const UnlockyearList = React.createClass({
 
       if(state.type === 'encourageSubmittedDataArrived'){
         let conditionData = state.encourageForm.submitData["解锁条件"].filter(item => {
-          return item.key == 1;
+          return item.key == 2;
         })[0];
 
         if(!conditionData){
@@ -106,9 +106,9 @@ const UnlockyearList = React.createClass({
           <FormItem
             className="unlockyear-item-formitem"
             {...formItemLayout}
-            label="年份"
+            label="解锁年"
           >
-            {getFieldDecorator(`年份-${key}`, {
+            {getFieldDecorator(`解锁年-${key}`, {
                initialValue: `${new Date().getFullYear() + index}`
             })(
                <Input />
@@ -117,18 +117,18 @@ const UnlockyearList = React.createClass({
           <FormItem
             className="unlockyear-item-formitem"
             {...formItemLayout}
-            label="数值"
+            label="解锁数值"
           >
-            {getFieldDecorator(`数值-${key}`)(
+            {getFieldDecorator(`解锁数值-${key}`)(
                <InputNumber />
              )}
           </FormItem>
           <FormItem
             className="unlockyear-item-formitem"
             {...formItemLayout}
-            label="增长率"
+            label="解锁增长率"
           >
-            {getFieldDecorator(`增长率-${key}`)(
+            {getFieldDecorator(`解锁增长率-${key}`)(
                <InputNumber />
              )}
           </FormItem>
@@ -153,7 +153,6 @@ const UnlockyearList = React.createClass({
           </Select>
         )}
         </FormItem>
-
 
         <div className="unlockyear-list">
           {/* <FormItem {...formItemLayout}>
@@ -191,6 +190,7 @@ const WrappedUnlockyearList = Form.create({
       return;
     }
 
+
     if(Object.keys(changedFields)[0] === '解锁业绩类型'){
 
       tmpConditionData = updateObj({
@@ -210,16 +210,15 @@ const WrappedUnlockyearList = Form.create({
     }
 
     tmpConditionData["解锁年"] = tmpUnlockYearData;
-    tmpConditionData["key"] = 1;
+    tmpConditionData["key"] = 2;
 
     let tmpArr = props.submitData["解锁条件"];
 
     if(typeof tmpArr == 'undefined'){
       tmpArr = [];
     } else {
-
       let filtered = tmpArr.filter(value => {
-        if(!!value.key && value.key !== 1){
+        if(!!value.key && value.key !== 2){
           return true;
         }
         return false;

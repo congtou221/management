@@ -1,11 +1,15 @@
 import React from 'react';
-import { Form, Input, InputNumber, Button, Icon, Select } from 'antd';
+import { Form, Input, InputNumber, Button, Icon, Select, Radio } from 'antd';
 import { connect } from 'react-redux';
+import Store from '../../../../../../store';
+import { updateArray } from '../../../../util/updateFieldValue';
+import { fillVariableArrToForm } from '../../../../util/fillJsonToForm';
 
 require('./buyerList.scss');
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const RadioGroup = Radio.Group;
 
 let uuid = 0;
 let tmpBuyerlistData = [];
@@ -50,6 +54,23 @@ const BuyerList = React.createClass({
     });
   },
 
+  componentDidMount(){
+    let { form } = this.props;
+
+    Store.subscribe(() => {
+      let state = Store.getState();
+      if(state.type === 'increaseSubmittedDataArrived'){
+        fillVariableArrToForm({
+          form: form,
+          data: state.increaseForm.submitData["增发对象"],
+          keyname: 'buyerKeys'
+        })
+        /* form.setFieldsValue({
+         *   'buyerKeys': [1, 2]
+         * })*/
+      }
+    })
+  },
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -70,7 +91,7 @@ const BuyerList = React.createClass({
             onClick={() => this.remove(key)}
           />
           <FormItem {...formItemLayout} label="认购方股东名称">
-            {getFieldDecorator(`股东名称-${key}`)(
+            {getFieldDecorator(`名称-${key}`)(
                <Input />
              )}
           </FormItem>
@@ -79,8 +100,8 @@ const BuyerList = React.createClass({
                <InputNumber />
              )}
           </FormItem>
-          <FormItem {...formItemLayout} label="认购方认购股份数量">
-            {getFieldDecorator(`认购股份数-${key}`)(
+          <FormItem {...formItemLayout} label="认购方认购数量">
+            {getFieldDecorator(`认购数量-${key}`)(
                <InputNumber />
              )}
           </FormItem>
@@ -96,18 +117,13 @@ const BuyerList = React.createClass({
           </FormItem>
 
           <FormItem {...formItemLayout} label="是否大股东/关联方">
-            {getFieldDecorator(`关联方-${key}`, {
+            {getFieldDecorator(`关联关系-${key}`, {
                initialValue: 'notRelated'
             })(
-               <Select
-                 showSearch
-                 style={{ width: 200 }}
-                 optionFilterProp="children"
-                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                 >
-                 <Option value="true">大股东</Option>
-                 <Option value="true">关联方</Option>
-                 <Option value="false">不是大股东/关联方</Option>
+               <Select>
+                 <Option value="大股东">大股东</Option>
+                 <Option value="关联方">关联方</Option>
+                 <Option value="">不是大股东/关联方</Option>
                </Select>
              )}
           </FormItem>
@@ -157,57 +173,67 @@ function mapDispatchToProps(dispatch){
 
 const WrappedBuyerList = Form.create({
   onFieldsChange(props, changedFields){
-    let changeItem = Object.keys(changedFields)[0];
-
-    if(changeItem === 'buyerKeys'){
-      let changedArr = changedFields[changeItem].value;
-
-      let filtered = tmpBuyerlistData.filter((value) => {
-        if(!value.key){
-          return false;
-        }
-        if(changedArr.indexOf(value.key) > -1){
-          return true;
-        }
-        return false;
-      })
-
-      let newArr = changedArr.map((key, index) => {
-        if(filtered.indexOf(key) < 0){
-          return {key : key}
-        }
-        return tmpBuyerlistData.find(item => {
-          return item.key == key;
-        })
-      })
-
-      tmpBuyerlistData = newArr;
-    }else {
-
-      let {name, value} = changedFields[changeItem];
-      let index = name.slice(-1);
-      let nameWithoutIndex = name.slice(0, -2);
-
-      let tmpArr = tmpBuyerlistData;
-
-      tmpBuyerlistData = tmpArr.map((item) => {
-        if(item.key == +index){
-          item[nameWithoutIndex] = value;
-          return item;
-        }
-        return item;
-      })
-
+    if($.isEmptyObject(changedFields)){
+      return;
     }
 
-    if(typeof props.submitData["交易信息"] == "undefined" ){
-      props.submitData["交易信息"] = {};
-    }
-    if(typeof props.submitData["交易信息"]["认购"] == "undefined"){
-      props.submitData["交易信息"]["认购"] = {};
-    }
+    tmpBuyerlistData = updateArray({
+      props: props,
+      changedFields: changedFields,
+      addKey: 'buyerKeys',
+      tmpData: tmpBuyerlistData
+    })
+    /* let changeItem = Object.keys(changedFields)[0];
 
-    props.submitData["交易信息"]["认购"]["认购方"] = tmpBuyerlistData;
+     * if(changeItem === 'buyerKeys'){
+     *   let changedArr = changedFields[changeItem].value;
+
+     *   let filtered = tmpBuyerlistData.filter((value) => {
+     *     if(!value.key){
+     *       return false;
+     *     }
+     *     if(changedArr.indexOf(value.key) > -1){
+     *       return true;
+     *     }
+     *     return false;
+     *   })
+
+     *   let newArr = changedArr.map((key, index) => {
+     *     if(filtered.indexOf(key) < 0){
+     *       return {key : key}
+     *     }
+     *     return tmpBuyerlistData.find(item => {
+     *       return item.key == key;
+     *     })
+     *   });
+
+     *   tmpBuyerlistData = newArr;
+     * }else {
+
+     *   let {name, value} = changedFields[changeItem];
+     *   let index = name.slice(-1);
+     *   let nameWithoutIndex = name.slice(0, -2);
+
+     *   let tmpArr = tmpBuyerlistData;
+
+     *   tmpBuyerlistData = tmpArr.map((item) => {
+     *     if(item.key == +index){
+     *       item[nameWithoutIndex] = value;
+     *       return item;
+     *     }
+     *     return item;
+     *   })
+
+     * }
+     */
+    /* if(typeof props.submitData["交易信息"] == "undefined" ){
+     *   props.submitData["交易信息"] = {};
+     * }
+     * if(typeof props.submitData["交易信息"]["认购"] == "undefined"){
+     *   props.submitData["交易信息"]["认购"] = {};
+     * }
+     */
+    props.submitData["增发对象"] = tmpBuyerlistData;
   }
 })(BuyerList);
 

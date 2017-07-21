@@ -18,9 +18,9 @@ const UploadContainer = React.createClass({
         <UploadBox />
         <FormBox />
 
-        <If when={isSubmit}>
-          <TableBox dataSource={retData}/>
-        </If>
+        {/* <If when={isSubmit}> */}
+          <TableBox />
+          {/* </If> */}
       </div>
     )
   }

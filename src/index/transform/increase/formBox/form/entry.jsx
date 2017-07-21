@@ -1,12 +1,17 @@
-import $ from 'jquery';
 import React from 'react';
 import moment from 'moment';
 import { Modal, Form, Input, Radio, DatePicker, Select, Button, message} from 'antd';
 import { connect } from 'react-redux';
+import Store from '../../../../../store';
 
+import MainBusiness from './mainBusiness';
+import BuyerBriefIntro from './buyerBriefIntro';
 import BuyerinfoSection from './buyerinfoSec/entry';
 import ProjectSection from './projectSec/entry';
 import DealinfoSection from './dealinfoSec/entry';
+
+import { updateObj } from '../../../util/updateFieldValue';
+import { fillBasicToForm } from '../../../util/fillJsonToForm';
 
 require('./style.scss');
 
@@ -22,36 +27,48 @@ const CollectionForm = React.createClass({
     let {
       form,
       submitData,
-      dispatchIncreaseFormCreated,
       dispatchIncreaseFormCalcResult
     } = this.props;
-    form.validateFields((err, values) => {
-      if (err) {
-        return;
-      }
 
-      submitData["type"] = "increase";
+    /* form.validateFields((err, values) => {
+     *   if (err) {
+     *     return;
+     *   }*/
 
-      console.log(submitData); debugger;
-      /* create successfully*/
+      submitData["type"] = "pp";
+
+      console.log(submitData);
+
       $.ajax({
         type: 'POST',
         url: 'api/increase',
         contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(submitData), //values need to be processed,
         success: retData => {
-          dispatchIncreaseFormCalcResult(retData);
-          console.log(retData);
-          /* fetch new data after upload the form*/
-          /* should be a get request*/
-          form.resetFields();
-          dispatchIncreaseFormCreated(retData);
-          message.success('提交成功！')
+          if(!!retData.status && !!retData.data && !!retData.data.data){
+            dispatchIncreaseFormCalcResult(retData.data.data);
+            message.success('提交成功！');
+          }
         }
       })
-    });
+   // });
   },
+  componentWillMount(){
+    let {
+      form
+    } = this.props;
 
+    Store.subscribe(() => {
+      let state = Store.getState();
+      if(state.type === 'increaseSubmittedDataArrived'){
+        fillBasicToForm({
+          form: form,
+          data: state.increaseForm.submitData
+        })
+      }
+    })
+
+  },
   render(){
     let { form, dispatchSaveMergerForm } = this.props;
 
@@ -108,8 +125,13 @@ const CollectionForm = React.createClass({
           })(<Input />)}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="本次定增事件是否热门">
-          {getFieldDecorator('本次定增是否热门', {
+        <FormItem {...formItemLayout} label="父进程日期">
+          {getFieldDecorator('父进程日期', {
+          })(<DatePicker />)}
+        </FormItem>
+
+        <FormItem {...formItemLayout} label="是否只有标题">
+          {getFieldDecorator('是否只有标题', {
           })(
              <RadioGroup>
                <Radio value={true}>是</Radio>
@@ -118,18 +140,37 @@ const CollectionForm = React.createClass({
            )}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="定增前主营业务">
-          {getFieldDecorator('定增前主营业务', {
+        <FormItem {...formItemLayout} label="链接">
+          {getFieldDecorator('链接', {
 
           })(<Input />)}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="定增后主营业务">
-          {getFieldDecorator('定增后主营业务', {
+        <FormItem {...formItemLayout} label="本次定增事件是否热门">
+          {getFieldDecorator('项目是否热门', {
+          })(
+             <RadioGroup>
+               <Radio value={true}>是</Radio>
+               <Radio value={false}>否</Radio>
+             </RadioGroup>
+           )}
+        </FormItem>
+
+
+        <FormItem {...formItemLayout} label="股权变化备注">
+          {getFieldDecorator('股权变化备注', {
 
           })(<Input />)}
         </FormItem>
 
+        <FormItem {...formItemLayout} label="募投项目概念">
+          {getFieldDecorator('募投项目概念', {
+
+          })(<Input />)}
+        </FormItem>
+
+        <MainBusiness />
+        <BuyerBriefIntro />
 
         <DealinfoSection />
         <BuyerinfoSection />
@@ -150,13 +191,11 @@ const WrappedCollectionForm = Form.create({
       return;
     }
 
-    let {name, value} = changedFields[Object.keys(changedFields)[0]];
-
-    if(!!value && !!value.format){
-      value = value.format('YYYY/MM/DD');
-    }
-
-    tmpIncreaseFormData[name] = value;
+    tmpIncreaseFormData = updateObj({
+      props: props,
+      changedFields: changedFields,
+      tmpData: tmpIncreaseFormData
+    });
 
     Object.assign(props.submitData, tmpIncreaseFormData);
 
@@ -179,12 +218,13 @@ function mapDispatchToProps(dispatch) {
      *   })
      * }*/
 
-    dispatchIncreaseFormCreated: retData => {
-      return dispatch({type: 'createIncreaseForm', retData: retData})
-    },
+    /* dispatchIncreaseFormCreated: retData => {
+     *   return dispatch({type: 'createIncreaseForm', retData: retData})
+     * },*/
     dispatchIncreaseFormCalcResult: result => {
-      return dispatch({type: 'calcIncreaseResultReceived', result: result})
+      return dispatch({type: 'increaseCalcResultReceived', result: result})
     }
+
   }
 }
 

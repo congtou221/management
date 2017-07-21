@@ -3,6 +3,9 @@ import { Form, Input,InputNumber, Radio } from 'antd';
 
 import { connect } from 'react-redux';
 import EventProperty from './eventProperty';
+import Store from '../../../../../../store';
+import { fillDealToForm } from '../../../../util/fillJsonToForm';
+import { updateObj } from '../../../../util/updateFieldValue';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -12,7 +15,24 @@ require('./style.scss');
 let tmpDealinfoData = {};
 
 const DealInfo = React.createClass({
+  componentDidMount(){
+    let {
+      form
+    } = this.props;
 
+    Store.subscribe(() => {
+      let state = Store.getState();
+
+      if(state.type === 'mergerSubmittedDataArrived'){
+        let submitData = state.mergerForm.submitData;
+        let dealinfo = submitData["交易信息"];
+
+        let newData = dealinfo;
+
+        form.setFieldsValue(newData);
+      }
+    })
+  },
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -63,9 +83,15 @@ const DealInfo = React.createClass({
 
 const WrappedDealInfo = Form.create({
   onFieldsChange(props, changedFields){
-    let {name, value} = changedFields[Object.keys(changedFields)[0]];
+    if($.isEmptyObject(changedFields)){
+      return;
+    }
 
-    tmpDealinfoData[name] = value;
+    tmpDealinfoData = updateObj({
+      props: props,
+      changedFields: changedFields,
+      tmpData: tmpDealinfoData
+    })
 
     props.submitData["交易信息"] = tmpDealinfoData;
 

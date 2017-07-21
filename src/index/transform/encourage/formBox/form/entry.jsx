@@ -1,6 +1,11 @@
 import React from 'react';
-import { Form, Input, Radio, DatePicker, Button, message, Select} from 'antd';
+import { Form, Input, InputNumber, Radio, DatePicker, Button, message, Select} from 'antd';
 import { connect } from 'react-redux';
+
+import Store from '../../../../../store';
+import { fillBasicToForm } from '../../../util/fillJsonToForm';
+
+import { updateObj } from '../../../util/updateFieldValue';
 
 //import RecruitSection from './recruitSec/entry';
 //import CompanySection from './companySec/entry';
@@ -12,36 +17,60 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
 
+let tmpEncourageFormData = {};
+
 const CollectionForm = React.createClass({
   handleChange() {
 
   },
   handleCreate() {
-    let { form, dispatchEncourageFormCreated } = this.props;
-    form.validateFields((err, values) => {
-      if (err) {
-        return;
-      }
+    let {
+      form,
+      submitData,
+      dispatchEncourageFormCalcResult
+    } = this.props;
 
-      /* create successfully*/
-      $.post({
-        type: 'POST',
-        url: 'api/posts',
-        dataType: 'json',
-        data: {
-          input: JSON.stringify(values) //values need to be processed
-        },
-        success: retData => {
-          /* fetch new data after upload the form*/
-          /* should be a get request*/
-          form.resetFields();
-          dispatchEncourageFormCreated(retData);
-          message.success('提交成功！')
+    /* form.validateFields((err, values) => {
+     *   if (err) {
+     *     return;
+     *   }
+     */
+    submitData["type"] = "jl";
+
+    console.log(submitData);
+
+    $.ajax({
+      type: 'POST',
+      url: 'api/encourage',
+      contentType: 'application/json; charset=UTF-8',
+      data: JSON.stringify(submitData),
+      success: retData => {
+          dispatchEncourageFormCalcResult(retData);
+          message.success('提交成功！');
+
+        if(!!retData.status && !!retData.data && !!retData.data.data){
+          dispatchEncourageFormCalcResult(retData.data.data);
+          message.success('提交成功！');
         }
-      })
-    });
+      }
+    })
+    /* });*/
   },
 
+  componentDidMount(){
+    let { form } = this.props;
+
+    Store.subscribe(() => {
+      let state = Store.getState();
+
+      if(state.type === 'encourageSubmittedDataArrived'){
+        fillBasicToForm({
+          form: form,
+          data: state.encourageForm.submitData
+        })
+      }
+    })
+  },
   render(){
     let { form, dispatchSaveEncourageForm } = this.props;
 
@@ -57,7 +86,7 @@ const CollectionForm = React.createClass({
             layout="horizontal"
             onSubmit={this.handleCreate}>
         <FormItem {...formItemLayout} label="股票代码">
-          {getFieldDecorator('id', {
+          {getFieldDecorator('股票代码', {
              rules: [{
                required: true,
                message: '请输入股票代码！'
@@ -65,19 +94,11 @@ const CollectionForm = React.createClass({
           })(<Input />)}
         </FormItem>
         <FormItem {...formItemLayout} label="公告日期">
-          {getFieldDecorator('date', {
-             rules: [{
-               required: true,
-               message: '请选择公告日期！'
-             }],
+          {getFieldDecorator('公告日期', {
           })(<DatePicker />)}
         </FormItem>
         <FormItem {...formItemLayout} label="进程">
-          {getFieldDecorator('process', {
-             rules: [{
-               required: true,
-               message: '请选择进程！'
-             }],
+          {getFieldDecorator('进程', {
           })(
              <Select
                mode="combobox"
@@ -96,32 +117,54 @@ const CollectionForm = React.createClass({
         </FormItem>
 
         <FormItem {...formItemLayout} label="事件简述">
-          {getFieldDecorator('description', {
+          {getFieldDecorator('事件简述', {
 
           })(<Input />)}
         </FormItem>
 
+        <FormItem {...formItemLayout} label="父进程日期">
+          {getFieldDecorator('父进程日期', {
+          })(<DatePicker />)}
+        </FormItem>
 
-        <FormItem {...formItemLayout} label="股票概念">
-          {getFieldDecorator('shares-concept', {
+        <FormItem {...formItemLayout} label="是否只有标题">
+          {getFieldDecorator('是否只有标题', {
+          })(
+             <RadioGroup>
+               <Radio value={true}>是</Radio>
+               <Radio value={false}>否</Radio>
+             </RadioGroup>
+           )}
+        </FormItem>
+
+        <FormItem {...formItemLayout} label="链接">
+          {getFieldDecorator('链接', {
 
           })(<Input />)}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="授予价">
-          {getFieldDecorator('price', {
+        <FormItem {...formItemLayout} label="概念">
+          {getFieldDecorator('概念', {
 
           })(<Input />)}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="股份数量">
-          {getFieldDecorator('amount', {
+        <div className="price-wrapper">
+          <FormItem {...formItemLayout} label="激励股价">
+            {getFieldDecorator('激励股价', {
 
-          })(<Input />)}
-        </FormItem>
+            })(<InputNumber />)}
+          </FormItem>
 
-        <FormItem {...formItemLayout} label="类型">
-          {getFieldDecorator('type', {
+          <FormItem {...formItemLayout} label="激励股份数量">
+            {getFieldDecorator('激励股份数量', {
+
+            })(<InputNumber />)}
+          </FormItem>
+        </div>
+
+        <FormItem {...formItemLayout} label="激励类型">
+          {getFieldDecorator('激励类型', {
           })(
              <RadioGroup>
                <Radio value="限制性股票激励">限制性股票激励</Radio>
@@ -131,12 +174,8 @@ const CollectionForm = React.createClass({
         </FormItem>
 
         <FormItem {...formItemLayout} label="基准年">
-          {getFieldDecorator('basedate', {
-             rules: [{
-               required: true,
-               message: '请选择基准年！'
-             }],
-          })(<DatePicker />)}
+          {getFieldDecorator('基准年', {
+           })(<InputNumber />)}
         </FormItem>
 
         <UnlockSection />
@@ -150,12 +189,26 @@ const CollectionForm = React.createClass({
 
 })
 
-const WrappedCollectionForm = Form.create()(CollectionForm);
+const WrappedCollectionForm = Form.create({
+  onFieldsChange(props, changedFields){
+    if($.isEmptyObject(changedFields)){
+      return;
+    }
+
+    tmpEncourageFormData = updateObj({
+      props: props,
+      changedFields: changedFields,
+      tmpData: tmpEncourageFormData
+    });
+
+    Object.assign(props.submitData, tmpEncourageFormData);
+  }
+})(CollectionForm);
 
  function mapStateToProps(state) {
 
    return {
-
+     submitData: state.encourageForm.submitData
    }
  }
 
@@ -169,6 +222,12 @@ function mapDispatchToProps(dispatch) {
       * }*/
      dispatchEncourageFormCreated: retData => {
        return dispatch({type: 'createEncourageForm', retData: retData})
+     },
+     dispatchEncourageFormCalcResult: result => {
+       return dispatch({
+         type: 'encourageCalcResultReceived',
+         result: result
+       })
      }
     }
   }

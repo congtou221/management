@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import If from '../../common/if';
-import TableBox from './tableBox/entry';
+import TableBox from '../common/resultBox/entry';
 // import ButtonBox from './buttonBox/entry';
 import UploadBox from '../common/uploadBox/entry';
 import FormBox from './formBox/entry';
@@ -17,9 +17,9 @@ const UploadContainer = React.createClass({
         <UploadBox />
         <FormBox />
 
-        <If when={isSubmit}>
+        {/* <If when={isSubmit}> */}
           <TableBox dataSource={retData}/>
-        </If>
+          {/* </If> */}
       </div>
     )
   }

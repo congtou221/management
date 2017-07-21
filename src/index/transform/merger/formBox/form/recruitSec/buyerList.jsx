@@ -1,11 +1,14 @@
 import React from 'react';
-import { Form, Input, InputNumber, Button, Icon, Select } from 'antd';
+import { Form, Input, InputNumber, Button, Icon, Select, Radio } from 'antd';
 import { connect } from 'react-redux';
+import Store from '../../../../../../store';
+import { fillVariableArrToForm } from '../../../../util/fillJsonToForm';
+import { updateArray } from '../../../../util/updateFieldValue';
 
 require('./buyerList.scss');
 
 const FormItem = Form.Item;
-const Option = Select.Option;
+const RadioGroup = Radio.Group;
 
 let uuid = 0;
 let tmpBuyerlistData = [];
@@ -50,6 +53,27 @@ const BuyerList = React.createClass({
     });
   },
 
+  componentDidMount(){
+    let {
+      form
+    } = this.props;
+
+    Store.subscribe(() => {
+      let state = Store.getState();
+
+      if(state.type === 'mergerSubmittedDataArrived'){
+        let submitData = state.mergerForm.submitData;
+        let buyers = submitData["交易信息"]["配募"]["配募方"];
+
+        fillVariableArrToForm({
+          form: form,
+          data: buyers,
+          keyname: 'buyerKeys'
+        });
+      }
+    })
+
+  },
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -96,18 +120,12 @@ const BuyerList = React.createClass({
           </FormItem>
           <FormItem {...formItemLayout} label="是否大股东/关联方">
             {getFieldDecorator(`关联方-${key}`, {
-               initialValue: 'notRelated'
+               initialValue: "true"
             })(
-               <Select
-                 showSearch
-                 style={{ width: 200 }}
-                 optionFilterProp="children"
-                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                 >
-                 <Option value="true">大股东</Option>
-                 <Option value="true">关联方</Option>
-                 <Option value="false">不是大股东/关联方</Option>
-               </Select>
+              <RadioGroup>
+                <Radio value={true}>是</Radio>
+                <Radio value={false}>否</Radio>
+              </RadioGroup>
              )}
           </FormItem>
 
@@ -156,51 +174,16 @@ function mapDispatchToProps(dispatch){
 
 const WrappedBuyerList = Form.create({
   onFieldsChange(props, changedFields) {
-
-    let changeItem = Object.keys(changedFields)[0];
-
-    if(changeItem === 'buyerKeys'){
-      let changedArr = changedFields[changeItem].value;
-
-      let filtered = tmpBuyerlistData.filter((value) => {
-        if(!value.key){
-          return false;
-        }
-        if(changedArr.indexOf(value.key) > -1){
-          return true;
-        }
-        return false;
-
-      })
-
-      let newArr = changedArr.map((key, index) => {
-        if(filtered.indexOf(key) < 0){
-          return {key : key}
-        }
-        return tmpBuyerlistData.find((item) => {
-          return item.key == key;
-        })
-      })
-
-      tmpBuyerlistData = newArr;
-
-    } else {
-
-      let {name, value} = changedFields[changeItem];
-      let index = name.slice(-1);
-      let nameWithoutIndex = name.slice(0, -2);
-
-      let tmpArr = tmpBuyerlistData;
-
-      tmpBuyerlistData = tmpArr.map((item) => {
-        if(item.key == +index){
-          item[nameWithoutIndex] = value;
-          return item;
-        }
-        return item;
-      })
-
+    if($.isEmptyObject(changedFields)){
+      return;
     }
+
+    tmpBuyerlistData = updateArray({
+      props: props,
+      changedFields: changedFields,
+      addKey: 'buyerKeys',
+      tmpData: tmpBuyerlistData
+    })
 
     if(typeof props.submitData["交易信息"] == "undefined" ){
       props.submitData["交易信息"] = {};

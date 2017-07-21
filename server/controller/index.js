@@ -13,11 +13,11 @@ router.get('/', function(req, res, next){
     url: 'http://localhost:3003/test'
   }, function(error, response, body){
 
-    let obj = JSON.parse(body);
-    let data = obj.status;
+  //  let obj = JSON.parse(body);
+//    let data = obj.status;
 
     res.render('index', {
-      status: data
+      status: ''
     });
   })
 

@@ -47,6 +47,9 @@ var config = {
     new webpack.DllReferencePlugin({
       context: __dirname,
       manifest: require('./production.manifest.json')
+    }),
+    new webpack.ProvidePlugin({
+      $: "jquery"
     })
   ]
 }

@@ -4,9 +4,8 @@ import { Form, Input } from 'antd';
 import { connect } from 'react-redux';
 
 import Store from '../../../../../store';
-import { updateObj } from '../../../util/updateFieldValue';
 
-require('./buyerBriefIntro.scss');
+
 
 const FormItem = Form.Item;
 
@@ -22,11 +21,10 @@ const BriefIntro = React.createClass({
     Store.subscribe(() => {
       let state = Store.getState();
 
-
-      if(state.type === 'mergerSubmittedDataArrived' ){
+      if(state.type === 'increaseSubmittedDataArrived' ){
         let newData = (() => {
-          let submitData = state.mergerForm.submitData;
-          let buyers = submitData["收购方股东简称"];
+          let submitData = state.increaseForm.submitData;
+          let buyers = submitData["股东简称"];
 
           if(!Array.isArray(buyers)){
             return;
@@ -34,7 +32,7 @@ const BriefIntro = React.createClass({
 
           return buyers.reduce((prev, cur, index) => {
 
-            prev[`收购方股东简称-${index + 1}`] = cur;
+            prev[`股东简称-${index + 1}`] = cur;
 
             return prev;
           }, {})
@@ -57,36 +55,36 @@ const BriefIntro = React.createClass({
 
     return (
       <div className="briefintro-wrapper">
-        收购方股东简称
-        <FormItem {...formItemLayout} label="收购方1">
-          {getFieldDecorator('收购方股东简称-1', {
+        股东简称
+        <FormItem {...formItemLayout} label="股东1">
+          {getFieldDecorator('股东简称-1', {
           })(
             <Input />
            )}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="收购方2">
-          {getFieldDecorator('收购方股东简称-2', {
+        <FormItem {...formItemLayout} label="股东2">
+          {getFieldDecorator('股东简称-2', {
           })(
              <Input />
            )}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="收购方3">
-          {getFieldDecorator('收购方股东简称-3', {
+        <FormItem {...formItemLayout} label="股东3">
+          {getFieldDecorator('股东简称-3', {
           })(
              <Input />
            )}
         </FormItem>
 
-        <FormItem {...formItemLayout} label="收购方4">
-          {getFieldDecorator('收购方股东简称-4', {
+        <FormItem {...formItemLayout} label="股东4">
+          {getFieldDecorator('股东简称-4', {
           })(
              <Input />
            )}
         </FormItem>
-        <FormItem {...formItemLayout} label="收购方5">
-          {getFieldDecorator('收购方股东简称-5', {
+        <FormItem {...formItemLayout} label="股东5">
+          {getFieldDecorator('股东简称-5', {
           })(
              <Input />
            )}
@@ -103,22 +101,21 @@ const WrappedBriefIntro = Form.create({
       return;
     }
 
-    /* 收购方股东简称待修改*/
     /* 注意：在提交数据后，需要把tmpBriefIntroData置空
      *   tmpBriefIntroData = [];
      */
     let {name, value} = changedFields[Object.keys(changedFields)[0]];
 
-    tmpBriefIntroData[+name.slice(-1)] = value;
+    tmpBriefIntroData.push(value);
 
-    props.submitData["收购方股东简称"] = tmpBriefIntroData;
+    props.submitData["股东简称"] = tmpBriefIntroData.slice(0, 5);
 
   }
 })(BriefIntro)
 
 function mapStateToProps(state) {
   return {
-    submitData: state.mergerForm.submitData
+    submitData: state.increaseForm.submitData
   }
 }
 

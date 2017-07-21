@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Radio } from 'antd';
 
 import { connect } from 'react-redux';
+import Store from '../../../../../../store';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -10,7 +11,26 @@ const RadioGroup = Radio.Group;
 let tmpEventpropData = {};
 
 const EventProperty = React.createClass({
+  componentDidMount(){
+    let {
+      form
+    } = this.props;
 
+    Store.subscribe(() => {
+      let state = Store.getState();
+
+      if(state.type === 'mergerSubmittedDataArrived'){
+        let submitData = state.mergerForm.submitData;
+        let eventprops = submitData["交易信息"]["事件性质"];
+
+        let newData = eventprops;
+
+        form.setFieldsValue(newData);
+      }
+
+
+    })
+  },
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -49,6 +69,10 @@ const EventProperty = React.createClass({
 
 const WrappedEventProperty = Form.create({
   onFieldsChange(props, changedFields){
+    if($.isEmptyObject(changedFields)){
+      return;
+    }
+
     let {name, value} = changedFields[Object.keys(changedFields)[0]];
 
     tmpEventpropData[name] = value;

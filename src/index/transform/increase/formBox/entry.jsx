@@ -10,6 +10,28 @@ require('./style.scss');
 
 const CollectionsPage = React.createClass({
 
+  fillForm() {
+    let {
+      dispatchIncreaseSubmittedDataArrived
+    } = this.props;
+
+    $.ajax({
+      type: 'GET',
+      url: 'api/increase/input',
+      contentType: 'application/json; charset=UTF-8',
+      data: {
+        type: 'increase'
+      },
+      success: retData => {
+        /* 将获取到的历史json存入store*/
+        if(!!retData.status && !!retData.data && !!retData.data.data){
+          dispatchIncreaseSubmittedDataArrived(retData.data.data);
+        }
+
+      }
+    })
+
+  },
   render() {
     let {
       visible,
@@ -18,6 +40,7 @@ const CollectionsPage = React.createClass({
     return (
       <div className="increase-form-wrapper">
         <Button onClick={dispatchShowModal}>录入定增数据</Button>
+        <Button onClick={this.fillForm} style={{marginLeft: 10}}>将JSON数据填入表单</Button>
         <If when={visible}>
           <CollectionCreateForm />
         </If>
@@ -36,6 +59,9 @@ function mapDispatchToProps(dispatch) {
   return {
     dispatchShowModal: () => {
       return dispatch({type: 'showIncreaseForm'})
+    },
+    dispatchIncreaseSubmittedDataArrived: submittedData => {
+      return dispatch({type: 'increaseSubmittedDataArrived', submitted: submittedData})
     }
   }
 }

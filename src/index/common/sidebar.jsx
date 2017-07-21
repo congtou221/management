@@ -13,7 +13,6 @@ export default React.createClass({
         <Menu
           mode="inline"
           defaultOpenKeys={['upload']}
-          defaultSelectedKeys={['1']}
           style={{ height: "100%", borderRight: "0" }} >
           <SubMenu key="upload" title={<span>上传数据</span>}>
             <Item key="1">

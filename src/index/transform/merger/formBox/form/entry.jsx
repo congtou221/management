@@ -3,6 +3,9 @@ import React from 'react';
 import moment from 'moment';
 import { Modal, Form, Input, Radio, DatePicker, Select, Button, message, Icon} from 'antd';
 import { connect } from 'react-redux';
+import Store from '../../../../../store';
+import { fillBasicToForm } from '../../../util/fillJsonToForm'
+import { updateObj } from '../../../util/updateFieldValue';
 
 import BuyerBriefIntro from './buyerBriefIntro';
 import RecruitSection from './recruitSec/entry';
@@ -23,7 +26,6 @@ const CollectionForm = React.createClass({
     let {
       form,
       submitData,
-      dispatchMergerFormSubmited,
       dispatchMergerFormCalcResult
     } = this.props;
 
@@ -33,7 +35,9 @@ const CollectionForm = React.createClass({
       }
       submitData["type"] = "merge";
 
+      /* 提交代码的时候记得重置submitData的值*/
       console.log(submitData); debugger;
+
       let newData = Object.assign(values, submitData);
       /* 将本组件内的数据，用来进行post请求；
        * 与此同时，更新store里的mergerForm.submitData*/
@@ -46,19 +50,32 @@ const CollectionForm = React.createClass({
         contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(submitData),
         success: retData => {
-          dispatchMergerFormCalcResult(retData);
-          console.log(retData);debugger;
-          /* fetch new data after upload the form*/
-          /* should be a get request*/
-          form.resetFields();
-          dispatchMergerFormSubmited(retData);
-          message.success('提交成功！')
+          if(!!retData.status && !!retData.data && !!retData.data.data){
+            dispatchMergerFormCalcResult(retData.data.data);
 
+            message.success('提交成功！')
+          }
         }
       })
     });
   },
 
+  componentDidMount(){
+    let {
+      form
+    } = this.props;
+
+    Store.subscribe(() => {
+      let state = Store.getState();
+      if(state.type === 'mergerSubmittedDataArrived'){
+        fillBasicToForm({
+          form: form,
+          data: state.mergerForm.submitData
+        })
+      }
+    })
+
+  },
   render(){
     let { form, dispatchSaveMergerForm } = this.props;
 
@@ -192,13 +209,11 @@ const WrappedCollectionForm = Form.create({
       return;
     }
 
-    let {name, value} = changedFields[Object.keys(changedFields)[0]];
-
-    if(!!value && !!value.format){
-      value = value.format('YYYY/MM/DD')
-    }
-
-    tmpMergerFormData[name] = value;
+    tmpMergerFormData = updateObj({
+      props: props,
+      changedFields: changedFields,
+      tmpData: tmpMergerFormData
+    });
 
     Object.assign(props.submitData, tmpMergerFormData);
 
@@ -220,15 +235,19 @@ function mapDispatchToProps(dispatch) {
       *     form: form
       *   })
       * }*/
-     dispatchMergerFormSubmited: retData => {
-       return dispatch({type: 'createMergerForm', retData: retData})
+     dispatchMergerFormSubmited: () => {
+       return dispatch({type: 'mergerFormSubmited'})
      },
-     dispatchMergerFormChanged: values => {
-       return dispatch({type: 'updateMergerFormData', values: values})
-     },
+     /* dispatchMergerFormChanged: values => {
+      *   return dispatch({type: 'updateMergerFormData', values: values})
+      * },*/
+
      dispatchMergerFormCalcResult: result => {
-       return dispatch({type: 'calcResultReceived', result: result})
-     }
+       return dispatch({type: 'mergerCalcResultReceived', result: result})
+     },
+     /* dispatchMergerSubmittedDataArrived: submitData => {
+      *   return dispatch({type: 'mergerSubmittedDataArrived', submitData: submitData})
+      * }*/
     }
   }
 

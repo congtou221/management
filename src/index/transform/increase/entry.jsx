@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React from 'react';
 import {connect} from 'react-redux';
 
@@ -11,15 +10,15 @@ const submitAction = { type: 'submit' };
 
 const UploadContainer = React.createClass({
   render() {
-    const {isSubmit, retData, receivedData} = this.props;
+    const {isSubmit, retData} = this.props;
     return(
       <div id="upload-increase-container">
         <UploadBox />
         <FormBox />
 
-        <If when={isSubmit}>
-          <TableBox dataSource={retData}/>
-        </If>
+        {/* <If when={isSubmit}> */}
+          <TableBox />
+          {/* </If> */}
       </div>
     )
   }
@@ -28,8 +27,8 @@ const UploadContainer = React.createClass({
 // Map Redux state to component props
 function mapStateToProps(state) {
   return {
-    isSubmit: state.submit,
-    retData: state.retData
+    isSubmit: state.increaseForm.submit,
+    retData: state.increaseForm.calcResult
   }
 }
 

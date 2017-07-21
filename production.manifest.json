@@ -1135,7 +1135,6 @@
     "./node_modules/_react-router@2.8.1@react-router/lib/browserHistory.js": 1133,
     "./node_modules/_history@2.1.2@history/lib/createBrowserHistory.js": 1134,
     "./node_modules/_react-router@2.8.1@react-router/lib/createRouterHistory.js": 1135,
-    "./node_modules/_react-router@2.8.1@react-router/lib/hashHistory.js": 1136,
-    "./node_modules/_jquery@3.2.1@jquery/dist/jquery.js": 1137
+    "./node_modules/_react-router@2.8.1@react-router/lib/hashHistory.js": 1136
   }
 }

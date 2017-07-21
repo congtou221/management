@@ -31,7 +31,7 @@ if(process.env.NODE_ENV == 'local') {
 
   app.use('/api', proxy('http://localhost:3003'));
 } else {
-  app.use('/api', proxy('https://beta.joudou.com'));
+  app.use('/api', proxy('http://localhost:3003'));
 }
 
 if(process.env.NODE_ENV == 'local') {

@@ -1,6 +1,9 @@
 import React from 'react';
 import { Form, Input, InputNumber, Button, Icon } from 'antd';
 import { connect } from 'react-redux';
+import Store from '../../../../../../store';
+import { updateArray } from '../../../../util/updateFieldValue';
+import { fillVariableArrToForm } from '../../../../util/fillJsonToForm';
 
 require('./style.scss');
 
@@ -35,6 +38,21 @@ const ProjectSection = React.createClass({
     });
   },
 
+  componentDidMount(){
+    let { form } = this.props;
+
+    Store.subscribe(() => {
+      let state = Store.getState();
+
+      if(state.type === 'increaseSubmittedDataArrived'){
+        fillVariableArrToForm({
+          form: form,
+          data: state.increaseForm.submitData["募投项目"],
+          keyname: 'projectKeys'
+        })
+      }
+    })
+  },
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -55,18 +73,13 @@ const ProjectSection = React.createClass({
             onClick={() => this.remove(key)}
           />
           <FormItem {...formItemLayout} label="项目名称">
-            {getFieldDecorator(`项目名称-${key}`)(
+            {getFieldDecorator(`名称-${key}`)(
                <Input />
              )}
           </FormItem>
-          <FormItem {...formItemLayout} label="投资金额">
-            {getFieldDecorator(`投资金额-${key}`)(
+          <FormItem {...formItemLayout} label="募投金额">
+            {getFieldDecorator(`募投金额-${key}`)(
                <InputNumber />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="建设期">
-            {getFieldDecorator(`建设期-${key}`)(
-               <Input />
              )}
           </FormItem>
 
@@ -74,33 +87,39 @@ const ProjectSection = React.createClass({
             利润数值
             <div className="profile-data-1">
               <FormItem {...formItemLayout} label="项目总利润">
-                {getFieldDecorator(`profile-${key}-sum`)(
+                {getFieldDecorator(`项目总利润-${key}`)(
                    <InputNumber />
                  )}
               </FormItem>
-              <FormItem {...formItemLayout} label="年均利润总和">
-                {getFieldDecorator(`profile-${key}-average-sum`)(
+              <FormItem {...formItemLayout} label="年均利润总额">
+                {getFieldDecorator(`年均利润总额-${key}`)(
                    <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="年均净利润">
-                {getFieldDecorator(`profile-${key}-average-net`)(
+                {getFieldDecorator(`年均净利润-${key}`)(
                    <InputNumber />
                  )}
               </FormItem>
             </div>
 
             <div className="profile-data-2">
+              <FormItem {...formItemLayout} label="建设期">
+                {getFieldDecorator(`建设期-${key}`)(
+                   <InputNumber />
+                 )}
+              </FormItem>
+
               <FormItem {...formItemLayout} label="回收期">
-                {getFieldDecorator(`project-${key}-recover`)(
-                   <Input />
+                {getFieldDecorator(`回收期-${key}`)(
+                   <InputNumber />
                  )}
               </FormItem>
             </div>
             <div className="profile-data-3">
               <FormItem {...formItemLayout} label="内部收益率">
-                {getFieldDecorator(`project-${key}-inside`)(
-                   <Input />
+                {getFieldDecorator(`内部收益率-${key}`)(
+                   <InputNumber />
                  )}
               </FormItem>
             </div>
@@ -146,53 +165,18 @@ function mapDispatchToProps(dispatch){
 
 const WrappedProjectSection = Form.create({
   onFieldsChange(props, changedFields) {
-
-    let changeItem = Object.keys(changedFields)[0];
-
-    if(changeItem === 'projectKeys'){
-      let changedArr = changedFields[changeItem].value;
-
-      let filtered = tmpProjectData.filter((value) => {
-        if(!value.key){
-          return false;
-        }
-        if(changedArr.indexOf(value.key) > -1){
-          return true;
-        }
-        return false;
-
-      })
-
-      let newArr = changedArr.map((key, index) => {
-        if(filtered.indexOf(key) < 0){
-          return {key : key}
-        }
-        return tmpProjectData.find((item) => {
-          return item.key == key;
-        })
-      })
-
-      tmpProjectData = newArr;
-
-    } else {
-
-      let {name, value} = changedFields[changeItem];
-      let index = name.slice(-1);
-      let nameWithoutIndex = name.slice(0, -2);
-
-      let tmpArr = tmpProjectData;
-
-      tmpProjectData= tmpArr.map((item) => {
-        if(item.key == +index){
-          item[nameWithoutIndex] = value;
-          return item;
-        }
-        return item;
-      })
-
+    if($.isEmptyObject(changedFields)){
+      return;
     }
 
-    props.submitData["项目"] = tmpProjectData;
+
+    tmpProjectData = updateArray({
+      props: props,
+      changedFields: changedFields,
+      addKey: 'projectKeys',
+      tmpData: tmpProjectData
+    })
+    props.submitData["募投项目"] = tmpProjectData;
 
   }
 })(ProjectSection);

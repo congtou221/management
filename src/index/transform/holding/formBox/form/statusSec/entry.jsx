@@ -1,6 +1,10 @@
 import React from 'react';
-import { Form, Radio, Input, Button, Icon, Select} from 'antd';
+import { Form, Radio, Input, InputNumber, Button, Icon, Select} from 'antd';
 import { connect } from 'react-redux';
+
+import Store from '../../../../../../store';
+import { updateObj } from '../../../../util/updateFieldValue';
+import { fillBasicToForm } from '../../../../util/fillJsonToForm';
 
 import If from '../../../../../common/if';
 
@@ -9,6 +13,8 @@ require('./style.scss');
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
+let tmpSatusData = {};
+
 const StatusSection = React.createClass({
   /*
    *   onRadioChange(e){
@@ -16,7 +22,19 @@ const StatusSection = React.createClass({
    *     dispatchShowRecruitSec(e.target.value);
    *   },
    * */
+  componentDidMount(){
+    let { form } = this.props;
 
+    Store.subscribe(() => {
+      let state = Store.getState();
+      if(state.type === 'holdingSubmittedDataArrived'){
+        fillBasicToForm({
+          form: form,
+          data: state.holdingForm.submitData["增减持"]
+        })
+      }
+    })
+  },
   render(){
     let { form } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
@@ -28,102 +46,101 @@ const StatusSection = React.createClass({
     return (
       <div className="status-sec">
         <FormItem {...formItemLayout} label="增减持状态">
-          {getFieldDecorator('status', {
-            initialValue: 'plan'
+          {getFieldDecorator('增减持状态', {
+            initialValue: '计划'
           })(
              <RadioGroup >
-               <Radio value="plan">计划</Radio>
-               <Radio value="proceed">进展</Radio>
-               <Radio value="finish">结束</Radio>
+               <Radio value="计划">计划</Radio>
+               <Radio value="进展">进展</Radio>
+               <Radio value="结束">结束</Radio>
              </RadioGroup>
            )}
         </FormItem>
 
-        <If when={getFieldValue('status') == 'plan'}>
+        <If when={getFieldValue('增减持状态') == '计划'}>
           <div className="status-detail">
 
             <div className="floor-status-detail">
               <FormItem {...formItemLayout} label="下限成本价">
-                {getFieldDecorator('floor-price')(
-                   <Input />
+                {getFieldDecorator('下限成本价')(
+                   <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="下限股份数量">
-                {getFieldDecorator('floor-amount')(
-                   <Input />
+                {getFieldDecorator('下限股份数量')(
+                   <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="下限金额">
-                {getFieldDecorator('floor-money')(
-                   <Input />
+                {getFieldDecorator('下限金额')(
+                   <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="下限占股比">
-                {getFieldDecorator('floor-precent')(
-                   <Input />
+                {getFieldDecorator('下限占股比')(
+                   <InputNumber />
                  )}
               </FormItem>
             </div>
 
             <div className="ceiling-status-detail">
               <FormItem {...formItemLayout} label="上限成本价">
-                {getFieldDecorator('ceiling-price')(
-                   <Input />
+                {getFieldDecorator('上限成本价')(
+                   <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="上限股份数量">
-                {getFieldDecorator('ceiling-amount')(
-                   <Input />
+                {getFieldDecorator('上限股份数量')(
+                   <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="上限金额">
-                {getFieldDecorator('ceiling-money')(
-                   <Input />
+                {getFieldDecorator('上限金额')(
+                   <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="上限占股比">
-                {getFieldDecorator('ceiling-precent')(
-                   <Input />
+                {getFieldDecorator('上限占股比')(
+                   <InputNumber />
                  )}
               </FormItem>
             </div>
 
           </div>
         </If>
-        <If when={getFieldValue('status') == 'proceed' || getFieldValue('status') == 'finish'}>
+        <If when={getFieldValue('增减持状态') == '进展' || getFieldValue('增减持状态') == '结束'}>
 
           <div className="status-detail">
             <FormItem {...formItemLayout} label="成本价">
-              {getFieldDecorator('floor-price')(
-                 <Input />
+              {getFieldDecorator('成本价')(
+                 <InputNumber />
                )}
             </FormItem>
             <FormItem {...formItemLayout} label="股份数量">
-              {getFieldDecorator('floor-amount')(
-                 <Input />
+              {getFieldDecorator('股份数量')(
+                 <InputNumber />
                )}
             </FormItem>
             <FormItem {...formItemLayout} label="金额">
-              {getFieldDecorator('floor-money')(
-                 <Input />
+              {getFieldDecorator('金额')(
+                 <InputNumber />
                )}
             </FormItem>
             <FormItem {...formItemLayout} label="占股比">
-              {getFieldDecorator('floor-precent')(
-                 <Input />
+              {getFieldDecorator('占股比')(
+                 <InputNumber />
                )}
             </FormItem>
           </div>
 
         </If>
       </div>
-    )
-  }
+    )  }
 })
 
 function mapStateToProps(state) {
   return {
-
+    submitData: state.holdingForm.submitData
   }
 }
 
@@ -133,7 +150,21 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-const WrappedStatusSection = Form.create()(StatusSection);
+const WrappedStatusSection = Form.create({
+  onFieldsChange(props, changedFields){
+    if($.isEmptyObject(changedFields)){
+      return;
+    }
+
+    tmpSatusData = updateObj({
+      props: props,
+      changedFields: changedFields,
+      tmpData: tmpSatusData
+    })
+
+    props.submitData["增减持"] = tmpSatusData;
+  }
+})(StatusSection);
 
 export default connect(
   mapStateToProps,

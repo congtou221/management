@@ -1,9 +1,13 @@
 import React from 'react';
 import { Form, Radio, Input, InputNumber, Button, Icon, Select} from 'antd';
 import { connect } from 'react-redux';
+import { updateObj } from '../../../../util/updateFieldValue';
 
 import BuyerList from './buyerList';
 import If from '../../../../../common/if';
+import Store from '../../../../../../store';
+
+import { fillBasicToForm } from '../../../../util/fillJsonToForm';
 
 require('./style.scss');
 
@@ -19,6 +23,23 @@ const RecruitSection = React.createClass({
     dispatchShowRecruitSec(e.target.value);
   },
 
+  componentDidMount(){
+    let {
+      form
+    } = this.props;
+
+    Store.subscribe(() => {
+      let state = Store.getState();
+
+      if(state.type === 'mergerSubmittedDataArrived'){
+
+        fillBasicToForm({
+          form: form,
+          data: state.mergerForm.submitData["交易信息"]["配募"]
+        })
+      }
+    })
+  },
   render(){
     let { form, showRecruitSec } = this.props;
     let { getFieldDecorator } = form;
@@ -108,9 +129,12 @@ function mapDispatchToProps(dispatch) {
 const WrappedRecruitSection = Form.create({
   onFieldsChange(props, changedFields) {
 
-    let {name, value} = changedFields[Object.keys(changedFields)[0]];
+    tmpRecruitData = updateObj({
+      props: props,
+      changedFields: changedFields,
+      tmpData: tmpRecruitData
+    })
 
-    tmpRecruitData[name] = value;
 
     if(typeof props.submitData["交易信息"] == 'undefined'){
       props.submitData["交易信息"] = {};

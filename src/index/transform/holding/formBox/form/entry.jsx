@@ -2,6 +2,10 @@ import $ from 'jquery';
 import React from 'react';
 import { Modal, Form, Input, Radio, DatePicker, Select, Button, message} from 'antd';
 import { connect } from 'react-redux';
+import Store from '../../../../../store';
+
+import { updateObj } from '../../../util/updateFieldValue';
+import { fillBasicToForm } from '../../../util/fillJsonToForm';
 
 import StatusSection from './statusSec/entry';
 
@@ -11,34 +15,53 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
 
+let tmpHoldingData = {};
+
 const CollectionForm = React.createClass({
 
   handleCreate() {
-    let { form, dispatchHoldingFormCreated } = this.props;
-    form.validateFields((err, values) => {
-      if (err) {
-        return;
-      }
+    let {
+      form,
+      submitData,
+      dispatchHoldingFormCalcResult
+    } = this.props;
+    /* form.validateFields((err, values) => {
+     *   if (err) {
+     *     return;
+     *   }
+     */
 
+    submitData["type"] = "holding";
+
+      console.log(submitData); debugger;
       /* create successfully*/
-      $.post({
+      $.ajax({
         type: 'POST',
-        url: 'api/posts',
-        dataType: 'json',
-        data: {
-          input: JSON.stringify(values) //values need to be processed
-        },
+        url: 'api/holding',
+        contentType: 'application/json; charset=UTF-8',
+        data: JSON.stringify(submitData),
+
         success: retData => {
-          /* fetch new data after upload the form*/
-          /* should be a get request*/
-          form.resetFields();
-          dispatchHoldingFormCreated(retData);
+          console.log(retData); debugger;
+          dispatchHoldingFormCalcResult(retData);
           message.success('提交成功！')
         }
       })
-    });
+    /* });*/
   },
+  componentDidMount(){
+    let { form } = this.props;
 
+    Store.subscribe(() => {
+      let state = Store.getState();
+      if(state.type === 'holdingSubmittedDataArrived'){
+        fillBasicToForm({
+          form: form,
+          data: state.holdingForm.submitData
+        })
+      }
+    })
+  },
   render(){
     let { form } = this.props;
 
@@ -54,7 +77,7 @@ const CollectionForm = React.createClass({
             layout="horizontal"
             onSubmit={this.handleCreate}>
         <FormItem {...formItemLayout} label="股票代码">
-          {getFieldDecorator('id', {
+          {getFieldDecorator('股票代码', {
              rules: [{
                required: true,
                message: '请输入股票代码！'
@@ -62,21 +85,13 @@ const CollectionForm = React.createClass({
           })(<Input />)}
         </FormItem>
         <FormItem {...formItemLayout} label="公告日期">
-          {getFieldDecorator('date', {
-             rules: [{
-               required: true,
-               message: '请选择公告日期！'
-             }],
+          {getFieldDecorator('公告日期', {
           })(<DatePicker />)}
         </FormItem>
 
 
         <FormItem {...formItemLayout} label="进程">
-          {getFieldDecorator('process', {
-             rules: [{
-               required: true,
-               message: '请选择进程！'
-             }],
+          {getFieldDecorator('进程', {
           })(
              <Select
                mode="combobox"
@@ -99,22 +114,18 @@ const CollectionForm = React.createClass({
         </FormItem>
 
         <FormItem {...formItemLayout} label="事件简述">
-          {getFieldDecorator('description', {
+          {getFieldDecorator('事件简述', {
 
           })(<Input />)}
         </FormItem>
 
         <FormItem {...formItemLayout} label="计划公告日">
-          {getFieldDecorator('plandate', {
-             rules: [{
-               required: true,
-               message: '请选择计划公告日期！'
-             }],
+          {getFieldDecorator('计划公告日', {
           })(<DatePicker />)}
         </FormItem>
 
         <FormItem {...formItemLayout} label="类型">
-          {getFieldDecorator('type', {
+          {getFieldDecorator('类型', {
 
           })(
              <Select>
@@ -129,14 +140,14 @@ const CollectionForm = React.createClass({
         </FormItem>
 
         <FormItem {...formItemLayout} label="股票概念">
-          {getFieldDecorator('concept', {
+          {getFieldDecorator('股票概念', {
 
           })(<Input />)}
         </FormItem>
 
 
         <FormItem {...formItemLayout} label="增减持起始时间">
-          {getFieldDecorator('begain-date', {
+          {getFieldDecorator('增减持起始时间', {
              rules: [{
                required: true,
                message: '请选择增减持起始时间！'
@@ -144,7 +155,7 @@ const CollectionForm = React.createClass({
           })(<DatePicker />)}
         </FormItem>
         <FormItem {...formItemLayout} label="增减持结束时间">
-          {getFieldDecorator('finish-date', {
+          {getFieldDecorator('增减持结束时间', {
              rules: [{
                required: true,
                message: '请选择增减持结束时间！'
@@ -163,12 +174,26 @@ const CollectionForm = React.createClass({
 
 })
 
-const WrappedCollectionForm = Form.create()(CollectionForm);
+const WrappedCollectionForm = Form.create({
+  onFieldsChange(props, changedFields){
+    if($.isEmptyObject(changedFields)){
+      return;
+    }
+
+    tmpHoldingData = updateObj({
+      props: props,
+      changedFields: changedFields,
+      tmpData: tmpHoldingData
+    })
+
+    Object.assign(props.submitData, tmpHoldingData);
+  }
+})(CollectionForm);
 
  function mapStateToProps(state) {
 
    return {
-
+     submitData : state.holdingForm.submitData
    }
  }
 
@@ -180,8 +205,11 @@ function mapDispatchToProps(dispatch) {
       *     form: form
       *   })
       * }*/
-     dispatchHoldingFormCreated: retData => {
-       return dispatch({type: 'createHoldingForm', retData: retData})
+     /* dispatchHoldingFormCreated: retData => {
+      *   return dispatch({type: 'createHoldingForm', retData: retData})
+      * }*/
+     dispatchHoldingFormCalcResult: result => {
+       return dispatch({type: 'holdingCalcResultReceived', result: result})
      }
     }
   }

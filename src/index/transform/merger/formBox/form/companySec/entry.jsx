@@ -9,6 +9,7 @@ import ListedCompany from './listedCompany/entry';
 import UnlistedCompany from './unlistedCompany/entry';
 
 import If from '../../../../../common/if';
+import Store from '../../../../../../store';
 
 require('./style.scss');
 
@@ -48,6 +49,7 @@ const CompanySection = React.createClass({
       key: uuid
     })
 
+
     setFieldsValue({
       companyKeys: companyKeys
     })
@@ -62,6 +64,31 @@ const CompanySection = React.createClass({
       companyKeys: companyKeys.filter(keyObj => keyObj.key !==k )
     })
 
+  },
+  componentDidMount(){
+    /* json回填表单*/
+    let { form } = this.props;
+
+    Store.subscribe(() => {
+      let state = Store.getState();
+
+      if(state.type === 'mergerSubmittedDataArrived'){
+        let submitData = state.mergerForm.submitData;
+        let companys = submitData["被收购公司"];
+
+        let keys = companys.map(item => {
+          return {
+            type: item['上市公司'] ? 'list' : 'unlist',
+            key: item['key']
+          }
+        })
+
+        form.setFieldsValue({
+          companyKeys: keys
+        })
+
+      }
+    })
   },
   render(){
     let { form } = this.props;
@@ -164,7 +191,7 @@ const WrappedCompanySection = Form.create({
     }
 
     props.submitData["被收购公司"] = tmpCompanyData;
-    console.log(props.submitData);
+
   }
 })(CompanySection);
 
