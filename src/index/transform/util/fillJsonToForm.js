@@ -44,6 +44,7 @@ export let fillVariableArrToForm = params => {
   tmpKey[keyname] = keys;
   form.setFieldsValue(tmpKey);
 
+  let r = /^\d{4}\/\d{2}\/\d{2}$/;
 
   // 分别设置每个增加项的表单具体值
   data.map(item => {
@@ -51,7 +52,11 @@ export let fillVariableArrToForm = params => {
     delete item.key;
 
     let newData = Object.keys(item).reduce((prev, cur) => {
-      prev[`${cur}-${key}`] = item[cur];
+      if(r.exec(item[cur])){
+        prev[`${cur}-${key}`] = item[cur] && moment(item[cur]);
+      }else{
+        prev[`${cur}-${key}`] = item[cur];
+      }
 
       return prev;
     }, {});

@@ -1,6 +1,6 @@
 function userReducer(
   state = {
-    isLogin: true,
+    isLogin: false,
     logForm: {
       visible: false,
       form: {}
@@ -26,13 +26,16 @@ function userReducer(
       visible: true,
       form: {},
       submitData: {},
-      calcResult: {}
+      calcResult: {},
+      baseYear:0,
+      submit: false
     },
     holdingForm: {
       visible: true,
       form: {},
-      submitData: {},
-      calcResult: {}
+      submitData: {"记录": [{key: 1}]},
+      calcResult: {},
+      submit: false
     },
     // formBox:{
     //     visible: false,
@@ -44,29 +47,10 @@ function userReducer(
     }
   }, action) {
   switch (action.type) {
-  case 'encourageSubmittedDataArrived':
-    return {
-      type: 'encourageSubmittedDataArrived',
-      isLogin: state.status,
-      logForm: state.logForm,
-      submit: state.submit,
-      retData: state.retData,
-      mergerForm: state.mergerForm,
-      increaseForm: state.increaseForm,
-      encourageForm: {
-        visible: state.encourageForm.visible,
-        form: state.encourageForm.form,
-        submitData: action.submitted,
-        calcResult: state.encourageForm.calcResult
-      },
-      holdingForm: state.holdingForm,
-      historyFormBox: state.historyFormBox
-
-    }
-  case 'encourageCalcResultReceived':
-    return {
-      type: 'encourageCalcResultReceived',
-      isLogin: state.status,
+  case 'encourageBaseYearChanged':
+    return  {
+      type: 'encourageBaseYearChanged',
+      isLogin: state.isLogin,
       logForm: state.logForm,
       submit: state.submit,
       retData: state.retData,
@@ -76,7 +60,51 @@ function userReducer(
         visible: state.encourageForm.visible,
         form: state.encourageForm.form,
         submitData: state.encourageForm.submitData,
-        calcResult: action.result
+        calcResult: state.encourageForm.calcResult,
+        baseYear: action.baseyear,
+        submit: state.encourageForm.submit
+      },
+      holdingForm: state.holdingForm,
+      historyFormBox: state.historyFormBox
+
+    }
+  case 'encourageSubmittedDataArrived':
+    return {
+      type: 'encourageSubmittedDataArrived',
+      isLogin: state.isLogin,
+      logForm: state.logForm,
+      submit: state.submit,
+      retData: state.retData,
+      mergerForm: state.mergerForm,
+      increaseForm: state.increaseForm,
+      encourageForm: {
+        visible: state.encourageForm.visible,
+        form: state.encourageForm.form,
+        submitData: action.submitted,
+        calcResult: state.encourageForm.calcResult,
+        baseYear: state.encourageForm.baseYear,
+        submit: state.encourageForm.submit
+      },
+      holdingForm: state.holdingForm,
+      historyFormBox: state.historyFormBox
+
+    }
+  case 'encourageCalcResultReceived':
+    return {
+      type: 'encourageCalcResultReceived',
+      isLogin: state.isLogin,
+      logForm: state.logForm,
+      submit: state.submit,
+      retData: state.retData,
+      mergerForm: state.mergerForm,
+      increaseForm: state.increaseForm,
+      encourageForm: {
+        visible: state.encourageForm.visible,
+        form: state.encourageForm.form,
+        submitData: state.encourageForm.submitData,
+        calcResult: action.result,
+        baseYear: state.encourageForm.baseYear,
+        submit: true
       },
       holdingForm: state.holdingForm,
       historyFormBox: state.historyFormBox
@@ -85,7 +113,7 @@ function userReducer(
   case 'holdingSubmittedDataArrived':
     return {
       type: 'holdingSubmittedDataArrived',
-      isLogin: state.status,
+      isLogin: state.isLogin,
       logForm: state.logForm,
       submit: state.submit,
       retData: state.retData,
@@ -96,14 +124,15 @@ function userReducer(
         visible: state.holdingForm.visible,
         form: state.holdingForm.form,
         submitData: action.submitted,
-        calcResult: state.holdingForm.calcResult
+        calcResult: state.holdingForm.calcResult,
+        submit: state.holdingForm.submit
       },
       historyFormBox: state.historyFormBox
     }
-  case 'holdingCalcResultReceived':debugger;
+  case 'holdingCalcResultReceived':
     return{
       type: 'holdingCalcResultReceived',
-      isLogin: state.status,
+      isLogin: state.isLogin,
       logForm: state.logForm,
       submit: state.submit,
       retData: state.retData,
@@ -114,7 +143,8 @@ function userReducer(
         visible: state.holdingForm.visible,
         form: state.holdingForm.form,
         submitData: state.holdingForm.submitData,
-        calcResult: action.result
+        calcResult: action.result,
+        submit: state.holdingForm.submit
       },
       historyFormBox: state.historyFormBox
 
@@ -122,7 +152,7 @@ function userReducer(
   case 'increaseSubmittedDataArrived':
     return{
       type: 'increaseSubmittedDataArrived',
-      isLogin: state.status,
+      isLogin: state.isLogin,
       logForm: state.logForm,
       submit: state.submit,
       retData: state.retData,
@@ -142,7 +172,7 @@ function userReducer(
   case 'increaseCalcResultReceived':
     return {
       type: 'increaseCalcResultReceived',
-      isLogin: state.status,
+      isLogin: state.isLogin,
       logForm: {
         form : state.logForm.form,
         visible: state.logForm.visible
@@ -161,11 +191,10 @@ function userReducer(
       holdingForm: state.holdingForm,
       historyFormBox: state.historyFormBox
     }
-
   case 'mergerCalcResultReceived':
     return {
       type: 'mergerCalcResultReceived',
-      isLogin: state.status,
+      isLogin: state.isLogin,
       logForm: {
         form : state.logForm.form,
         visible: state.logForm.visible
@@ -188,7 +217,7 @@ function userReducer(
   case 'mergerSubmittedDataArrived':
     return {
         type: 'mergerSubmittedDataArrived',
-        isLogin: state.status,
+        isLogin: state.isLogin,
         logForm: {
           form : state.logForm.form,
           visible: state.logForm.visible
@@ -209,26 +238,6 @@ function userReducer(
         historyFormBox: state.historyFormBox
 
     }
-    // case 'updateMergerFormData':
-    //   return {
-    //     isLogin: state.status,
-    //     logForm: {
-    //       form : state.logForm.form,
-    //       visible: state.logForm.visible
-    //     },
-    //     submit: state.submit,
-    //     retData: state.retData,
-    //     mergerForm: {
-    //       visible: state.mergerForm.visible,
-    //       form: state.mergerForm.form,
-    //       showRecruitSec: state.mergerForm.showRecruitSec,
-    //       submitData: Object.assign(state.mergerForm.submitData, action.values)
-    //     },
-    //     increaseForm: state.increaseForm,
-    //     encourageForm: state.encourageForm,
-    //     holdingForm: state.holdingForm,
-    //     historyFormBox: state.historyFormBox
-    //   }
     case 'updateLogStatus':
       return {
         isLogin: action.status,
@@ -416,24 +425,6 @@ function userReducer(
         holdingForm: state.holdingForm,
         historyFormBox: state.historyFormBox
       }
-  // case 'createIncreaseForm' :
-  //     return {
-  //       isLogin: state.isLogin,
-  //       logForm: state.logForm,
-  //       submit: true,
-  //       retData: action.retData,
-  //       mergerForm: state.mergerForm,
-  //       increaseForm: {
-  //           visible: true,
-  //           form: state.increaseForm.form,
-  //           submitData: state.increaseForm.submitData,
-  //           calcResult: state.increaseForm.calcResult
-  //       },
-  //       encourageForm: state.encourageForm,
-  //       holdingForm: state.holdingForm,
-  //       historyFormBox: state.historyFormBox
-
-  //     }
     case 'showEncourageForm' :
       return {
         isLogin: state.isLogin,

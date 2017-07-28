@@ -2,11 +2,11 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import If from '../../common/if';
-import TableBox from '../common/resultBox/entry';
+import TableBox from './tableBox/entry';
 // import ButtonBox from './buttonBox/entry';
 import UploadBox from '../common/uploadBox/entry';
 import FormBox from './formBox/entry';
-
+import ReleaseBox from './releaseBox/entry';
 
 const UploadContainer = React.createClass({
   render() {
@@ -18,8 +18,11 @@ const UploadContainer = React.createClass({
         <FormBox />
 
         {/* <If when={isSubmit}> */}
-          <TableBox dataSource={retData}/>
+          <TableBox />
           {/* </If> */}
+          {/* <If when={isSubmit}> */}
+            <ReleaseBox />
+            {/* </If> */}
       </div>
     )
   }

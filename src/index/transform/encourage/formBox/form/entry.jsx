@@ -23,38 +23,96 @@ const CollectionForm = React.createClass({
   handleChange() {
 
   },
+  updateUnlockYear(){
+    let {
+      form,
+      dispatchEncourageFormBaseYear
+    } = this.props;
+    let baseYear = form.getFieldValue('基准年');
+
+    dispatchEncourageFormBaseYear(baseYear);
+
+  },
   handleCreate() {
     let {
       form,
       submitData,
-      dispatchEncourageFormCalcResult
+      dispatchEncourageFormCalcResult,
+      dispatchUpdateLogStatus
     } = this.props;
 
-    /* form.validateFields((err, values) => {
-     *   if (err) {
-     *     return;
-     *   }
-     */
-    submitData["type"] = "jl";
-
-    console.log(submitData);
-
-    $.ajax({
-      type: 'POST',
-      url: 'api/encourage',
-      contentType: 'application/json; charset=UTF-8',
-      data: JSON.stringify(submitData),
-      success: retData => {
-          dispatchEncourageFormCalcResult(retData);
-          message.success('提交成功！');
-
-        if(!!retData.status && !!retData.data && !!retData.data.data){
-          dispatchEncourageFormCalcResult(retData.data.data);
-          message.success('提交成功！');
-        }
+    form.validateFields((err, values) => {
+      if (err) {
+        message.error('数据不完善，请检查输入内容！');
+        return;
       }
-    })
-    /* });*/
+
+      submitData["type"] = "jl";
+
+      let processSubmitData = submitData => {
+        if(!submitData["解锁条件"]){
+          return;
+        }
+
+        let filterUnlockyears = years => {
+          return years.reduce((prev, cur) => {
+            let tmp = prev;
+            if(prev.length > 0 || cur["增长率"] || cur["数值"]){
+              tmp.push(cur);
+            }
+
+            return tmp;
+
+          }, [])
+        }
+
+        let conditions = submitData["解锁条件"].map(condition => {
+          if(!condition["解锁年"]){
+            return condition;
+          }
+
+          let unlockYears = condition["解锁年"];
+          let noHeadYears = filterUnlockyears(unlockYears);
+          let noHeadTailYears = filterUnlockyears(noHeadYears.reverse());
+
+          Object.assign(condition, {"解锁年": noHeadTailYears.reverse()});
+
+          return condition;
+        });
+
+        Object.assign(submitData, {"解锁条件": conditions});
+
+      }
+
+      processSubmitData(submitData);
+
+      $.ajax({
+        type: 'POST',
+        url: 'api/encourage',
+        contentType: 'application/json; charset=UTF-8',
+        data: JSON.stringify(submitData),
+        success: retData => {
+
+          if(!!retData && !retData.islogin){
+            message.error('登录状态已失效，请重新登录！', 2, () => {
+              dispatchUpdateLogStatus(false);
+            });
+            return;
+          }
+
+          if(!!retData.status && !!retData.data && !!retData.data.data){
+            dispatchEncourageFormCalcResult(retData.data.data);
+            message.success('提交成功！');
+            return;
+          }
+
+          message.error('提交失败');
+        },
+        error: err => {
+          message.error('网络错误，请稍后重试！');
+        }
+      })
+    });
   },
 
   componentDidMount(){
@@ -175,7 +233,11 @@ const CollectionForm = React.createClass({
 
         <FormItem {...formItemLayout} label="基准年">
           {getFieldDecorator('基准年', {
-           })(<InputNumber />)}
+          })(
+             <InputNumber
+             onBlur={this.updateUnlockYear}
+             />
+           )}
         </FormItem>
 
         <UnlockSection />
@@ -228,6 +290,15 @@ function mapDispatchToProps(dispatch) {
          type: 'encourageCalcResultReceived',
          result: result
        })
+     },
+     dispatchEncourageFormBaseYear: baseYear => {
+       return dispatch({
+         type: 'encourageBaseYearChanged',
+         baseyear: baseYear
+       })
+     },
+     dispatchUpdateLogStatus: status => {
+       return dispatch({type: 'updateLogStatus', status: status})
      }
     }
   }

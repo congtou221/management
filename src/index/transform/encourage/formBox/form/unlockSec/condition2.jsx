@@ -47,6 +47,7 @@ const UnlockyearList = React.createClass({
 
   componentDidMount(){
     let { form } = this.props;
+    let { getFieldValue } = form;
 
     Store.subscribe(() => {
       let state = Store.getState();
@@ -69,6 +70,16 @@ const UnlockyearList = React.createClass({
           form: form,
           data: conditionData["解锁年"]
         });
+      }
+      if(state.type === 'encourageBaseYearChanged'){
+        let baseYear = state.encourageForm.baseYear;
+        let unlockYearKeys = getFieldValue('unlockyearKeys');
+        let fields = unlockYearKeys.reduce((prev, cur) => {
+          prev[`年份-${cur}`] = baseYear + cur;
+          return prev;
+        }, {})
+
+        form.setFieldsValue(fields);
       }
     })
   },
@@ -106,10 +117,9 @@ const UnlockyearList = React.createClass({
           <FormItem
             className="unlockyear-item-formitem"
             {...formItemLayout}
-            label="解锁年"
+            label="年份"
           >
-            {getFieldDecorator(`解锁年-${key}`, {
-               initialValue: `${new Date().getFullYear() + index}`
+            {getFieldDecorator(`年份-${key}`, {
             })(
                <Input />
              )}
@@ -117,18 +127,18 @@ const UnlockyearList = React.createClass({
           <FormItem
             className="unlockyear-item-formitem"
             {...formItemLayout}
-            label="解锁数值"
+            label="数值"
           >
-            {getFieldDecorator(`解锁数值-${key}`)(
+            {getFieldDecorator(`数值-${key}`)(
                <InputNumber />
              )}
           </FormItem>
           <FormItem
             className="unlockyear-item-formitem"
             {...formItemLayout}
-            label="解锁增长率"
+            label="增长率"
           >
-            {getFieldDecorator(`解锁增长率-${key}`)(
+            {getFieldDecorator(`增长率-${key}`)(
                <InputNumber />
              )}
           </FormItem>

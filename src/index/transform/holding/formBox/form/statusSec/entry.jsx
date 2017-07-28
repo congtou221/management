@@ -16,13 +16,9 @@ const FormItem = Form.Item;
 let tmpSatusData = {};
 
 const StatusSection = React.createClass({
-  /*
-   *   onRadioChange(e){
-   *     let { dispatchShowRecruitSec } = this.props;
-   *     dispatchShowRecruitSec(e.target.value);
-   *   },
-   * */
+
   componentDidMount(){
+
     let { form } = this.props;
 
     Store.subscribe(() => {
@@ -36,17 +32,20 @@ const StatusSection = React.createClass({
     })
   },
   render(){
-    let { form } = this.props;
+    let { form, statusKey } = this.props;
     let { getFieldDecorator, getFieldValue } = form;
 
     const formItemLayout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 8 }
     }
+
+    getFieldDecorator('formItemKey');
+
     return (
-      <div className="status-sec">
+      <div className="status-sec" ref="formItem">
         <FormItem {...formItemLayout} label="增减持状态">
-          {getFieldDecorator('增减持状态', {
+          {getFieldDecorator(`增减持状态-${statusKey}`, {
             initialValue: '计划'
           })(
              <RadioGroup >
@@ -57,27 +56,27 @@ const StatusSection = React.createClass({
            )}
         </FormItem>
 
-        <If when={getFieldValue('增减持状态') == '计划'}>
+        <If when={getFieldValue(`增减持状态-${statusKey}`) == '计划'}>
           <div className="status-detail">
 
             <div className="floor-status-detail">
               <FormItem {...formItemLayout} label="下限成本价">
-                {getFieldDecorator('下限成本价')(
+                {getFieldDecorator(`下限成本价-${statusKey}`)(
                    <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="下限股份数量">
-                {getFieldDecorator('下限股份数量')(
+                {getFieldDecorator(`下限股份数量-${statusKey}`)(
                    <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="下限金额">
-                {getFieldDecorator('下限金额')(
+                {getFieldDecorator(`下限金额-${statusKey}`)(
                    <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="下限占股比">
-                {getFieldDecorator('下限占股比')(
+                {getFieldDecorator(`下限占股比-${statusKey}`)(
                    <InputNumber />
                  )}
               </FormItem>
@@ -85,22 +84,22 @@ const StatusSection = React.createClass({
 
             <div className="ceiling-status-detail">
               <FormItem {...formItemLayout} label="上限成本价">
-                {getFieldDecorator('上限成本价')(
+                {getFieldDecorator(`上限成本价-${statusKey}`)(
                    <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="上限股份数量">
-                {getFieldDecorator('上限股份数量')(
+                {getFieldDecorator(`上限股份数量-${statusKey}`)(
                    <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="上限金额">
-                {getFieldDecorator('上限金额')(
+                {getFieldDecorator(`上限金额-${statusKey}`)(
                    <InputNumber />
                  )}
               </FormItem>
               <FormItem {...formItemLayout} label="上限占股比">
-                {getFieldDecorator('上限占股比')(
+                {getFieldDecorator(`上限占股比-${statusKey}`)(
                    <InputNumber />
                  )}
               </FormItem>
@@ -108,26 +107,26 @@ const StatusSection = React.createClass({
 
           </div>
         </If>
-        <If when={getFieldValue('增减持状态') == '进展' || getFieldValue('增减持状态') == '结束'}>
+        <If when={getFieldValue(`增减持状态-${statusKey}`) == '进展' || getFieldValue(`增减持状态-${statusKey}`) == '结束'}>
 
           <div className="status-detail">
             <FormItem {...formItemLayout} label="成本价">
-              {getFieldDecorator('成本价')(
+              {getFieldDecorator(`成本价-${statusKey}`)(
                  <InputNumber />
                )}
             </FormItem>
             <FormItem {...formItemLayout} label="股份数量">
-              {getFieldDecorator('股份数量')(
+              {getFieldDecorator(`股份数量-${statusKey}`)(
                  <InputNumber />
                )}
             </FormItem>
             <FormItem {...formItemLayout} label="金额">
-              {getFieldDecorator('金额')(
+              {getFieldDecorator(`金额-${statusKey}`)(
                  <InputNumber />
                )}
             </FormItem>
             <FormItem {...formItemLayout} label="占股比">
-              {getFieldDecorator('占股比')(
+              {getFieldDecorator(`占股比-${statusKey}`)(
                  <InputNumber />
                )}
             </FormItem>
@@ -138,17 +137,6 @@ const StatusSection = React.createClass({
     )  }
 })
 
-function mapStateToProps(state) {
-  return {
-    submitData: state.holdingForm.submitData
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-
-  }
-}
 
 const WrappedStatusSection = Form.create({
   onFieldsChange(props, changedFields){
@@ -162,11 +150,18 @@ const WrappedStatusSection = Form.create({
       tmpData: tmpSatusData
     })
 
-    props.submitData["增减持"] = tmpSatusData;
+    console.log(props.submitData); debugger;
+
+    let tmp = props.submitData;
+
+    tmp.forEach((item, index) => {
+      if(item.key == props.statusKey){
+        props.submitData[index]["增减持"] = tmpSatusData;
+      }
+    })
+
+    console.log(props.submitData); debugger;
   }
 })(StatusSection);
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(WrappedStatusSection)
+export default WrappedStatusSection;

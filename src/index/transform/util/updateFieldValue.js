@@ -67,6 +67,10 @@ export let updateArray = params => {
       let reg1 = /^(.*)-/;
       let reg2 = /-(\d+)$/;
 
+      if(!(reg1.exec(name) || reg2.exec(name))){
+        return;
+      }
+
       let nameWithoutIndex = reg1.exec(name)[1];
       let index = reg2.exec(name)[1];
 

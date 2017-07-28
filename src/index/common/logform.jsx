@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal, Form, Input, Radio, Icon, Checkbox } from 'antd';
+import { Button, Modal, Form, Input, Radio, Icon, Checkbox, Menu, Dropdown, message } from 'antd';
 import {connect} from 'react-redux';
 import If from './if';
 
@@ -20,7 +20,7 @@ const CollectionCreateForm = Form.create()(
       >
         <Form layout="vertical">
           <FormItem>
-            {getFieldDecorator('userName', {
+            {getFieldDecorator('username', {
                rules: [{ required: true, message: '请输入用户名！' }],
             })(
                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />
@@ -33,19 +33,6 @@ const CollectionCreateForm = Form.create()(
                <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="密码" />
              )}
           </FormItem>
-          {/* <FormItem>
-              {getFieldDecorator('remember', {
-              valuePropName: 'checked',
-              initialValue: true,
-              })(
-              <Checkbox>Remember me</Checkbox>
-              )}
-              <a className="login-form-forgot" href="">Forgot password</a>
-              <Button type="primary" htmlType="submit" className="login-form-button">
-              Log in
-              </Button>
-              Or <a href="">register now!</a>
-              </FormItem> */}
         </Form>
       </Modal>
     );
@@ -67,11 +54,9 @@ const LogForm = React.createClass({
         return;
       }
 
-      console.log('Received values of form: ', values);
-
       $.ajax({
         type: 'POST',
-        url: 'api/loginfo',
+        url: 'api/login',
         dataType: 'json',
         data: values,
         success: retData => {
@@ -89,7 +74,40 @@ const LogForm = React.createClass({
       })
     });
   },
+  logout(){
+    let { dispatchUpdateLogStatus } = this.props;
 
+
+    $.ajax({
+      type: 'GET',
+      url: 'api/logout',
+      dataType: 'json',
+      success: retData => {
+        if(!!retData && !!retData.status){
+          dispatchUpdateLogStatus(false);
+        //  window.location.reload();
+        }
+      },
+      error: err => {
+        message.error("登出失败，请再次尝试！");
+      }
+    })
+  },
+  componentWillMount(){
+    let { dispatchUpdateLogStatus } = this.props;
+    $.ajax({
+      type: 'GET',
+      url: 'api/checklogin',
+      dataType: 'json',
+      success: retData => {
+        if(retData.islogin){
+          dispatchUpdateLogStatus(true);
+          return;
+        }
+        dispatchUpdateLogStatus(false);
+      }
+    })
+  },
   render() {
     let {
       isLogin,
@@ -98,13 +116,23 @@ const LogForm = React.createClass({
       dispatchHideLogForm,
       dispatchSaveLogForm
     } = this.props;
+
+    const menu = (
+      <Menu>
+        <Menu.Item>
+          <a onClick={this.logout}>退出登录</a>
+        </Menu.Item>
+      </Menu>
+    );
     return (
       <div>
         <If when={!isLogin}>
           <Button type="primary" onClick={dispatchShowLogForm}>登录</Button>
         </If>
         <If when={!!isLogin}>
-          <Button type="primary" shape="circle" icon="user" />
+          <Dropdown overlay={menu}>
+            <Button type="primary" shape="circle" icon="user" />
+          </Dropdown>
         </If>
 
         <CollectionCreateForm

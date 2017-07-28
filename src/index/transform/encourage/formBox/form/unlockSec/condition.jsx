@@ -47,6 +47,7 @@ const UnlockyearList = React.createClass({
 
   componentDidMount(){
     let { form } = this.props;
+    let { getFieldValue } = form;
 
     Store.subscribe(() => {
       let state = Store.getState();
@@ -69,6 +70,16 @@ const UnlockyearList = React.createClass({
           form: form,
           data: conditionData["解锁年"]
         });
+      }
+      if(state.type === 'encourageBaseYearChanged'){
+        let baseYear = state.encourageForm.baseYear;
+        let unlockYearKeys = getFieldValue('unlockyearKeys');
+        let fields = unlockYearKeys.reduce((prev, cur) => {
+          prev[`年份-${cur}`] = baseYear + cur;
+          return prev;
+        }, {})
+
+        form.setFieldsValue(fields);
       }
     })
   },
@@ -109,7 +120,7 @@ const UnlockyearList = React.createClass({
             label="年份"
           >
             {getFieldDecorator(`年份-${key}`, {
-               initialValue: `${new Date().getFullYear() + index}`
+
             })(
                <Input />
              )}

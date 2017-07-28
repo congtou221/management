@@ -27,13 +27,15 @@ const CollectionForm = React.createClass({
     let {
       form,
       submitData,
-      dispatchIncreaseFormCalcResult
+      dispatchIncreaseFormCalcResult,
+      dispatchUpdateLogStatus
     } = this.props;
 
-    /* form.validateFields((err, values) => {
-     *   if (err) {
-     *     return;
-     *   }*/
+    form.validateFields((err, values) => {
+      if (err) {
+        message.error('数据不完善，请检查输入内容！');
+        return;
+      }
 
       submitData["type"] = "pp";
 
@@ -45,13 +47,26 @@ const CollectionForm = React.createClass({
         contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(submitData), //values need to be processed,
         success: retData => {
+          if(!retData.islogin){
+            message.error('登录状态已失效，请重新登录！', 2, ()=>{
+              dispatchUpdateLogStatus(false);
+            });
+            return;
+          }
+
           if(!!retData.status && !!retData.data && !!retData.data.data){
             dispatchIncreaseFormCalcResult(retData.data.data);
             message.success('提交成功！');
+            return;
           }
+
+          message.error('提交失败');
+        },
+        error: err => {
+          message.error('网络错误，请稍后重试！');
         }
       })
-   // });
+    });
   },
   componentWillMount(){
     let {
@@ -223,6 +238,9 @@ function mapDispatchToProps(dispatch) {
      * },*/
     dispatchIncreaseFormCalcResult: result => {
       return dispatch({type: 'increaseCalcResultReceived', result: result})
+    },
+    dispatchUpdateLogStatus: status => {
+      return dispatch({type: 'updateLogStatus', status: status})
     }
 
   }

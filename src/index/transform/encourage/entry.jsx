@@ -6,6 +6,7 @@ import TableBox from './tableBox/entry';
 // import ButtonBox from './buttonBox/entry';
 import UploadBox from '../common/uploadBox/entry';
 import FormBox from './formBox/entry';
+import ReleaseBox from './releaseBox/entry';
 
 const submitAction = { type: 'submit' };
 
@@ -21,6 +22,9 @@ const UploadContainer = React.createClass({
         {/* <If when={isSubmit}> */}
           <TableBox />
           {/* </If> */}
+          <If when={isSubmit}>
+            <ReleaseBox />
+          </If>
       </div>
     )
   }
@@ -29,8 +33,8 @@ const UploadContainer = React.createClass({
 // Map Redux state to component props
 function mapStateToProps(state) {
   return {
-    isSubmit: state.submit,
-    retData: state.retData
+    isSubmit: state.encourageForm.submit,
+    retData: state.encourageForm.calcResult
   }
 }
 

@@ -26,11 +26,14 @@ const CollectionForm = React.createClass({
     let {
       form,
       submitData,
-      dispatchMergerFormCalcResult
+      /* dispatchMergerFormSubmited,*/
+      dispatchMergerFormCalcResult,
+      dispatchUpdateLogStatus
     } = this.props;
 
     form.validateFields((err, values) => {
       if (err) {
+        message.error('数据不完善，请检查输入内容！');
         return;
       }
       submitData["type"] = "merge";
@@ -50,11 +53,20 @@ const CollectionForm = React.createClass({
         contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(submitData),
         success: retData => {
+          if(!retData.islogin){
+            message.error('登录状态已失效，请重新登录！', 2, () => {
+              dispatchUpdateLogStatus(false);
+            });
+            return;
+          }
+          /* dispatchMergerFormSubmited();*/
+
           if(!!retData.status && !!retData.data && !!retData.data.data){
             dispatchMergerFormCalcResult(retData.data.data);
-
-            message.success('提交成功！')
+            message.success('提交成功！');
+            return;
           }
+          message.error('提交失败！');
         }
       })
     });
@@ -235,9 +247,9 @@ function mapDispatchToProps(dispatch) {
       *     form: form
       *   })
       * }*/
-     dispatchMergerFormSubmited: () => {
-       return dispatch({type: 'mergerFormSubmited'})
-     },
+     /* dispatchMergerFormSubmited: () => {
+      *   return dispatch({type: 'mergerFormSubmited'})
+      * },*/
      /* dispatchMergerFormChanged: values => {
       *   return dispatch({type: 'updateMergerFormData', values: values})
       * },*/
