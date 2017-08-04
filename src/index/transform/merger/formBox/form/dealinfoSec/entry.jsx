@@ -29,6 +29,10 @@ const DealInfo = React.createClass({
 
         let newData = dealinfo;
 
+        if(!newData){
+          return;
+        }
+
         form.setFieldsValue(newData);
       }
     })

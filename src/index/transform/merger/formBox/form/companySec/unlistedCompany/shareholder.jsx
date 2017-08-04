@@ -51,7 +51,7 @@ const Shareholder = React.createClass({
     let { form } = this.props;
 
     let state = Store.getState();
-    if(state.type === 'mergerSubmittedDataArrived'){
+    if(state.type === 'mergerSubmittedDataArrived'){ debugger;
       let submitData = state.mergerForm.submitData;
       let companys = submitData["被收购公司"];
 

@@ -63,7 +63,13 @@ const BuyerList = React.createClass({
 
       if(state.type === 'mergerSubmittedDataArrived'){
         let submitData = state.mergerForm.submitData;
-        let buyers = submitData["交易信息"]["配募"]["配募方"];
+        let dealinfo = submitData["交易信息"] || {};
+        let recruit = dealinfo["配募"] || {};
+        let buyers = recruit["配募方"] || [];
+
+        buyers = buyers.filter(item => {
+          return (typeof item !== 'undefined');
+        })
 
         fillVariableArrToForm({
           form: form,

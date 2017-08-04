@@ -16,7 +16,7 @@ const CollectionsPage = React.createClass({
       url: 'api/encourage/input',
       contentType: 'application/json; charset=UTF-8',
       data: {
-        type: 'increase'
+        type: 'encourage'
       },
       success: retData => {
         if(!!retData.status && !!retData.data && !!retData.data.data){

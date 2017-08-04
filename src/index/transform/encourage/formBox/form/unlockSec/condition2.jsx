@@ -53,7 +53,8 @@ const UnlockyearList = React.createClass({
       let state = Store.getState();
 
       if(state.type === 'encourageSubmittedDataArrived'){
-        let conditionData = state.encourageForm.submitData["解锁条件"].filter(item => {
+        let condition = state.encourageForm.submitData["解锁条件"] || [];
+        let conditionData = condition.filter(item => {
           return item.key == 2;
         })[0];
 

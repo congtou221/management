@@ -40,6 +40,10 @@ const BriefIntro = React.createClass({
           }, {})
         })();
 
+        if(!newData){
+          return;
+        }
+
         form.setFieldsValue(newData);
 
       }

@@ -23,7 +23,7 @@ const UploadContainer = React.createClass({
         {/* <If when={isSubmit}> */}
           <TableBox />
           {/* </If> */}
-          <If when={isSubmit}>
+          <If when={false}>
 
             <ReleaseBox />
 

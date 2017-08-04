@@ -76,6 +76,10 @@ const CompanySection = React.createClass({
         let submitData = state.mergerForm.submitData;
         let companys = submitData["被收购公司"];
 
+        if(!companys){
+          return;
+        }
+
         let keys = companys.map(item => {
           return {
             type: item['上市公司'] ? 'list' : 'unlist',

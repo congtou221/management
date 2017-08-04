@@ -32,10 +32,11 @@ const RecruitSection = React.createClass({
       let state = Store.getState();
 
       if(state.type === 'mergerSubmittedDataArrived'){
-
+        let dealinfo = state.mergerForm.submitData["交易信息"] || {};
+        let recruit = dealinfo["配募"] || {};
         fillBasicToForm({
           form: form,
-          data: state.mergerForm.submitData["交易信息"]["配募"]
+          data: recruit
         })
       }
     })

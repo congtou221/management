@@ -62,8 +62,8 @@ const LogForm = React.createClass({
         success: retData => {
 
           if(retData.status){
-            dispatchUpdateLogStatus(true);
-//            window.location.reload();
+//            dispatchUpdateLogStatus(true);
+            window.location.reload();
           }
 
           form.resetFields();

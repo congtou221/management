@@ -21,7 +21,8 @@ const EventProperty = React.createClass({
 
       if(state.type === 'mergerSubmittedDataArrived'){
         let submitData = state.mergerForm.submitData;
-        let eventprops = submitData["交易信息"]["事件性质"];
+        let dealinfo = submitData["交易信息"] || {};
+        let eventprops = dealinfo["事件性质"] || {};
 
         let newData = eventprops;
 

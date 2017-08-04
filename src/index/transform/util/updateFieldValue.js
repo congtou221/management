@@ -5,7 +5,7 @@ export let updateObj = params => {
     tmpData
   } = params;
 
-  if($.isEmptyObject(changedFields)){
+  if($.isEmptyObject(changedFields) || !tmpData){
     return;
   }
 
@@ -67,7 +67,7 @@ export let updateArray = params => {
       let reg1 = /^(.*)-/;
       let reg2 = /-(\d+)$/;
 
-      if(!(reg1.exec(name) || reg2.exec(name))){
+      if(!(reg1.exec(name) && reg2.exec(name))){
         return;
       }
 

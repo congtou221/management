@@ -61,6 +61,7 @@ export let fillVariableArrToForm = params => {
       return prev;
     }, {});
 
+
     form.setFieldsValue(newData);
 
   });

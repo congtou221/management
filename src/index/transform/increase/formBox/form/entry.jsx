@@ -22,6 +22,49 @@ const RadioGroup = Radio.Group;
 let tmpIncreaseFormData = {};
 
 const CollectionForm = React.createClass({
+  release(){
+    let {
+      submitData,
+      dispatchUpdateLogStatus
+    } = this.props;
+    let {
+      type,
+      股票代码,
+      公告日期,
+      父进程公告日期
+    } = submitData;
+
+    let data = {
+      type: type,
+      code: 股票代码,
+      date: 公告日期,
+      parentdate: 父进程公告日期 || 公告日期
+    };
+
+    $.ajax({
+      type: 'POST',
+      url: 'api/release',
+      contentType: 'application/json; charset=UTF-8',
+      data: JSON.stringify(data),
+      success: retData => {
+        if(!!retData && !retData.islogin){
+          message.error('登录状态已失效，请重新登录！', 2, () => {
+            //            window.location.reload();
+            dispatchUpdateLogStatus(false);
+          });
+          return;
+        }
+        if(!!retData && !retData.status){
+          message.error('发布失败，未找到上一条相同记录！');
+          return;
+        }
+
+        message.success('发布成功！');
+
+      }
+    })
+  },
+
 
   handleCreate() {
     let {
@@ -30,6 +73,8 @@ const CollectionForm = React.createClass({
       dispatchIncreaseFormCalcResult,
       dispatchUpdateLogStatus
     } = this.props;
+
+    let me = this;
 
     form.validateFields((err, values) => {
       if (err) {
@@ -55,8 +100,12 @@ const CollectionForm = React.createClass({
           }
 
           if(!!retData.status && !!retData.data && !!retData.data.data){
+
+            me.release();
+
             dispatchIncreaseFormCalcResult(retData.data.data);
             message.success('提交成功！');
+
             return;
           }
 
