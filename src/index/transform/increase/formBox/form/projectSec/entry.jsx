@@ -1,9 +1,10 @@
 import React from 'react';
-import { Form, Input, InputNumber, Button, Icon } from 'antd';
+import { Form, Input, InputNumber, Button, Icon, Row, Col } from 'antd';
 import { connect } from 'react-redux';
 import Store from '../../../../../../store';
 import { updateArray } from '../../../../util/updateFieldValue';
 import { fillVariableArrToForm } from '../../../../util/fillJsonToForm';
+import toThousands from '../../../../util/toThousands';
 
 require('./style.scss');
 
@@ -72,56 +73,93 @@ const ProjectSection = React.createClass({
             type="minus-circle-o"
             onClick={() => this.remove(key)}
           />
-          <FormItem {...formItemLayout} label="项目名称">
-            {getFieldDecorator(`名称-${key}`)(
-               <Input />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="募投金额">
-            {getFieldDecorator(`募投金额-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
-
+          <Row gutter={16}>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="项目名称">
+                {getFieldDecorator(`名称-${key}`)(
+                   <Input />
+                 )}
+              </FormItem>
+            </Col>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="募投金额">
+                {getFieldDecorator(`募投金额-${key}`)(
+                   <InputNumber
+                     formatter={value => toThousands(value)}
+                   />
+                 )}
+              </FormItem>
+            </Col>
+          </Row>
           <div className="profile-data">
             利润数值
             <div className="profile-data-1">
-              <FormItem {...formItemLayout} label="项目总利润">
-                {getFieldDecorator(`项目总利润-${key}`)(
-                   <InputNumber />
-                 )}
-              </FormItem>
-              <FormItem {...formItemLayout} label="年均利润总额">
-                {getFieldDecorator(`年均利润总额-${key}`)(
-                   <InputNumber />
-                 )}
-              </FormItem>
-              <FormItem {...formItemLayout} label="年均净利润">
-                {getFieldDecorator(`年均净利润-${key}`)(
-                   <InputNumber />
-                 )}
-              </FormItem>
+              <Row gutter={16}>
+                <Col className="gutter-row" span={6}>
+                  <FormItem {...formItemLayout} label="项目总利润">
+                    {getFieldDecorator(`项目总利润-${key}`)(
+                       <InputNumber
+                         formatter={value => toThousands(value)}
+                       />
+                     )}
+                  </FormItem>
+                </Col>
+                <Col className="gutter-row" span={6}>
+                  <FormItem {...formItemLayout} label="年均利润总额">
+                    {getFieldDecorator(`年均利润总额-${key}`)(
+                       <InputNumber
+                         formatter={value => toThousands(value)}
+                       />
+                     )}
+                  </FormItem>
+                </Col>
+                <Col className="gutter-row" span={6}>
+                  <FormItem {...formItemLayout} label="年均净利润">
+                    {getFieldDecorator(`年均净利润-${key}`)(
+                       <InputNumber
+                         formatter={value => toThousands(value)}
+                       />
+                     )}
+                  </FormItem>
+                </Col>
+              </Row>
             </div>
 
             <div className="profile-data-2">
-              <FormItem {...formItemLayout} label="建设期">
-                {getFieldDecorator(`建设期-${key}`)(
-                   <InputNumber />
-                 )}
-              </FormItem>
-
-              <FormItem {...formItemLayout} label="回收期">
-                {getFieldDecorator(`回收期-${key}`)(
-                   <InputNumber />
-                 )}
-              </FormItem>
+              <Row gutter={16}>
+                <Col className="gutter-row" span={6}>
+                  <FormItem {...formItemLayout} label="内部收益率">
+                    {getFieldDecorator(`内部收益率-${key}`)(
+                       <InputNumber
+                         formatter={value => toThousands(value)}
+                       />
+                     )}
+                  </FormItem>
+                </Col>
+                <Col className="gutter-row" span={6}>
+                  <FormItem {...formItemLayout} label="回收期">
+                    {getFieldDecorator(`回收期-${key}`)(
+                       <InputNumber
+                         formatter={value => toThousands(value)}
+                       />
+                     )}
+                  </FormItem>
+                </Col>
+              </Row>
             </div>
+
             <div className="profile-data-3">
-              <FormItem {...formItemLayout} label="内部收益率">
-                {getFieldDecorator(`内部收益率-${key}`)(
-                   <InputNumber />
-                 )}
-              </FormItem>
+              <Row gutter={16}>
+                <Col className="gutter-row" span={6}>
+                  <FormItem {...formItemLayout} label="建设期">
+                    {getFieldDecorator(`建设期-${key}`)(
+                       <InputNumber
+                         formatter={value => toThousands(value)}
+                       />
+                     )}
+                  </FormItem>
+                </Col>
+              </Row>
             </div>
 
           </div>
@@ -133,14 +171,17 @@ const ProjectSection = React.createClass({
     return (
       <div className="project-sec">
         <div className="project-list">
-
-          <FormItem {...formItemLayout}>
-            {getFieldDecorator('addProjectBtn')(
-               <Button type="dashed" onClick={this.addProject}>
-                 <Icon type="plus" />增加项目
-               </Button>
-             )}
-          </FormItem>
+          <Row gutter={16}>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="项目">
+                {getFieldDecorator('addProjectBtn')(
+                   <Button type="dashed" onClick={this.addProject}>
+                     <Icon type="plus" />增加
+                   </Button>
+                 )}
+              </FormItem>
+            </Col>
+          </Row>
 
           {list}
         </div>

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Form, Input, InputNumber } from 'antd';
+import { Form, Input, InputNumber, Row, Col } from 'antd';
 
 import { connect } from 'react-redux';
+import toThousands from '../../../../../util/toThousands';
 
 const FormItem = Form.Item;
 
@@ -26,55 +27,85 @@ const ListedCompany = React.createClass({
 
         <label>上市公司</label>
 
-        <FormItem {...formItemLayout} label="股票代码">
-          { getFieldDecorator('股票代码', {
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="股票代码">
+              { getFieldDecorator('股票代码', {
 
-          })(
-              <Input />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="换股价">
-          { getFieldDecorator('换股价', {
+              })(
+                  <Input />
+                )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="换股价">
+              { getFieldDecorator('换股价', {
 
-          })(
-              <InputNumber />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="换股比例">
-          { getFieldDecorator('换股比例', {
+              })(
+                  <InputNumber
+                    formatter={value => toThousands(value)}
+                  />
+                )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="换股比例">
+              { getFieldDecorator('换股比例', {
 
-          })(
-              <InputNumber />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="收购价格">
-          { getFieldDecorator('收购价格', {
+              })(
+                  <InputNumber
+                    formatter={value => toThousands(value)}
+                  />
+                )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="收购价格">
+              { getFieldDecorator('收购价格', {
 
-          })(
-              <InputNumber />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="收购比例">
-          { getFieldDecorator('收购比例', {
+              })(
+                  <InputNumber
+                    formatter={value => toThousands(value)}
+                  />
+                )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="收购比例">
+              { getFieldDecorator('收购比例', {
 
-          })(
-              <InputNumber />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="收购金额">
-          { getFieldDecorator('收购金额', {
+              })(
+                  <InputNumber
+                    formatter={value => toThousands(value)}
+                  />
+                )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="收购金额">
+              { getFieldDecorator('收购金额', {
 
-          })(
-              <InputNumber />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="收购现金">
-          { getFieldDecorator('收购现金', {
+              })(
+                  <InputNumber
+                    formatter={value => toThousands(value)}
+                  />
+                )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="收购现金">
+              { getFieldDecorator('收购现金', {
 
-          })(
-              <InputNumber />
-            )}
-        </FormItem>
+              })(
+                  <InputNumber
+                     formatter={value => toThousands(value)}
+                  />
+                )}
+            </FormItem>
+          </Col>
+        </Row>
 
       </div>
     )

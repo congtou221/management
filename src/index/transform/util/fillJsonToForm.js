@@ -81,18 +81,25 @@ export let fillArrLenToForm = params => {
   form.setFieldsValue(tmp);
 };
 
-export let fillArrToForm = params => {
+export let fillArrToForm = params => {debugger;
   let {
     form,
     data
   } = params;
+
+  let r = /^\d{4}\/\d{2}\/\d{2}$/;
 
   data.map(item => {
     let key = item.key;
     delete item.key;
 
     let newData = Object.keys(item).reduce((prev, cur) => {
-      prev[`${cur}-${key}`] = item[cur];
+
+      if(r.exec(item[cur])){
+        prev[`${cur}-${key}`] = item[cur] && moment(item[cur]);
+      }else{
+        prev[`${cur}-${key}`] = item[cur];
+      }
 
       return prev;
     }, {});

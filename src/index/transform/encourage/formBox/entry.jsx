@@ -29,7 +29,7 @@ const CollectionsPage = React.createClass({
     let { visible, dispatchShowModal } = this.props;
     return (
       <div className="encourage-form-wrapper">
-        <Button onClick={dispatchShowModal}>录入激励数据</Button>
+        {/* <Button onClick={dispatchShowModal}>录入激励数据</Button> */}
         <Button onClick={this.fillForm} style={{marginLeft: 10}}>将JSON数据填入表单</Button>
         <If when={visible}>
           <CollectionCreateForm />

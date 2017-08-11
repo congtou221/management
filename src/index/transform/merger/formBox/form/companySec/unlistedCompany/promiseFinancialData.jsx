@@ -1,12 +1,14 @@
 import React from 'react';
 import moment from 'moment';
-import { Form, Button, Icon, Input, InputNumber, DatePicker } from 'antd';
+import { Form, Button, Icon, Input, InputNumber, DatePicker, Row, Col } from 'antd';
 
 import { connect } from 'react-redux';
 import Store from '../../../../../../../store';
 
 import { updateArray } from '../../../../../util/updateFieldValue';
 import { fillArrToForm, fillArrLenToForm } from '../../../../../util/fillJsonToForm';
+import toThousands from '../../../../../util/toThousands';
+import by from '../../../../../util/sortby';
 
 const FormItem = Form.Item;
 const { MonthPicker, RangePicker } = DatePicker;
@@ -106,28 +108,43 @@ const FinancialData = React.createClass({
             type="minus-circle-o"
             onClick={ () => this.remove(key) }
           />
+          <Row gutter={16}>
+            <Col className="gutter-row" span={6}>
+              <FormItem
+                {...formItemLayout}
+                label="承诺业绩的时间"
+              >
+                {getFieldDecorator(`时间-${key}`, {
+                   rules: [{
+                   }, {
+                     validator: (rule, value, callback) => {
+                       let r = /^\s*\d{4}\s*$/;
+                       if(!r.test(value)){
+                         callback('请输入四位年份数字！')
+                       }
+                     }
+                   }]
+                })(
+                   <Input />
+                 )}
+              </FormItem>
+            </Col>
 
-          <FormItem
-            {...formItemLayout}
-            label="承诺业绩的时间"
-          >
-            {getFieldDecorator(`时间-${key}`, {
-            })(
-               <Input />
-             )}
-          </FormItem>
+            <Col className="gutter-row" span={6}>
+              <FormItem
+                {...formItemLayout}
+                label="承诺业绩的净利润"
+              >
+                {getFieldDecorator(`净利润-${key}`, {
 
-          <FormItem
-            {...formItemLayout}
-            label="承诺业绩的净利润"
-          >
-            {getFieldDecorator(`净利润-${key}`, {
-
-            })(
-               <InputNumber />
-             )}
-          </FormItem>
-
+                })(
+                   <InputNumber
+                     formatter={value => toThousands(value)}
+                   />
+                 )}
+              </FormItem>
+            </Col>
+          </Row>
         </div>
       )
 
@@ -135,13 +152,17 @@ const FinancialData = React.createClass({
 
     return (
       <div className="financial-datalist" ref="promiseFinancialDataItem">
-        <FormItem {...formItemLayout}>
-          {getFieldDecorator('add-financial-data')(
-             <Button type="dashed" onClick={this.addFinancialData}>
-               <Icon type="plus" />增加一条承诺财务数据
-             </Button>
-           )}
-        </FormItem>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="承诺财务数据">
+              {getFieldDecorator('add-financial-data')(
+                 <Button type="dashed" onClick={this.addFinancialData}>
+                   <Icon type="plus" />增加
+                 </Button>
+               )}
+            </FormItem>
+          </Col>
+        </Row>
 
         <div className="financial-dataitem-wrapper">
           {list}
@@ -165,6 +186,8 @@ const WrappedFinancialData = Form.create({
       addKey: 'financialDataKeys',
       tmpData: tmpFinancialData
     });
+
+    tmpFinancialData.sort(by("时间"));
 
     if(typeof props.submitData["被收购公司"] == 'undefined'){
       props.submitData["被收购公司"] = [];

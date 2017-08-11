@@ -3,6 +3,25 @@
         margin: 24px auto;
         padding: 15px 30px;
         border: 1px dotted #999999;
+        .ant-form-item{
+            margin: 5px 0;
+            display: inline-block;
+            width: 100%;
+            .ant-form-item-label{
+                display: inline-block;
+                width: 40%;
+            }
+            .ant-form-item-control-wrapper{
+                display: inline-block;
+                width: 50%;
+                .ant-calendar-picker{
+                    width: 100%;
+                }
+                .ant-radio-wrapper{
+                    margin-right: 4px;
+                }
+            }
+        }
         .form-item{
             border: 1px dotted #999999;
             padding: 10px;

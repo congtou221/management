@@ -3,6 +3,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { Timeline, message } from 'antd';
 
+import If from '../common/if';
 //import CollapseBox from './nestedTableBox/entry';
 
 const HistoryContainer = React.createClass({
@@ -34,6 +35,10 @@ const HistoryContainer = React.createClass({
   },
   locateInput(e){
     let id = $(e.target).data("eventid");
+    if(!id || id === '0'){
+      return;
+    }
+
     let {
       dispatchMergerSubmittedDataArrived,
       dispatchIncreaseSubmittedDataArrived,
@@ -47,34 +52,34 @@ const HistoryContainer = React.createClass({
       dataType: 'json',
       data: {id:id},
       success: retData => {
-        if(!!retData.status && !!retData.data && !!retData.data.data){
+        if(!!retData.status && !!retData.data && !!retData.data.data){ debugger;
           switch (retData.data.data.type){
             case 'merge':
-              window.location.href="/#/upload/merger";
+              window.location.hash="#/upload/merger";
               setTimeout(() => {
                 dispatchMergerSubmittedDataArrived(retData.data.data);
               }, 2000);
 
               break;
-            case 'pp':
-              window.location.href="/#/upload/increase";
+            case 'pp': debugger;
+              window.location.hash="#/upload/increase";
               setTimeout(() => {
                 dispatchIncreaseSubmittedDataArrived(retData.data.data);
               }, 2000);
 
               break;
             case 'jl':
-              window.location.href="/#/upload/encourage";
+              window.location.hash="#/upload/encourage";
               setTimeout(() => {
                 dispatchEncourageSubmittedDataArrived(retData.data.data);
               }, 2000);
 
               break;
-            case 'internal':
-              window.location.href="/#/upload/holding";
+            case 'internal': debugger;
+              window.location.hash="#/upload/holding";
               setTimeout(() => {
                 dispatchHoldingSubmittedDataArrived(retData.data.data);
-              });
+              }, 2000);
 
               break;
           }
@@ -88,17 +93,24 @@ const HistoryContainer = React.createClass({
   },
   render(){
     let me = this;
+    let r = /失败/;
+
     let list = me.state.keys.map((key, index) => {
 
       return (
-        <Timeline.Item key={index}>
+        <Timeline.Item key={index} color={r.test(key.action) ? 'red' : 'blue'}>
           <strong>
             {moment(key.timestamp).format('YYYY-MM-DD hh:mm:ss')}
           </strong>
           &nbsp;&nbsp;|&nbsp;&nbsp;
-          <a data-eventid = {key.id} >
-            {key.action}
-          </a>
+          <If when={key.id == 0}>
+            <span>{key.action}</span>
+          </If>
+          <If when={key.id !== 0}>
+            <a data-eventid = {key.id} href="javascript:void(0);" >
+              {key.action}
+            </a>
+          </If>
         </Timeline.Item>
       )
     })

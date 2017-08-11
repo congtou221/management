@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, InputNumber, Radio } from 'antd';
+import { Form, InputNumber, Radio, Col, Row, Select } from 'antd';
 
 import { connect } from 'react-redux';
 
@@ -7,8 +7,10 @@ import Store from '../../../../../../store';
 
 import { updateObj } from '../../../../util/updateFieldValue';
 import { fillDealToForm } from '../../../../util/fillJsonToForm';
+import toThousands from '../../../../util/toThousands';
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 const RadioGroup = Radio.Group;
 
 require('./style.scss');
@@ -44,29 +46,47 @@ const DealInfo = React.createClass({
 
     return (
       <div className="dealinfo-sec">
-        <FormItem {...formItemLayout} label="增发金额">
-          {getFieldDecorator('增发金额')(
-             <InputNumber />
-           )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="增发股价">
-          {getFieldDecorator('增发股价')(
-             <InputNumber />
-           )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="增发数量">
-          {getFieldDecorator('增发数量')(
-             <InputNumber />
-           )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="定价类型">
-          {getFieldDecorator('定价类型')(
-             <RadioGroup>
-               <Radio value="询价">询价</Radio>
-               <Radio value="定价">定价</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="增发金额">
+              {getFieldDecorator('增发金额')(
+                 <InputNumber
+                   formatter={value => toThousands(value)}
+                 />
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="增发股价">
+              {getFieldDecorator('增发股价')(
+                 <InputNumber
+                   formatter={value => toThousands(value)}
+                 />
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="增发数量">
+              {getFieldDecorator('增发数量')(
+                 <InputNumber
+                   formatter={value => toThousands(value)}
+                 />
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="定价类型">
+              {getFieldDecorator('定价类型')(
+                 <Select>
+                   <Option value="询价">询价</Option>
+                   <Option value="定价">定价</Option>
+                   <Option value="不低于">不低于</Option>
+                 </Select>
+
+               )}
+            </FormItem>
+          </Col>
+        </Row>
       </div>
     )
   }

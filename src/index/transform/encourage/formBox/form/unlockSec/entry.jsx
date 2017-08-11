@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Radio, Input, Button, Icon, DatePicker} from 'antd';
+import { Form, Radio, Input, Button, Icon, DatePicker, Col, Row} from 'antd';
 import { connect } from 'react-redux';
 
 import Store from '../../../../../../store';
@@ -52,18 +52,21 @@ const UnlockSection = React.createClass({
     }
     return (
       <div className="unlock-sec">
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="解锁条件关系">
+              {getFieldDecorator('解锁条件关系', {
+              })(
+                 <RadioGroup >
+                   <Radio value="AND">AND</Radio>
+                   <Radio value="OR">OR</Radio>
+                 </RadioGroup>
+               )}
+            </FormItem>
+          </Col>
+        </Row>
 
         <ConditionOne />
-
-        <FormItem {...formItemLayout} label="解锁条件关系">
-          {getFieldDecorator('解锁条件关系', {
-          })(
-             <RadioGroup >
-               <Radio value="AND">AND</Radio>
-               <Radio value="OR">OR</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
 
         <ConditionTwo />
 

@@ -1,11 +1,12 @@
 import $ from 'jquery';
 import React from 'react';
 import moment from 'moment';
-import { Modal, Form, Input, Radio, DatePicker, Select, Button, message, Icon} from 'antd';
+import { Modal, Form, Input, Radio, DatePicker, Select, Button, message, Icon, Row, Col} from 'antd';
 import { connect } from 'react-redux';
 import Store from '../../../../../store';
-import { fillBasicToForm } from '../../../util/fillJsonToForm'
+import { fillBasicToForm } from '../../../util/fillJsonToForm';
 import { updateObj } from '../../../util/updateFieldValue';
+import { concepts } from '../../../util/datasource';
 
 import BuyerBriefIntro from './buyerBriefIntro';
 import RecruitSection from './recruitSec/entry';
@@ -63,7 +64,9 @@ const CollectionForm = React.createClass({
     })
   },
 
-  handleCreate() {
+  handleCreate(e) {
+    e.preventDefault();
+
     let {
       form,
       submitData,
@@ -132,7 +135,36 @@ const CollectionForm = React.createClass({
         })
       }
     });
+  },
+  autoFillInfo(e){
+    let secucode = e.currentTarget.value;
+    let { form, dispatchReceivedMergerHolders } = this.props;
+    let { setFieldsValue } = form;
 
+    $.ajax({
+      type: 'GET',
+      url: 'api/companyinfo',
+      contentType: 'application/json; charset=UTF-8',
+      data: {
+        code: secucode
+      },
+      success: retData => {
+        if(retData.status && retData.data && retData.data.data){
+          let {name, holders} = retData.data.data;
+
+          setFieldsValue({
+            name: name
+          });
+
+          dispatchReceivedMergerHolders(holders);
+        }
+      }
+    })
+  },
+  createConceptList(){
+    return concepts.map(item => {
+      return (<Option key={item}>{item}</Option>)
+    });
   },
   render(){
     let { form, dispatchSaveMergerForm } = this.props;
@@ -140,111 +172,155 @@ const CollectionForm = React.createClass({
     let { getFieldDecorator, getFieldValue } = form;
 
     const formItemLayout = {
-      labelCol: { span: 8 },
-      wrapperCol: { span : 8 }
+      labelCol: { span: 15 },
+      wrapperCol: { span : 15 }
     }
 
-     return (
+    getFieldDecorator('name');
+
+    return (
       <Form className="merger-form"
             layout="horizontal"
             onSubmit={this.handleCreate}>
-        <FormItem {...formItemLayout} label="股票代码">
-          {getFieldDecorator('股票代码', {
-             rules: [{
-               required: true,
-               message: '请输入股票代码！'
-             }],
-          })(<Input />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="公告日期">
-          {getFieldDecorator('公告日期', {
-          })(<DatePicker />)}
-        </FormItem>
 
-        <FormItem {...formItemLayout} label="进程">
-          {getFieldDecorator('进程', {
-          })(
-             <Select
-               mode="combobox"
-               notFoundContent=""
-               defaultActiveFirstOption={false}
-               showArrow={true}
-               filterOption={false}
-               >
-              <Option key="草案">草案</Option>
-              <Option key="修订稿">修订稿</Option>
-              <Option key="部门批复">部门批复</Option>
-              <Option key="证监会受理">证监会受理</Option>
-              <Option key="通过">通过</Option>
-              <Option key="证监会核准">证监会核准</Option>
-              <Option key="失败">失败</Option>
-              <Option key="上市">上市</Option>
-              <Option key="中止">中止</Option>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem label="股票代码" help={getFieldValue('name')}>
+              {getFieldDecorator('股票代码', {
+                 rules: [{
+                   required: true,
+                   message: '请输入股票代码！'
+                 }],
+              })(<Input
+                   onBlur={this.autoFillInfo}
+              />)}
+            </FormItem>
+          </Col>
 
-            </Select>
-           )}
-        </FormItem>
+          <Col className="gutter-row" span={6}>
+            <FormItem label="公告日期">
+              {getFieldDecorator('公告日期', {
+              })(<DatePicker />)}
+            </FormItem>
+          </Col>
 
-        <FormItem {...formItemLayout} label="事件描述">
-          {getFieldDecorator('事件描述', {
+          <Col className="gutter-row" span={6}>
+            <FormItem label="进程">
+              {getFieldDecorator('进程', {
+              })(
+                 <Select
+                   mode="combobox"
+                   notFoundContent=""
+                   defaultActiveFirstOption={false}
+                   showArrow={true}
+                   filterOption={false}
+                   >
+                   <Option key="草案">草案</Option>
+                   <Option key="修订稿">修订稿</Option>
+                   <Option key="部门批复">部门批复</Option>
+                   <Option key="证监会受理">证监会受理</Option>
+                   <Option key="通过">通过</Option>
+                   <Option key="证监会核准">证监会核准</Option>
+                   <Option key="失败">失败</Option>
+                   <Option key="上市">上市</Option>
+                   <Option key="中止">中止</Option>
 
-          })(<Input />)}
-        </FormItem>
+                 </Select>
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="父进程日期">
+              {getFieldDecorator('父进程日期', {
+              })(<DatePicker />)}
+            </FormItem>
+          </Col>
 
-        <FormItem {...formItemLayout} label="父进程日期">
-          {getFieldDecorator('父进程日期', {
-          })(<DatePicker />)}
-        </FormItem>
+        </Row>
 
-        <FormItem {...formItemLayout} label="是否只录标题">
-          {getFieldDecorator('是否只录标题', {
+        <Row gutter={16}>
 
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="被收购方概念">
+              {getFieldDecorator('被收购方概念', {
 
-        <FormItem {...formItemLayout} label="链接">
-          {getFieldDecorator('链接', {
+              })(<Select
+                   showSearch
+                   filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                >
+                {this.createConceptList()}
+                 </Select>)}
+            </FormItem>
+          </Col>
 
-          })(<Input />)}
-        </FormItem>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="被收购方行业">
+              {getFieldDecorator('被收购方行业', {
 
-        <FormItem {...formItemLayout} label="收购方概念是否热门">
-          {getFieldDecorator('收购方概念是否热门', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
+              })(<Input />)}
+            </FormItem>
+          </Col>
 
-        <FormItem {...formItemLayout} label="被收购方概念是否热门">
-          {getFieldDecorator('被收购方概念是否热门', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="链接">
+              {getFieldDecorator('链接', {
 
-        <FormItem {...formItemLayout} label="被收购方概念">
-          {getFieldDecorator('被收购方概念', {
+              })(<Input />)}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row gutter={16}>
 
-          })(<Input />)}
-        </FormItem>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="是否只录标题">
+              {getFieldDecorator('是否只录标题', {
 
-        <FormItem {...formItemLayout} label="被收购方行业">
-          {getFieldDecorator('被收购方行业', {
+              })(
+                 <RadioGroup>
+                   <Radio value={true}>是</Radio>
+                   <Radio value={false}>否</Radio>
+                 </RadioGroup>
+               )}
+            </FormItem>
+          </Col>
 
-          })(<Input />)}
-        </FormItem>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="收购方概念是否热门">
+              {getFieldDecorator('收购方概念是否热门', {
+              })(
+                 <RadioGroup>
+                   <Radio value={true}>是</Radio>
+                   <Radio value={false}>否</Radio>
+                 </RadioGroup>
+               )}
+            </FormItem>
+          </Col>
 
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="被收购方概念是否热门">
+              {getFieldDecorator('被收购方概念是否热门', {
+              })(
+                 <RadioGroup>
+                   <Radio value={true}>是</Radio>
+                   <Radio value={false}>否</Radio>
+                 </RadioGroup>
+               )}
+            </FormItem>
+          </Col>
+
+        </Row>
+
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem label="事件描述" className="desc-input">
+              {getFieldDecorator('事件描述', {
+
+              })(<Input type="textarea" style={{resize:"none"}} />)}
+            </FormItem>
+          </Col>
+
+
+        </Row>
         <BuyerBriefIntro />
 
         <DealinfoSection />
@@ -263,6 +339,8 @@ const CollectionForm = React.createClass({
 
 const WrappedCollectionForm = Form.create({
   onFieldsChange(props, changedFields){
+    let {dispatchMergerBasicdataChanged} = props;
+
     if($.isEmptyObject(changedFields)){
       return;
     }
@@ -273,8 +351,16 @@ const WrappedCollectionForm = Form.create({
       tmpData: tmpMergerFormData
     });
 
-    Object.assign(props.submitData, tmpMergerFormData);
+    let allMergerFormData = Object.keys(props.submitData).reduce((prev, cur) => {
+      prev[cur] = props.submitData[cur];
+      return prev;
+    }, tmpMergerFormData);
 
+    dispatchMergerBasicdataChanged(allMergerFormData);
+    /* console.log(props.submitData, tmpMergerFormData); debugger;
+     * Object.assign(props.submitData, tmpMergerFormData);
+     * console.log(props.submitData, tmpMergerFormData); debugger;
+     */
   }
 })(CollectionForm);
 
@@ -287,29 +373,18 @@ const WrappedCollectionForm = Form.create({
 
 function mapDispatchToProps(dispatch) {
    return {
-     /* dispatchSaveMergerForm: form => {
-      *   return dispatch({
-      *     type: 'saveMergerForm',
-      *     form: form
-      *   })
-      * }*/
-     /* dispatchMergerFormSubmited: () => {
-      *   return dispatch({type: 'mergerFormSubmited'})
-      * },*/
-     /* dispatchMergerFormChanged: values => {
-      *   return dispatch({type: 'updateMergerFormData', values: values})
-      * },*/
-
+     dispatchMergerBasicdataChanged: data => {
+       return dispatch({type: 'mergerBasicdataChanged', data: data})
+     },
      dispatchMergerFormCalcResult: result => {
        return dispatch({type: 'mergerCalcResultReceived', result: result})
      },
-     /* dispatchMergerSubmittedDataArrived: submitData => {
-      *   return dispatch({type: 'mergerSubmittedDataArrived', submitData: submitData})
-      * },*/
      dispatchUpdateLogStatus: status => {
        return dispatch({type: 'updateLogStatus', status: status})
+     },
+     dispatchReceivedMergerHolders: holders => {
+       return dispatch({type: 'mergerHoldersReceived', holders: holders})
      }
-
     }
   }
 

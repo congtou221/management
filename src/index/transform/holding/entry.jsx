@@ -14,15 +14,15 @@ const UploadContainer = React.createClass({
     return(
       <div id="upload-holding-container">
 
-        <UploadBox />
+        {/* <UploadBox /> */}
         <FormBox />
 
         {/* <If when={isSubmit}> */}
           <TableBox />
           {/* </If> */}
-          {/* <If when={isSubmit}> */}
+          <If when={false}>
             <ReleaseBox />
-            {/* </If> */}
+          </If>
       </div>
     )
   }

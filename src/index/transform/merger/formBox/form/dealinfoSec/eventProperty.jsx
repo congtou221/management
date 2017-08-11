@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Radio } from 'antd';
+import { Form, Input, Radio, Row, Col } from 'antd';
 
 import { connect } from 'react-redux';
 import Store from '../../../../../../store';
@@ -43,25 +43,31 @@ const EventProperty = React.createClass({
 
     return (
       <div className="eventprop-wrapper">
-        <FormItem {...formItemLayout} label="借壳">
-          {getFieldDecorator('借壳', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={8}>
+            <FormItem {...formItemLayout} label="借壳">
+              {getFieldDecorator('借壳', {
+              })(
+                 <RadioGroup>
+                   <Radio value={true}>是</Radio>
+                   <Radio value={false}>否</Radio>
+                 </RadioGroup>
+               )}
+            </FormItem>
+          </Col>
 
-        <FormItem {...formItemLayout} label="资产置出">
-          {getFieldDecorator('资产置出', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
+          <Col className="gutter-row" span={8}>
+            <FormItem {...formItemLayout} label="资产置出">
+              {getFieldDecorator('资产置出', {
+              })(
+                 <RadioGroup>
+                   <Radio value={true}>是</Radio>
+                   <Radio value={false}>否</Radio>
+                 </RadioGroup>
+               )}
+            </FormItem>
+          </Col>
+        </Row>
 
       </div>
     )

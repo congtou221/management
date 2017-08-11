@@ -1,11 +1,12 @@
 import React from 'react';
-import { Form, Input,InputNumber, Radio } from 'antd';
+import { Form, Input,InputNumber, Radio, Row, Col } from 'antd';
 
 import { connect } from 'react-redux';
 import EventProperty from './eventProperty';
 import Store from '../../../../../../store';
 import { fillDealToForm } from '../../../../util/fillJsonToForm';
 import { updateObj } from '../../../../util/updateFieldValue';
+import toThousands from '../../../../util/toThousands';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -46,40 +47,64 @@ const DealInfo = React.createClass({
       wrapperCol: { span: 8}
     }
 
+    let me = this;
     return (
       <div className="dealinfo-sec">
-        <FormItem {...formItemLayout} label="交易总金额">
-          {getFieldDecorator('交易总金额')(
-             <InputNumber />
-           )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="交易方式">
-          {getFieldDecorator('交易方式')(
-             <RadioGroup>
-               <Radio value="股份">股份</Radio>
-               <Radio value="现金">现金</Radio>
-               <Radio value="both">both</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="交易总金额">
+              {getFieldDecorator('交易总金额')(
+                 <InputNumber
+                   formatter={value => toThousands(value)}
+                 />
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="交易方式">
+              {getFieldDecorator('交易方式')(
+                 <RadioGroup>
+                   <Radio value="股份">股份</Radio>
+                   <Radio value="现金">现金</Radio>
+                   <Radio value="both">both</Radio>
+                 </RadioGroup>
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="换股价">
+              {getFieldDecorator('换股价')(
+                 <InputNumber
+                   formatter={value => toThousands(value)}
+                 />
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="发行股份数量">
+              {getFieldDecorator('发行股份数量')(
+                 <InputNumber
+                   formatter={value => toThousands(value)}
+                 />
+               )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="支付现金">
+              {getFieldDecorator('支付现金')(
+                 <InputNumber
+                   formatter={value => toThousands(value)}
+                 />
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={18}>
+            <EventProperty />
+          </Col>
+        </Row>
 
-        <FormItem {...formItemLayout} label="换股价">
-          {getFieldDecorator('换股价')(
-             <InputNumber />
-           )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="发行股份数量">
-          {getFieldDecorator('发行股份数量')(
-             <InputNumber />
-           )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="支付现金">
-          {getFieldDecorator('支付现金')(
-             <InputNumber />
-           )}
-        </FormItem>
-
-        <EventProperty />
       </div>
     )
   }

@@ -1,11 +1,12 @@
 import React from 'react';
-import { Form, Input, InputNumber, Radio, DatePicker, Button, message, Select} from 'antd';
+import { Form, Input, InputNumber, Radio, DatePicker, Button, message, Select, Col, Row} from 'antd';
 import { connect } from 'react-redux';
 
 import Store from '../../../../../store';
 import { fillBasicToForm } from '../../../util/fillJsonToForm';
-
 import { updateObj } from '../../../util/updateFieldValue';
+import toThousands from '../../../util/toThousands';
+import { concepts } from '../../../util/datasource';
 
 //import RecruitSection from './recruitSec/entry';
 //import CompanySection from './companySec/entry';
@@ -74,7 +75,9 @@ const CollectionForm = React.createClass({
     dispatchEncourageFormBaseYear(baseYear);
 
   },
-  handleCreate() {
+  handleCreate(e) {
+    e.preventDefault();
+
     let {
       form,
       submitData,
@@ -176,6 +179,12 @@ const CollectionForm = React.createClass({
       }
     })
   },
+  createConceptList(){
+    return concepts.map(item => {
+      return (<Option key={item}>{item}</Option>)
+    });
+  },
+
   render(){
     let { form, dispatchSaveEncourageForm } = this.props;
 
@@ -190,102 +199,140 @@ const CollectionForm = React.createClass({
       <Form className="encourage-form"
             layout="horizontal"
             onSubmit={this.handleCreate}>
-        <FormItem {...formItemLayout} label="股票代码">
-          {getFieldDecorator('股票代码', {
-             rules: [{
-               required: true,
-               message: '请输入股票代码！'
-             }],
-          })(<Input />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="公告日期">
-          {getFieldDecorator('公告日期', {
-          })(<DatePicker />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="进程">
-          {getFieldDecorator('进程', {
-          })(
-             <Select
-               mode="combobox"
-               notFoundContent=""
-               defaultActiveFirstOption={false}
-               showArrow={true}
-               filterOption={false}
-               onChange={this.handleChange}
-               >
-              <Option key='计划'>计划</Option>
-              <Option key='进展'>进展</Option>
-              <Option key='结束'>结束</Option>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="股票代码">
+              {getFieldDecorator('股票代码', {
+                 rules: [{
+                   required: true,
+                   message: '请输入股票代码！'
+                 }],
+              })(<Input />)}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="公告日期">
+              {getFieldDecorator('公告日期', {
+              })(<DatePicker />)}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="进程">
+              {getFieldDecorator('进程', {
+              })(
+                 <Select
+                   mode="combobox"
+                   notFoundContent=""
+                   defaultActiveFirstOption={false}
+                   showArrow={true}
+                   filterOption={false}
+                   onChange={this.handleChange}
+                   >
+                   <Option key='草案'>草案</Option>
+                   <Option key='修订稿'>修订稿</Option>
+                   <Option key='完成'>完成</Option>
+                   <Option key='终止'>终止</Option>
+                 </Select>
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="父进程日期">
+              {getFieldDecorator('父进程日期', {
+              })(<DatePicker />)}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row gutter={16}>
 
-             </Select>
-           )}
-        </FormItem>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="是否只有标题">
+              {getFieldDecorator('是否只有标题', {
+              })(
+                 <RadioGroup>
+                   <Radio value={true}>是</Radio>
+                   <Radio value={false}>否</Radio>
+                 </RadioGroup>
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="链接">
+              {getFieldDecorator('链接', {
 
-        <FormItem {...formItemLayout} label="事件简述">
-          {getFieldDecorator('事件简述', {
+              })(<Input />)}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="概念">
+              {getFieldDecorator('概念', {
 
-          })(<Input />)}
-        </FormItem>
+              })(<Select
+                   showSearch
+                   filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                >
+                {this.createConceptList()}
+                 </Select>)}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="基准年">
+              {getFieldDecorator('基准年', {
+              })(
+                 <InputNumber
+                   onBlur={this.updateUnlockYear}
+                 />
+               )}
+            </FormItem>
+          </Col>
 
-        <FormItem {...formItemLayout} label="父进程日期">
-          {getFieldDecorator('父进程日期', {
-          })(<DatePicker />)}
-        </FormItem>
+        </Row>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={12}>
+            <div className="price-wrapper">
+              <Row gutter={16}>
+                <Col className="gutter-row" span={12}>
+                  <FormItem {...formItemLayout} label="激励股价">
+                    {getFieldDecorator('激励股价', {
 
-        <FormItem {...formItemLayout} label="是否只有标题">
-          {getFieldDecorator('是否只有标题', {
-          })(
-             <RadioGroup>
-               <Radio value={true}>是</Radio>
-               <Radio value={false}>否</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
+                    })(<InputNumber
+                         formatter={value => toThousands(value)}
+                    />)}
+                  </FormItem>
+                </Col>
+                <Col className="gutter-row" span={12}>
+                  <FormItem {...formItemLayout} label="激励股份数量">
+                    {getFieldDecorator('激励股份数量', {
 
-        <FormItem {...formItemLayout} label="链接">
-          {getFieldDecorator('链接', {
+                    })(<InputNumber
+                         formatter={value => toThousands(value)}
+                    />)}
+                  </FormItem>
+                </Col>
+              </Row>
+            </div>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="激励类型">
+              {getFieldDecorator('激励类型', {
+              })(
+                 <RadioGroup>
+                   <Radio value="限制性股票激励">限制性股票激励</Radio>
+                   <Radio value="股票期权激励">股票期权激励</Radio>
+                 </RadioGroup>
+               )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="事件简述" className="desc-input">
+              {getFieldDecorator('事件简述', {
 
-          })(<Input />)}
-        </FormItem>
-
-        <FormItem {...formItemLayout} label="概念">
-          {getFieldDecorator('概念', {
-
-          })(<Input />)}
-        </FormItem>
-
-        <div className="price-wrapper">
-          <FormItem {...formItemLayout} label="激励股价">
-            {getFieldDecorator('激励股价', {
-
-            })(<InputNumber />)}
-          </FormItem>
-
-          <FormItem {...formItemLayout} label="激励股份数量">
-            {getFieldDecorator('激励股份数量', {
-
-            })(<InputNumber />)}
-          </FormItem>
-        </div>
-
-        <FormItem {...formItemLayout} label="激励类型">
-          {getFieldDecorator('激励类型', {
-          })(
-             <RadioGroup>
-               <Radio value="限制性股票激励">限制性股票激励</Radio>
-               <Radio value="股票期权激励">股票期权激励</Radio>
-             </RadioGroup>
-           )}
-        </FormItem>
-
-        <FormItem {...formItemLayout} label="基准年">
-          {getFieldDecorator('基准年', {
-          })(
-             <InputNumber
-             onBlur={this.updateUnlockYear}
-             />
-           )}
-        </FormItem>
+              })(<Input type="textarea" style={{resize: "none"}}/>)}
+            </FormItem>
+          </Col>
+        </Row>
 
         <UnlockSection />
 
@@ -300,6 +347,8 @@ const CollectionForm = React.createClass({
 
 const WrappedCollectionForm = Form.create({
   onFieldsChange(props, changedFields){
+    let {dispatchEncourageSubmitBtnClicked} = props;
+
     if($.isEmptyObject(changedFields)){
       return;
     }
@@ -310,7 +359,12 @@ const WrappedCollectionForm = Form.create({
       tmpData: tmpEncourageFormData
     });
 
-    Object.assign(props.submitData, tmpEncourageFormData);
+    //Object.assign(props.submitData, tmpEncourageFormData);
+    tmpEncourageFormData["解锁条件关系"] = props.submitData["解锁条件关系"];
+    tmpEncourageFormData["解锁条件"] = props.submitData["解锁条件"];
+
+    dispatchEncourageSubmitBtnClicked(tmpEncourageFormData);
+
   }
 })(CollectionForm);
 
@@ -329,6 +383,9 @@ function mapDispatchToProps(dispatch) {
       *     form: form
       *   })
       * }*/
+     dispatchEncourageSubmitBtnClicked: data => {
+       return dispatch({type: 'encourageSubmitBtnClicked', data: data})
+     },
      dispatchEncourageFormCreated: retData => {
        return dispatch({type: 'createEncourageForm', retData: retData})
      },

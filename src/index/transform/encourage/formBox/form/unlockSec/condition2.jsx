@@ -1,11 +1,12 @@
 import React from 'react';
 import moment from 'moment';
-import { Form, Input, InputNumber, Button, Icon, DatePicker, Select } from 'antd';
+import { Form, Input, InputNumber, Button, Icon, DatePicker, Select, Col, Row } from 'antd';
 import { connect } from 'react-redux';
 import Store from '../../../../../../store';
 
 import { updateObj, updateArrayLength } from '../../../../util/updateFieldValue';
 import { fillBasicToForm, fillArrToForm } from '../../../../util/fillJsonToForm';
+import toThousands from '../../../../util/toThousands';
 
 require('./condition.scss');
 
@@ -115,34 +116,46 @@ const UnlockyearList = React.createClass({
               type="minus-circle-o"
               onClick={() => this.remove(key)}
               /> */}
-          <FormItem
-            className="unlockyear-item-formitem"
-            {...formItemLayout}
-            label="年份"
-          >
-            {getFieldDecorator(`年份-${key}`, {
-            })(
-               <Input />
-             )}
-          </FormItem>
-          <FormItem
-            className="unlockyear-item-formitem"
-            {...formItemLayout}
-            label="数值"
-          >
-            {getFieldDecorator(`数值-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
-          <FormItem
-            className="unlockyear-item-formitem"
-            {...formItemLayout}
-            label="增长率"
-          >
-            {getFieldDecorator(`增长率-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
+          <Row gutter={16}>
+            <Col className="gutter-row" span={8}>
+              <FormItem
+                className="unlockyear-item-formitem"
+                {...formItemLayout}
+                label="年份"
+              >
+                {getFieldDecorator(`年份-${key}`, {
+                })(
+                   <Input />
+                 )}
+              </FormItem>
+            </Col>
+            <Col className="gutter-row" span={8}>
+              <FormItem
+                className="unlockyear-item-formitem"
+                {...formItemLayout}
+                label="数值"
+              >
+                {getFieldDecorator(`数值-${key}`)(
+                   <InputNumber
+                     formatter={value => toThousands(value)}
+                   />
+                 )}
+              </FormItem>
+            </Col>
+            <Col className="gutter-row" span={8}>
+              <FormItem
+                className="unlockyear-item-formitem"
+                {...formItemLayout}
+                label="增长率"
+              >
+                {getFieldDecorator(`增长率-${key}`)(
+                   <InputNumber
+                     formatter={value => toThousands(value)}
+                   />
+                 )}
+              </FormItem>
+            </Col>
+          </Row>
 
         </div>
       )
@@ -150,20 +163,24 @@ const UnlockyearList = React.createClass({
 
     return (
       <div className="condition-wrapper" ref="conditionItem">
-        <FormItem {...headerFormItemLayout} label="解锁业绩类型">
-        {getFieldDecorator('解锁业绩类型')(
-          <Select
-            style={{ width: 200 }}
-          >
-            <Option value="营业收入">营业收入</Option>
-            <Option value="净利润">净利润</Option>
-            <Option value="归母净利润">归母净利润</Option>
-            <Option value="归母扣非净利润">归母扣非净利润</Option>
-            <Option value="利润总额">利润总额</Option>
-            <Option value="净资产收益率">净资产收益率</Option>
-          </Select>
-        )}
-        </FormItem>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...headerFormItemLayout} label="解锁业绩类型">
+              {getFieldDecorator('解锁业绩类型')(
+                 <Select
+                   style={{ width: 200 }}
+                   >
+                   <Option value="营业收入">营业收入</Option>
+                   <Option value="净利润">净利润</Option>
+                   <Option value="归母净利润">归母净利润</Option>
+                   <Option value="归母扣非净利润">归母扣非净利润</Option>
+                   <Option value="利润总额">利润总额</Option>
+                   <Option value="净资产收益率">净资产收益率</Option>
+                 </Select>
+               )}
+            </FormItem>
+          </Col>
+        </Row>
 
         <div className="unlockyear-list">
           {/* <FormItem {...formItemLayout}>

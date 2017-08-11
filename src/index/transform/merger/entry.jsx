@@ -17,7 +17,7 @@ const UploadContainer = React.createClass({
     return(
       <div id="upload-merger-container">
 
-        <UploadBox />
+      {/* <UploadBox /> */}
         <FormBox />
 
         {/* <If when={isSubmit}> */}

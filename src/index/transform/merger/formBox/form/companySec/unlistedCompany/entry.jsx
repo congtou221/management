@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, InputNumber } from 'antd';
+import { Form, Input, InputNumber, Row, Col } from 'antd';
 
 import FinancialData from './financialData';
 import PromiseFinancialData from './promiseFinancialData';
@@ -11,6 +11,7 @@ import Store from '../../../../../../../store';
 
 import { updateObj } from '../../../../../util/updateFieldValue';
 import { fillBasicToForm } from '../../../../../util/fillJsonToForm';
+import toThousands from '../../../../../util/toThousands';
 
 const FormItem = Form.Item;
 
@@ -58,48 +59,68 @@ const UnlistedCompany = React.createClass({
 
         <label>非上市公司</label>
 
-        <FormItem {...formItemLayout} label="公司名称">
-          { getFieldDecorator('名称', {
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="公司名称">
+              { getFieldDecorator('名称', {
 
-          })(
+              })(
+                  <Input />
+                )}
+            </FormItem>
+          </Col>
+          {/* <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="公司行业">
+              { getFieldDecorator('行业', {
+
+              })(
               <Input />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="公司行业">
-          { getFieldDecorator('行业', {
+              )}
+              </FormItem>
+              </Col>
+              <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="公司概念">
+              { getFieldDecorator('概念', {
 
-          })(
+              })(
               <Input />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="公司概念">
-          { getFieldDecorator('概念', {
+              )}
+              </FormItem>
+              </Col> */}
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="收购价格">
+              { getFieldDecorator('收购价格', {
 
-          })(
-              <Input />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="收购价格">
-          { getFieldDecorator('收购价格', {
+              })(
+                  <InputNumber
+                    formatter={value => toThousands(value)}
+                  />
+                )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="收购现金">
+              { getFieldDecorator('支付现金', {
 
-          })(
-              <InputNumber />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="收购现金">
-          { getFieldDecorator('支付现金', {
+              })(
+                  <InputNumber
+                    formatter={value => toThousands(value)}
+                  />
+                )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="收购比例">
+              { getFieldDecorator('收购比例', {
 
-          })(
-              <InputNumber />
-            )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="收购比例">
-          { getFieldDecorator('收购比例', {
-
-          })(
-              <InputNumber />
-            )}
-        </FormItem>
+              })(
+                  <InputNumber
+                    formatter={value => toThousands(value)}
+                  />
+                )}
+            </FormItem>
+          </Col>
+        </Row>
 
         <FinancialData />
         <PromiseFinancialData />

@@ -114,8 +114,8 @@ export let updateArrayLength = params => {
     let index = reg2.exec(name)[1];
 
     let item = tmpData[+index - 1];
-    if(typeof item == 'undefined'){
-      item = {};
+    if(typeof item == 'undefined'){ debugger;
+      item = {key: +index};
     }
 
     if(!!value && !!value.format){

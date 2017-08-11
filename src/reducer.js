@@ -13,7 +13,8 @@ function userReducer(
       showRecruitSec: true,
       submitData: {},
       calcResult: {},
-      submit: false
+      submit: false,
+      holders: []
     },
     increaseForm:{
       visible: true,
@@ -68,6 +69,28 @@ function userReducer(
       historyFormBox: state.historyFormBox
 
     }
+  case 'encourageSubmitBtnClicked':
+    return {
+      type: 'encourageSubmitBtnClicked',
+      isLogin: state.isLogin,
+      logForm: state.logForm,
+      submit: state.submit,
+      retData: state.retData,
+      mergerForm: state.mergerForm,
+      increaseForm: state.increaseForm,
+      encourageForm: {
+        visible: state.encourageForm.visible,
+        form: state.encourageForm.form,
+        submitData: action.data,
+        calcResult: state.encourageForm.calcResult,
+        baseYear: state.encourageForm.baseYear,
+        submit: state.encourageForm.submit
+      },
+      holdingForm: state.holdingForm,
+      historyFormBox: state.historyFormBox
+
+    }
+
   case 'encourageSubmittedDataArrived':
     return {
       type: 'encourageSubmittedDataArrived',
@@ -149,6 +172,29 @@ function userReducer(
       historyFormBox: state.historyFormBox
 
     }
+  case 'increaseHoldersReceived':
+    return {
+      type: 'increaseHoldersReceived',
+      isLogin: state.isLogin,
+      logForm: {
+        form : state.logForm.form,
+        visible: state.logForm.visible
+      },
+      submit: state.submit,
+      retData: state.retData,
+      mergerForm: state.mergerForm,
+      increaseForm: {
+        visible: state.increaseForm.visible,
+        form: state.increaseForm.form,
+        submitData: state.increaseForm.submitData,
+        calcResult: state.increaseForm.calcResult,
+        submit: state.increaseForm.submit,
+        holders: action.holders
+      },
+      encourageForm: state.encourageForm,
+      holdingForm: state.holdingForm,
+      historyFormBox: state.historyFormBox
+    }
   case 'increaseSubmittedDataArrived':
     return{
       type: 'increaseSubmittedDataArrived',
@@ -190,6 +236,53 @@ function userReducer(
       encourageForm: state.encourageForm,
       holdingForm: state.holdingForm,
       historyFormBox: state.historyFormBox
+    }
+  case 'mergerHoldersReceived':
+    return {
+      type: 'mergerHoldersReceived',
+      isLogin: state.isLogin,
+      logForm: {
+        form : state.logForm.form,
+        visible: state.logForm.visible
+      },
+      submit: state.submit,
+      retData: state.retData,
+      mergerForm: {
+        visible: state.mergerForm.visible,
+        form: state.mergerForm.form,
+        showRecruitSec: state.mergerForm.showRecruitSec,
+        submitData: state.mergerForm.submitData,
+        calcResult: state.mergerForm.calcResult,
+        submit: state.mergerForm.submit,
+        holders: action.holders
+      },
+      increaseForm: state.increaseForm,
+      encourageForm: state.encourageForm,
+      holdingForm: state.holdingForm,
+      historyFormBox: state.historyFormBox
+    }
+  case 'mergerBasicdataChanged':
+    return {
+      type: 'mergerBasicdataChanged',
+        isLogin: state.isLogin,
+        logForm: {
+          form : state.logForm.form,
+          visible: state.logForm.visible
+        },
+        submit: state.submit,
+        retData: state.retData,
+        mergerForm: {
+          visible: state.mergerForm.visible,
+          form: state.mergerForm.form,
+          showRecruitSec: state.mergerForm.showRecruitSec,
+          submitData: action.data,
+          calcResult: state.mergerForm.calcResult,
+          submit: state.mergerForm.submit
+        },
+        increaseForm: state.increaseForm,
+        encourageForm: state.encourageForm,
+        holdingForm: state.holdingForm,
+        historyFormBox: state.historyFormBox
     }
   case 'mergerCalcResultReceived':
     return {

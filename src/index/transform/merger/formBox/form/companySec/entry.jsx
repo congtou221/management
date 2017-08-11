@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Radio, Icon, Button } from 'antd';
+import { Form, Radio, Icon, Button, Row, Col } from 'antd';
 
 import { connect } from 'react-redux';
 
@@ -134,22 +134,26 @@ const CompanySection = React.createClass({
       <div className="company-sec">
 
         <div className="company-list">
-          <FormItem {...formItemLayout}>
-            {getFieldDecorator('listedCompany')(
-               <Button type="dashed" onClick={this.addListedCompany}>
-                 <Icon type="plus" />增加上市公司信息
-               </Button>
-             )}
-          </FormItem>
-
-          <FormItem {...formItemLayout}>
-            {getFieldDecorator('unlistedCompany')(
-              <Button type="dashed" onClick={this.addUnlistedCompany}>
-                 <Icon type="plus" />增加非上市公司信息
-              </Button>
-             )}
-          </FormItem>
-
+          <Row gutter={16}>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="上市公司信息">
+                {getFieldDecorator('listedCompany')(
+                   <Button type="dashed" onClick={this.addListedCompany}>
+                     <Icon type="plus" />增加
+                   </Button>
+                 )}
+              </FormItem>
+            </Col>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="非上市公司信息">
+                {getFieldDecorator('unlistedCompany')(
+                   <Button type="dashed" onClick={this.addUnlistedCompany}>
+                     <Icon type="plus" />增加
+                   </Button>
+                 )}
+              </FormItem>
+            </Col>
+          </Row>
           <div className="company-item-wrapper">
             {list}
           </div>

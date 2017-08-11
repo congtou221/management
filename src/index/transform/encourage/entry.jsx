@@ -16,7 +16,7 @@ const UploadContainer = React.createClass({
     return(
       <div id="upload-encourage-container">
 
-        <UploadBox />
+        {/* <UploadBox /> */}
         <FormBox />
 
         {/* <If when={isSubmit}> */}

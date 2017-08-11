@@ -46,7 +46,7 @@ const ReleaseBox = React.createClass({
   },
   render(){
     return (
-      <div class="release-wrapper" style={{width: "100%", textAlign: "center", marginTop: 20}}>
+      <div className="release-wrapper" style={{width: "100%", textAlign: "center", marginTop: 20}}>
         <Button type="primary" size="large" onClick={this.release}>确认无误后，点击这里开始发布</Button>
       </div>
     )

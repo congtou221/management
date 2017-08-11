@@ -18,7 +18,7 @@ const CollectionsPage = React.createClass({
       url: 'api/holding/input',
       contentType: 'application/json; charset=UTF-8',
       data: {
-        type: 'increase'
+        type: 'holding'
       },
       success: retData => {
         /* 将获取到的历史json存入store*/
@@ -35,7 +35,7 @@ const CollectionsPage = React.createClass({
     } = this.props;
     return (
       <div className="holding-form-wrapper">
-        <Button onClick={dispatchShowModal}>录入增减持数据</Button>
+        {/* <Button onClick={dispatchShowModal}>录入增减持数据</Button> */}
         <Button onClick={this.fillForm} style={{marginLeft: 10}}>将JSON数据填入表单</Button>
         <If when={visible}>
             <CollectionCreateForm />

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Form, Input, InputNumber, Button, Icon, Select, Radio } from 'antd';
+import { Form, Input, InputNumber, Button, Icon, Select, Radio, Col, Row } from 'antd';
 import { connect } from 'react-redux';
 import Store from '../../../../../../store';
-import { fillVariableArrToForm } from '../../../../util/fillJsonToForm';
+import { fillArrLenToForm, fillArrToForm } from '../../../../util/fillJsonToForm';
 import { updateArray } from '../../../../util/updateFieldValue';
+import toThousands from '../../../../util/toThousands';
 
 require('./buyerList.scss');
 
@@ -21,7 +22,7 @@ const BuyerList = React.createClass({
     const buyerKeys = getFieldValue('buyerKeys');
 
     uuid++;
-    buyerKeys.push(uuid);
+    buyerKeys.push({id: uuid, type: 'know'});
 
     setFieldsValue({
       buyerKeys: buyerKeys
@@ -35,7 +36,7 @@ const BuyerList = React.createClass({
     const buyerKeys = getFieldValue('buyerKeys');
 
     uuid++;
-    buyerKeys.push(uuid);
+    buyerKeys.push({id: uuid, type: 'unknow'});
 
     setFieldsValue({
       buyerKeys: buyerKeys
@@ -49,7 +50,7 @@ const BuyerList = React.createClass({
     const buyerKeys = getFieldValue('buyerKeys');
 
     setFieldsValue({
-      buyerKeys: buyerKeys.filter(key => key !==k )
+      buyerKeys: buyerKeys.filter(item => item.id !==k )
     });
   },
 
@@ -69,12 +70,17 @@ const BuyerList = React.createClass({
 
         buyers = buyers.filter(item => {
           return (typeof item !== 'undefined');
-        })
+        });
 
-        fillVariableArrToForm({
+        fillArrLenToForm({
           form: form,
-          data: buyers,
-          keyname: 'buyerKeys'
+          keys: buyers.map(item => {return {id: item.key, type: item["股东名称"]=="待定"?"unknow":"know"}}),
+          keyname:'buyerKeys'
+        });
+
+        fillArrToForm({
+          form: form,
+          data: buyers
         });
       }
     })
@@ -91,7 +97,10 @@ const BuyerList = React.createClass({
     getFieldDecorator('buyerKeys', {initialValue: []});
     const buyerKeys = getFieldValue('buyerKeys');
 
-    let list = buyerKeys.map((key, index) => {
+    let list = buyerKeys.map((item, index) => {
+      let key = item.id;
+      let type = item.type;
+
       return (
         <div className="recruit-buyeritem" key={key}>
           <Icon
@@ -99,41 +108,48 @@ const BuyerList = React.createClass({
             type="minus-circle-o"
             onClick={() => this.remove(key)}
           />
-          <FormItem {...formItemLayout} label="配募方股东名称">
-            {getFieldDecorator(`股东名称-${key}`)(
-               <Input />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="配募方认购金额">
-            {getFieldDecorator(`认购金额-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="配募方认购股份数量">
-            {getFieldDecorator(`认购股份数-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="配募方认购价格">
-            {getFieldDecorator(`认购价格-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="配募前后持股比例变化">
-            {getFieldDecorator(`持股比例变化-${key}`)(
-               <Input />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="是否大股东/关联方">
-            {getFieldDecorator(`关联方-${key}`, {
-               initialValue: "true"
-            })(
-              <RadioGroup>
-                <Radio value={true}>是</Radio>
-                <Radio value={false}>否</Radio>
-              </RadioGroup>
-             )}
-          </FormItem>
+          <br/>
+          <label>{type=='know' ? '确定的配募方' : '不确定的配募方'}</label>
+
+          <Row gutter={16}>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="配募方股东名称">
+                {getFieldDecorator(`股东名称-${key}`)(
+                   <Input />
+                 )}
+              </FormItem>
+            </Col>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="配募方认购金额">
+                {getFieldDecorator(`认购金额-${key}`)(
+                   <InputNumber
+                     formatter={value => toThousands(value)}
+                   />
+                 )}
+              </FormItem>
+            </Col>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="配募方认购股份数量">
+                {getFieldDecorator(`认购股份数-${key}`)(
+                   <InputNumber
+                     formatter={value => toThousands(value)}
+                   />
+                 )}
+              </FormItem>
+            </Col>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="是否大股东/关联方">
+                {getFieldDecorator(`关联方-${key}`, {
+                   initialValue: "true"
+                })(
+                   <RadioGroup>
+                     <Radio value={true}>是</Radio>
+                     <Radio value={false}>否</Radio>
+                   </RadioGroup>
+                 )}
+              </FormItem>
+            </Col>
+          </Row>
 
         </div>
       )
@@ -141,21 +157,26 @@ const BuyerList = React.createClass({
 
     return (
       <div className="recruit-buyerlist">
-        <FormItem {...formItemLayout}>
-          {getFieldDecorator('know-buyer')(
-             <Button type="dashed" onClick={this.addKnowBuyer}>
-               <Icon type="plus" />增加确定的配募方
-             </Button>
-           )}
-        </FormItem>
-        <FormItem {...formItemLayout}>
-          {getFieldDecorator('unknow-buyer')(
-             <Button type="dashed" onClick={this.addUnknowBuyer}>
-               <Icon type="plus" />增加不确定的配募方
-             </Button>
-           )}
-        </FormItem>
-
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="确定的配募方">
+              {getFieldDecorator('know-buyer')(
+                 <Button type="dashed" onClick={this.addKnowBuyer}>
+                   <Icon type="plus" />增加
+                 </Button>
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="不确定的配募方">
+              {getFieldDecorator('unknow-buyer')(
+                 <Button type="dashed" onClick={this.addUnknowBuyer}>
+                   <Icon type="plus" />增加
+                 </Button>
+               )}
+            </FormItem>
+          </Col>
+        </Row>
         <div className="recruit-buyeritem-wrapper">
           {list}
         </div>

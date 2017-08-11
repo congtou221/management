@@ -1,9 +1,10 @@
 import React from 'react';
-import { Form, Input, InputNumber, Button, Icon, Select, Radio } from 'antd';
+import { Form, Input, InputNumber, Button, Icon, Select, Radio, Row, Col } from 'antd';
 import { connect } from 'react-redux';
 import Store from '../../../../../../store';
 import { updateArray } from '../../../../util/updateFieldValue';
 import { fillVariableArrToForm } from '../../../../util/fillJsonToForm';
+import toThousands from '../../../../util/toThousands';
 
 require('./buyerList.scss');
 
@@ -90,65 +91,90 @@ const BuyerList = React.createClass({
             type="minus-circle-o"
             onClick={() => this.remove(key)}
           />
-          <FormItem {...formItemLayout} label="认购方股东名称">
-            {getFieldDecorator(`名称-${key}`)(
-               <Input />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="认购方认购金额">
-            {getFieldDecorator(`认购金额-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="认购方认购数量">
-            {getFieldDecorator(`认购数量-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="认购方认购价格">
-            {getFieldDecorator(`认购价格-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
-          <FormItem {...formItemLayout} label="认购前后持股比例变化">
-            {getFieldDecorator(`持股比例变化-${key}`)(
-               <InputNumber />
-             )}
-          </FormItem>
-
-          <FormItem {...formItemLayout} label="是否大股东/关联方">
-            {getFieldDecorator(`关联关系-${key}`, {
-               initialValue: 'notRelated'
-            })(
-               <Select>
-                 <Option value="大股东">大股东</Option>
-                 <Option value="关联方">关联方</Option>
-                 <Option value="">不是大股东/关联方</Option>
-               </Select>
-             )}
-          </FormItem>
-
+          <Row gutter={16}>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="认购方股东名称">
+                {getFieldDecorator(`名称-${key}`)(
+                   <Input />
+                 )}
+              </FormItem>
+            </Col>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="认购方认购金额">
+                {getFieldDecorator(`认购金额-${key}`)(
+                   <InputNumber
+                     formatter={value => toThousands(value)}
+                   />
+                 )}
+              </FormItem>
+            </Col>
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="认购方认购数量">
+                {getFieldDecorator(`认购数量-${key}`)(
+                   <InputNumber
+                     formatter={value => toThousands(value)}
+                   />
+                 )}
+              </FormItem>
+            </Col>
+            {/* <Col className="gutter-row" span={6}>
+                <FormItem {...formItemLayout} label="认购方认购价格">
+                {getFieldDecorator(`认购价格-${key}`)(
+                <InputNumber
+                formatter={value => toThousands(value)}
+                />
+                )}
+                </FormItem>
+                </Col> */}
+            {/* <Col className="gutter-row" span={6}>
+                <FormItem {...formItemLayout} label="认购前后持股比例变化">
+                {getFieldDecorator(`持股比例变化-${key}`)(
+                <InputNumber
+                formatter={value => toThousands(value)}
+                />
+                )}
+                </FormItem>
+                </Col> */}
+            <Col className="gutter-row" span={6}>
+              <FormItem {...formItemLayout} label="是否大股东/关联方">
+                {getFieldDecorator(`关联关系-${key}`, {
+                   initialValue: ''
+                })(
+                   <Select>
+                     <Option value="大股东">大股东</Option>
+                     <Option value="关联方">关联方</Option>
+                     <Option value="">不是大股东/关联方</Option>
+                   </Select>
+                 )}
+              </FormItem>
+            </Col>
+          </Row>
         </div>
       )
     })
 
     return (
       <div className="recruit-buyerlist">
-        <FormItem {...formItemLayout}>
-          {getFieldDecorator('know-buyer')(
-             <Button type="dashed" onClick={this.addKnowBuyer}>
-               <Icon type="plus" />增加确定的认购方
-             </Button>
-           )}
-        </FormItem>
-        <FormItem {...formItemLayout}>
-          {getFieldDecorator('unknow-buyer')(
-             <Button type="dashed" onClick={this.addUnknowBuyer}>
-               <Icon type="plus" />增加不确定的认购方
-             </Button>
-           )}
-        </FormItem>
-
+        <Row gutter={16}>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="确定的认购方">
+              {getFieldDecorator('know-buyer')(
+                 <Button type="dashed" onClick={this.addKnowBuyer}>
+                   <Icon type="plus" />增加
+                 </Button>
+               )}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={6}>
+            <FormItem {...formItemLayout} label="不确定的认购方">
+              {getFieldDecorator('unknow-buyer')(
+                 <Button type="dashed" onClick={this.addUnknowBuyer}>
+                   <Icon type="plus" />增加
+                 </Button>
+               )}
+            </FormItem>
+          </Col>
+        </Row>
         <div className="recruit-buyeritem-wrapper">
           {list}
         </div>

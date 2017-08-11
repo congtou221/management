@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input } from 'antd';
+import { Form, Input, Row, Col } from 'antd';
 
 import { connect } from 'react-redux';
 
@@ -45,17 +45,22 @@ const MainBusiness = React.createClass({
     return (
       <div className="mainbusiness-wrapper">
 
-        <FormItem {...formItemLayout} label="定增前主营业务">
-          {getFieldDecorator('定增前', {
+        <Row gutter={16}>
+          <Col className="gutter-row" span={12}>
+            <FormItem {...formItemLayout} label="定增前主营业务">
+              {getFieldDecorator('定增前', {
 
-          })(<Input />)}
-        </FormItem>
+              })(<Input />)}
+            </FormItem>
+          </Col>
+          <Col className="gutter-row" span={12}>
+            <FormItem {...formItemLayout} label="定增后主营业务">
+              {getFieldDecorator('定增后', {
 
-        <FormItem {...formItemLayout} label="定增后主营业务">
-          {getFieldDecorator('定增后', {
-
-          })(<Input />)}
-        </FormItem>
+              })(<Input />)}
+            </FormItem>
+          </Col>
+        </Row>
 
       </div>
     )

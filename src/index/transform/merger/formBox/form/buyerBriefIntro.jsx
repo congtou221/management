@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input } from 'antd';
+import { Form, Input, Row, Col } from 'antd';
 
 import { connect } from 'react-redux';
 
@@ -47,6 +47,21 @@ const BriefIntro = React.createClass({
         form.setFieldsValue(newData);
 
       }
+      if(state.type === 'mergerHoldersReceived'){
+        let holders = state.mergerForm.holders;
+
+        form.setFieldsValue({
+          holders: holders
+        });
+
+        let holdersname = holders.map(item => {
+          return item.name;
+        });
+
+        let submitData = state.mergerForm.submitData;
+        submitData["收购方股东简称"] = holdersname;
+        tmpBriefIntroData = holdersname;
+      }
 
     })
   },
@@ -59,42 +74,75 @@ const BriefIntro = React.createClass({
       wrapperCol: { span: 8}
     }
 
+    getFieldDecorator('holders', {initialValue: []});
+
+    let generateHelp = data => {
+      if(data && data.name && data.ratio){
+        return data.name + ": " + data.ratio + "%";
+      }
+      return "";
+    }
+
     return (
       <div className="briefintro-wrapper">
         收购方股东简称
-        <FormItem {...formItemLayout} label="收购方1">
-          {getFieldDecorator('收购方股东简称-1', {
-          })(
-            <Input />
-           )}
-        </FormItem>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={4}>
+            <FormItem {...formItemLayout}
+              label="收购方1"
+              help={generateHelp(getFieldValue('holders')[0])}>
+              {getFieldDecorator('收购方股东简称-1', {
+              })(
+                 <Input />
+               )}
+            </FormItem>
+          </Col>
 
-        <FormItem {...formItemLayout} label="收购方2">
-          {getFieldDecorator('收购方股东简称-2', {
-          })(
-             <Input />
-           )}
-        </FormItem>
+          <Col className="gutter-row" span={4}>
+            <FormItem {...formItemLayout}
+                label="收购方2"
+                help={generateHelp(getFieldValue('holders')[1])}>
+             {getFieldDecorator('收购方股东简称-2', {
+              })(
+                 <Input />
+               )}
+            </FormItem>
+          </Col>
 
-        <FormItem {...formItemLayout} label="收购方3">
-          {getFieldDecorator('收购方股东简称-3', {
-          })(
-             <Input />
-           )}
-        </FormItem>
+          <Col className="gutter-row" span={4}>
+            <FormItem {...formItemLayout}
+               label="收购方3"
+               help={generateHelp(getFieldValue('holders')[2])}>
+              {getFieldDecorator('收购方股东简称-3', {
+              })(
+                 <Input />
+               )}
+            </FormItem>
+          </Col>
 
-        <FormItem {...formItemLayout} label="收购方4">
-          {getFieldDecorator('收购方股东简称-4', {
-          })(
-             <Input />
-           )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="收购方5">
-          {getFieldDecorator('收购方股东简称-5', {
-          })(
-             <Input />
-           )}
-        </FormItem>
+          <Col className="gutter-row" span={4}>
+            <FormItem {...formItemLayout}
+                 label="收购方4"
+                 help={generateHelp(getFieldValue('holders')[3])}>
+              {getFieldDecorator('收购方股东简称-4', {
+              })(
+                 <Input />
+               )}
+            </FormItem>
+          </Col>
+
+          <Col className="gutter-row" span={4}>
+            <FormItem {...formItemLayout}
+                 label="收购方5"
+                 help={generateHelp(getFieldValue('holders')[4])}>
+              {getFieldDecorator('收购方股东简称-5', {
+              })(
+                 <Input />
+               )}
+            </FormItem>
+
+          </Col>
+        </Row>
 
       </div>
     )
@@ -113,7 +161,15 @@ const WrappedBriefIntro = Form.create({
      */
     let {name, value} = changedFields[Object.keys(changedFields)[0]];
 
-    tmpBriefIntroData[+name.slice(-1)] = value;
+    let reg = /-(\d+)$/;
+
+    if(!reg.exec(name)){
+      return;
+    }
+
+    let index = reg.exec(name)[1];
+
+    tmpBriefIntroData[+index - 1] = value;
 
     props.submitData["收购方股东简称"] = tmpBriefIntroData;
 
